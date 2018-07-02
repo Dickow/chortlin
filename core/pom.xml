@@ -12,6 +12,7 @@
 
     <properties>
         <kotlin.version>1.2.50</kotlin.version>
+        <kotlin.compiler.jvmTarget>1.8</kotlin.compiler.jvmTarget>
         <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
         <experimentalCoroutines>enable</experimentalCoroutines>
     </properties>

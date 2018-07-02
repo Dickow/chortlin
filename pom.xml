@@ -12,4 +12,10 @@
     </modules>
     <packaging>pom</packaging>
 
+    <properties>
+        <java.version>10</java.version>
+        <maven.compiler.source>10</maven.compiler.source>
+        <maven.compiler.target>10</maven.compiler.target>
+    </properties>
+
 </project>
