@@ -10,15 +10,18 @@ class SequentialInteractionTest {
 
     @Test
     fun `setup simple sequential choreography`() {
-
-        Chortlin.beginChoreography()
+        Chortlin.choreography()
                 .onTrigger(TestReceiver::receiveMsg)
-                .mapTo { _, _, _ -> InputObject() }
+                .mapInputTo { _, _, _ -> InputObject() }
                 .processWith { _ -> TestMessage() }
-                .thenInteractWith(TestReceiver2::receiveMsg)
-                .via(TestChannel())
-                .mapTo { _ -> InputObject2() }
-                .processWithAndEnd { _ -> }
+                .thenInteractWith(
+                        Chortlin.interaction()
+                                .onInteraction(TestReceiver2::receiveMsg)
+                                .mapTo { _ -> InputObject2() }
+                                .processWith { _ -> TestMessage() }
+                                .end()
+                                .configureChannel(TestChannel())
+                )
     }
 
     class TestMessage : IMessage

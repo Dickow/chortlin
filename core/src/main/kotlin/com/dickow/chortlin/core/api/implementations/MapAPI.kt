@@ -1,37 +1,22 @@
 package com.dickow.chortlin.core.api.implementations
 
-import com.dickow.chortlin.core.api.interfaces.*
+import com.dickow.chortlin.core.api.implementations.interaction.InteractionProcessAPI
+import com.dickow.chortlin.core.api.implementations.trigger.TriggerProcessAPI
+import com.dickow.chortlin.core.api.interfaces.interaction.IInteractionMapAPI
+import com.dickow.chortlin.core.api.interfaces.interaction.IInteractionProcessAPI
+import com.dickow.chortlin.core.api.interfaces.trigger.ITriggerMapAPI
+import com.dickow.chortlin.core.api.interfaces.trigger.ITriggerProcessAPI
+import com.dickow.chortlin.core.intercept.builders.ReceiveInterceptorBuilder
 
-class MapAPI<T1, T2, T3, T4, T5, T6> :
-        IMapAPI, IMapAPI1<T1>, IMapAPI2<T1, T2>,
-        IMapAPI3<T1, T2, T3>, IMapAPI4<T1, T2, T3, T4>,
-        IMapAPI5<T1, T2, T3, T4, T5>, IMapAPI6<T1, T2, T3, T4, T5, T6> {
-    override fun <TMapped> mapTo(mapper: () -> TMapped): IProcessorAPI<TMapped> {
-        return ProcessorAPI()
+class MapAPI<TClass, R> constructor(
+        private val endpoint: Any,
+        private val method: (TClass) -> R
+) : IInteractionMapAPI, ITriggerMapAPI {
+    override fun <TMapped> mapInputTo(mapper: () -> TMapped): ITriggerProcessAPI<TMapped> {
+        return TriggerProcessAPI()
     }
 
-    override fun <TMapped> mapTo(mapper: (T1) -> TMapped): IProcessorAPI<TMapped> {
-        return ProcessorAPI()
+    override fun <TMapped> mapTo(mapper: () -> TMapped): IInteractionProcessAPI<TMapped> {
+        return InteractionProcessAPI(endpoint, this, ReceiveInterceptorBuilder(method, mapper))
     }
-
-    override fun <TMapped> mapTo(mapper: (T1, T2) -> TMapped): IProcessorAPI<TMapped> {
-        return ProcessorAPI()
-    }
-
-    override fun <TMapped> mapTo(mapper: (T1, T2, T3) -> TMapped): IProcessorAPI<TMapped> {
-        return ProcessorAPI()
-    }
-
-    override fun <TMapped> mapTo(mapper: (T1, T2, T3, T4) -> TMapped): IProcessorAPI<TMapped> {
-        return ProcessorAPI()
-    }
-
-    override fun <TMapped> mapTo(mapper: (T1, T2, T3, T4, T5) -> TMapped): IProcessorAPI<TMapped> {
-        return ProcessorAPI()
-    }
-
-    override fun <TMapped> mapTo(mapper: (T1, T2, T3, T4, T5, T6) -> TMapped): IProcessorAPI<TMapped> {
-        return ProcessorAPI()
-    }
-
 }

@@ -12,14 +12,18 @@ public class JavaSequentialInteractionTest {
     public void SetupSimpleSequentialChoreography() {
         var mapper = new Mapper();
         var processor1 = new Processor1();
-        Chortlin.INSTANCE.beginChoreography()
+        Chortlin.INSTANCE.choreography()
                 .onTrigger(TestReceiver::receiveMsg)
-                .mapTo(mapper::map1)
+                .mapInputTo(mapper::map1)
                 .processWith(processor1::process)
-                .thenInteractWith(TestReceiver2::receiveMsg)
-                .via(new TestChannel())
-                .mapTo(mapper::map2)
-                .processWithAndEnd(o -> null);
+                .thenInteractWith(
+                        Chortlin.INSTANCE.interaction()
+                                .onInteraction(TestReceiver2::receiveMsg)
+                                .mapTo(mapper::map2)
+                                .processWith(o -> new TestMessage())
+                                .end()
+                                .configureChannel(new TestChannel())
+                );
     }
 
     private class TestReceiver {
@@ -62,7 +66,7 @@ public class JavaSequentialInteractionTest {
     }
 
     private class TestReceiver2 {
-        public int receiveMsg(IMessage msg) {
+        public int receiveMsg(TestMessage msg) {
             return 4;
         }
     }
