@@ -1,8 +1,7 @@
 package com.dickow.chortlin.core.api.interfaces
 
-import com.dickow.chortlin.core.interaction.IChannel
-import com.dickow.chortlin.core.message.IMessage
+import com.dickow.chortlin.core.configuration.IChannel
 
-interface IChannelAPI<TChannelMsg : IMessage> {
+interface IChannelAPI<TChannelMsg> {
     fun via(channel: IChannel<TChannelMsg>)
 }

@@ -1,3 +1,5 @@
 package com.dickow.chortlin.core.message
 
-interface IMessage
+interface IMessage<T> {
+    fun getPayload(): T
+}

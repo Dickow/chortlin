@@ -1,7 +1,7 @@
 package com.dickow.chortlin.core.test.interaction;
 
 import com.dickow.chortlin.core.Chortlin;
-import com.dickow.chortlin.core.interaction.IChannel;
+import com.dickow.chortlin.core.configuration.IChannel;
 import com.dickow.chortlin.core.message.IMessage;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
@@ -10,8 +10,8 @@ public class JavaSequentialInteractionTest {
 
     @Test
     public void SetupSimpleSequentialChoreography() {
-        var mapper = new Mapper();
-        var processor1 = new Processor1();
+        Mapper mapper = new Mapper();
+        Processor1 processor1 = new Processor1();
         Chortlin.INSTANCE.choreography()
                 .onTrigger(TestReceiver::receiveMsg)
                 .mapInputTo(mapper::map1)
@@ -32,7 +32,11 @@ public class JavaSequentialInteractionTest {
         }
     }
 
-    private class TestMessage implements IMessage {
+    private class TestMessage implements IMessage<String> {
+        @Override
+        public String getPayload() {
+            return "Hello world";
+        }
     }
 
     private class InputObject {
@@ -44,7 +48,7 @@ public class JavaSequentialInteractionTest {
     private class TestChannel implements IChannel<TestMessage> {
 
         @Override
-        public void send(@NotNull TestMessage message) {
+        public void send(@NotNull IMessage<TestMessage> message) {
 
         }
     }

@@ -6,6 +6,7 @@ import com.dickow.chortlin.core.api.interfaces.interaction.IInteractionEndpointA
 import com.dickow.chortlin.core.api.interfaces.trigger.ITriggerEndpointAPI
 
 object Chortlin {
+
     fun choreography(): ITriggerEndpointAPI {
         return TriggerEndpointAPI()
     }

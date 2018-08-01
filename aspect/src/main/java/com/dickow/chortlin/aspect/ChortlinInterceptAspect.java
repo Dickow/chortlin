@@ -8,14 +8,14 @@ import org.aspectj.lang.annotation.Pointcut;
 @Aspect
 public class ChortlinInterceptAspect {
 
-    @Pointcut("@annotation(com.dickow.chortlin.aspect.annotation.TestAnnotation)")
+    @Pointcut("@annotation(com.dickow.chortlin.aspect.annotation.ChortlinEndpoint)")
     public void annotationPointcut() {
     }
 
     @Around("annotationPointcut() && execution(* *(..))")
-    public Object beforeEndpointIsCalled(ProceedingJoinPoint joinPoint) throws Throwable {
+    public Object beforeEndpointIsCalled(ProceedingJoinPoint joinPoint) {
         System.out.println("I am intercepting the call");
-        return joinPoint.proceed();
+        return null;
     }
 
 }

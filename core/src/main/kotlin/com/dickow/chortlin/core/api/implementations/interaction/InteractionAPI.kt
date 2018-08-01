@@ -1,23 +1,22 @@
 package com.dickow.chortlin.core.api.implementations.interaction
 
 import com.dickow.chortlin.core.api.interfaces.interaction.IInteractionAPI
-import com.dickow.chortlin.core.interaction.Interaction
-import com.dickow.chortlin.core.interaction.InteractionDefinition
+import com.dickow.chortlin.core.configuration.interaction.Interaction
+import com.dickow.chortlin.core.configuration.interaction.InteractionDefinition
 
-class InteractionAPI<TInput> constructor(
-        private val endpoint: Any,
-        private val mapper: Any,
-        private val process: InteractionProcessAPI<TInput>
-) : IInteractionAPI {
-    override fun thenInteractWith(interactions: List<Interaction>): InteractionDefinition {
-        return InteractionDefinition(endpoint, mapper, process, interactions)
+class InteractionAPI constructor(private val interactionDefinition: InteractionDefinition) : IInteractionAPI {
+    override fun thenInteractWith(interactions: Collection<Interaction>): InteractionDefinition {
+        interactionDefinition.interactions = interactions
+        return interactionDefinition
     }
 
     override fun end(): InteractionDefinition {
-        return InteractionDefinition(endpoint, mapper, process, emptyList())
+        interactionDefinition.interactions = emptyList()
+        return interactionDefinition
     }
 
     override fun thenInteractWith(interaction: Interaction): InteractionDefinition {
-        return InteractionDefinition(endpoint, mapper, process, listOf(interaction))
+        interactionDefinition.interactions = listOf(interaction)
+        return interactionDefinition
     }
 }

@@ -1,7 +1,7 @@
 package com.dickow.chortlin.core.test.interaction
 
 import com.dickow.chortlin.core.Chortlin
-import com.dickow.chortlin.core.interaction.IChannel
+import com.dickow.chortlin.core.configuration.IChannel
 import com.dickow.chortlin.core.message.IMessage
 
 import kotlin.test.Test
@@ -24,7 +24,11 @@ class SequentialInteractionTest {
                 )
     }
 
-    class TestMessage : IMessage
+    class TestMessage : IMessage<String> {
+        override fun getPayload(): String {
+            return "Hello world"
+        }
+    }
 
     class InputObject
 
@@ -37,13 +41,12 @@ class SequentialInteractionTest {
     }
 
     class TestChannel : IChannel<TestMessage> {
-        override fun send(message: TestMessage) {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        override fun send(message: IMessage<TestMessage>) {
         }
     }
 
     class TestReceiver2 {
-        fun receiveMsg(msg: IMessage): Int {
+        fun receiveMsg(msg: String): Int {
             return 4
         }
     }

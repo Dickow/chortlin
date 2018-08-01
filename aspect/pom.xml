@@ -4,11 +4,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
         <artifactId>master</artifactId>
-        <groupId>com-dickow-chortlin</groupId>
+        <groupId>com.dickow.chortlin</groupId>
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-
     <artifactId>aspect</artifactId>
 
     <properties>
@@ -21,7 +20,7 @@
     <dependencies>
         <!-- Chortlin dependency -->
         <dependency>
-            <groupId>com-dickow-chortlin</groupId>
+            <groupId>com.dickow.chortlin</groupId>
             <artifactId>core</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
@@ -43,13 +42,6 @@
             <version>5.2.0</version>
             <scope>test</scope>
         </dependency>
-        <!--<dependency>-->
-        <!--<groupId>com.sun</groupId>-->
-        <!--<artifactId>tools</artifactId>-->
-        <!--<version>${java.version}</version>-->
-        <!--<scope>system</scope>-->
-        <!--<systemPath>${project.basedir}/pom.xml</systemPath>-->
-        <!--</dependency>-->
     </dependencies>
 
     <build>
@@ -60,10 +52,6 @@
                 <version>1.11</version>
                 <configuration>
                     <complianceLevel>1.8</complianceLevel>
-                    <includes>
-                        <include>**/*.java</include>
-                        <include>**/*.aj</include>
-                    </includes>
                 </configuration>
                 <executions>
                     <execution>
@@ -79,18 +67,6 @@
                         </goals>
                     </execution>
                 </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.aspectj</groupId>
-                        <artifactId>aspectjrt</artifactId>
-                        <version>${aspectj.runtime.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.aspectj</groupId>
-                        <artifactId>aspectjtools</artifactId>
-                        <version>${aspectj.runtime.version}</version>
-                    </dependency>
-                </dependencies>
             </plugin>
         </plugins>
     </build>
