@@ -1,8 +1,6 @@
 package com.dickow.chortlin.core.api.interfaces.interaction
 
-import com.dickow.chortlin.core.handlers.IHandler
-import com.dickow.chortlin.core.handlers.IHandler1
-import com.dickow.chortlin.core.handlers.IHandler2
+import com.dickow.chortlin.core.handlers.*
 
 interface IInteractionMapAPI {
     fun <TMapped> mapTo(mapper: () -> TMapped): IInteractionProcessAPI<TMapped>
@@ -21,16 +19,20 @@ interface IInteractionMapAPI2<T1, T2> {
 
 interface IInteractionMapAPI3<T1, T2, T3> {
     fun <TMapped> mapTo(mapper: (T1, T2, T3) -> TMapped): IInteractionProcessAPI<TMapped>
+    fun <T1, T2, T3, TMapped, R> handleWith(handler: IHandler3<T1, T2, T3, TMapped, R>): IInteractionAPI
 }
 
 interface IInteractionMapAPI4<T1, T2, T3, T4> {
     fun <TMapped> mapTo(mapper: (T1, T2, T3, T4) -> TMapped): IInteractionProcessAPI<TMapped>
+    fun <T1, T2, T3, T4, TMapped, R> handleWith(handler: IHandler4<T1, T2, T3, T4, TMapped, R>): IInteractionAPI
 }
 
 interface IInteractionMapAPI5<T1, T2, T3, T4, T5> {
     fun <TMapped> mapTo(mapper: (T1, T2, T3, T4, T5) -> TMapped): IInteractionProcessAPI<TMapped>
+    fun <T1, T2, T3, T4, T5, TMapped, R> handleWith(handler: IHandler5<T1, T2, T3, T4, T5, TMapped, R>): IInteractionAPI
 }
 
 interface IInteractionMapAPI6<T1, T2, T3, T4, T5, T6> {
     fun <TMapped> mapTo(mapper: (T1, T2, T3, T4, T5, T6) -> TMapped): IInteractionProcessAPI<TMapped>
+    fun <T1, T2, T3, T4, T5, T6, TMapped, R> handleWith(handler: IHandler6<T1, T2, T3, T4, T5, T6, TMapped, R>): IInteractionAPI
 }

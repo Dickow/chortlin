@@ -3,8 +3,9 @@ package com.dickow.chortlin.core.configuration.interaction
 import com.dickow.chortlin.core.configuration.ChortlinConfiguration
 import com.dickow.chortlin.core.configuration.map.IMapper
 import com.dickow.chortlin.core.configuration.process.IProcessor
+import java.util.*
 
-data class Interaction constructor(
+class Interaction constructor(
         internal val endpoint: Any,
         internal val mapper: IMapper,
         internal val processor: IProcessor,
@@ -16,5 +17,17 @@ data class Interaction constructor(
 
     override fun applyTo() {
         processor.process(arrayOf(mapper.map(emptyArray())))
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (other is Interaction) {
+            return endpoint == other.endpoint
+        }
+
+        return false
+    }
+
+    override fun hashCode(): Int {
+        return Objects.hashCode(endpoint)
     }
 }

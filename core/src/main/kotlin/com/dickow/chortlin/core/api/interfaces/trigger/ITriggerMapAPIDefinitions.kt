@@ -1,8 +1,6 @@
 package com.dickow.chortlin.core.api.interfaces.trigger
 
-import com.dickow.chortlin.core.handlers.IHandler
-import com.dickow.chortlin.core.handlers.IHandler1
-import com.dickow.chortlin.core.handlers.IHandler2
+import com.dickow.chortlin.core.handlers.*
 
 interface ITriggerMapAPI {
     fun <TMapped> mapInputTo(mapper: () -> TMapped): ITriggerProcessAPI<TMapped>
@@ -21,16 +19,20 @@ interface ITriggerMapAPI2<T1, T2> {
 
 interface ITriggerMapAPI3<T1, T2, T3> {
     fun <TMapped> mapInputTo(mapper: (T1, T2, T3) -> TMapped): ITriggerProcessAPI<TMapped>
+    fun <T1, T2, T3, TMapped, R> handleWith(handler: IHandler3<T1, T2, T3, TMapped, R>): ITriggerAPI
 }
 
 interface ITriggerMapAPI4<T1, T2, T3, T4> {
     fun <TMapped> mapInputTo(mapper: (T1, T2, T3, T4) -> TMapped): ITriggerProcessAPI<TMapped>
+    fun <T1, T2, T3, T4, TMapped, R> handleWith(handler: IHandler4<T1, T2, T3, T4, TMapped, R>): ITriggerAPI
 }
 
 interface ITriggerMapAPI5<T1, T2, T3, T4, T5> {
     fun <TMapped> mapInputTo(mapper: (T1, T2, T3, T4, T5) -> TMapped): ITriggerProcessAPI<TMapped>
+    fun <T1, T2, T3, T4, T5, TMapped, R> handleWith(handler: IHandler5<T1, T2, T3, T4, T5, TMapped, R>): ITriggerAPI
 }
 
 interface ITriggerMapAPI6<T1, T2, T3, T4, T5, T6> {
     fun <TMapped> mapInputTo(mapper: (T1, T2, T3, T4, T5, T6) -> TMapped): ITriggerProcessAPI<TMapped>
+    fun <T1, T2, T3, T4, T5, T6, TMapped, R> handleWith(handler: IHandler6<T1, T2, T3, T4, T5, T6, TMapped, R>): ITriggerAPI
 }
