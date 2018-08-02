@@ -28,8 +28,7 @@ class ScenarioTest4 {
                                                 .onInteraction(InteractionDefinitions::interaction)
                                                 .mapTo { s -> s }
                                                 .processWith { s -> s }
-                                                .end()
-                                                .configureChannel(sinkChannel))
+                                                .end())
                                 .configureChannel(sinkChannel))
                 .configureChannel(sinkChannel)
         assertTrue(choreography is Trigger)

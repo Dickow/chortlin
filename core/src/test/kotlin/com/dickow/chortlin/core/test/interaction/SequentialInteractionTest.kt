@@ -1,9 +1,7 @@
 package com.dickow.chortlin.core.test.interaction
 
 import com.dickow.chortlin.core.Chortlin
-import com.dickow.chortlin.core.configuration.IChannel
 import com.dickow.chortlin.core.message.IMessage
-
 import kotlin.test.Test
 
 class SequentialInteractionTest {
@@ -20,8 +18,7 @@ class SequentialInteractionTest {
                                 .mapTo { _ -> InputObject2() }
                                 .processWith { _ -> TestMessage() }
                                 .end()
-                                .configureChannel(TestChannel())
-                )
+                ).noChannel()
     }
 
     class TestMessage : IMessage<String> {
@@ -37,11 +34,6 @@ class SequentialInteractionTest {
     class TestReceiver {
         fun receiveMsg(p1: String, p2: Int, p3: Boolean) {
 
-        }
-    }
-
-    class TestChannel : IChannel<TestMessage> {
-        override fun send(message: IMessage<TestMessage>) {
         }
     }
 

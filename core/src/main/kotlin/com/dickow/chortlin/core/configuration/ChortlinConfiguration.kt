@@ -1,3 +1,6 @@
 package com.dickow.chortlin.core.configuration
 
-interface ChortlinConfiguration
+interface ChortlinConfiguration {
+    fun applyTo(args: Array<Any>)
+    fun applyTo()
+}

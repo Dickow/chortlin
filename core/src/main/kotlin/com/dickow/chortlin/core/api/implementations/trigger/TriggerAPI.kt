@@ -1,10 +1,12 @@
 package com.dickow.chortlin.core.api.implementations.trigger
 
 import com.dickow.chortlin.core.api.interfaces.trigger.ITriggerAPI
+import com.dickow.chortlin.core.configuration.ChortlinConfiguration
 import com.dickow.chortlin.core.configuration.Definition
 import com.dickow.chortlin.core.configuration.interaction.Interaction
 
 class TriggerAPI constructor(private val definition: Definition) : ITriggerAPI {
+
     override fun thenInteractWith(interaction: Interaction): Definition {
         definition.interactions = listOf(interaction)
         return definition
@@ -15,8 +17,8 @@ class TriggerAPI constructor(private val definition: Definition) : ITriggerAPI {
         return definition
     }
 
-    override fun end(): Definition {
+    override fun end(): ChortlinConfiguration {
         definition.interactions = emptyList()
-        return definition
+        return definition.noChannel()
     }
 }

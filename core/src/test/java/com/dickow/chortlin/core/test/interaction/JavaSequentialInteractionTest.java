@@ -6,10 +6,10 @@ import com.dickow.chortlin.core.message.IMessage;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
-public class JavaSequentialInteractionTest {
+class JavaSequentialInteractionTest {
 
     @Test
-    public void SetupSimpleSequentialChoreography() {
+    void SetupSimpleSequentialChoreography() {
         Mapper mapper = new Mapper();
         Processor1 processor1 = new Processor1();
         Chortlin.INSTANCE.choreography()
@@ -22,12 +22,11 @@ public class JavaSequentialInteractionTest {
                                 .mapTo(mapper::map2)
                                 .processWith(o -> new TestMessage())
                                 .end()
-                                .configureChannel(new TestChannel())
                 );
     }
 
     private class TestReceiver {
-        public Void receiveMsg(String p1, Integer p2, Boolean p3) {
+        Void receiveMsg(String p1, Integer p2, Boolean p3) {
             return null;
         }
     }
@@ -54,23 +53,23 @@ public class JavaSequentialInteractionTest {
     }
 
     private class Mapper {
-        public InputObject map1(String s, int i, boolean b) {
+        InputObject map1(String s, int i, boolean b) {
             return new InputObject();
         }
 
-        public InputObject2 map2(TestMessage msg) {
+        InputObject2 map2(TestMessage msg) {
             return new InputObject2();
         }
     }
 
     private class Processor1 {
-        public TestMessage process(InputObject input) {
+        TestMessage process(InputObject input) {
             return new TestMessage();
         }
     }
 
     private class TestReceiver2 {
-        public int receiveMsg(TestMessage msg) {
+        int receiveMsg(TestMessage msg) {
             return 4;
         }
     }
