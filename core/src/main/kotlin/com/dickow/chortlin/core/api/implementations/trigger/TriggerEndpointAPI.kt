@@ -4,6 +4,7 @@ import com.dickow.chortlin.core.api.interfaces.trigger.*
 import com.dickow.chortlin.core.configuration.trigger.TriggerBuilder
 
 class TriggerEndpointAPI : ITriggerEndpointAPI {
+
     override fun <TClass, R> onTrigger(method: (TClass) -> R): ITriggerMapAPI {
         val definition = TriggerBuilder()
         definition.endpoint = method

@@ -3,12 +3,12 @@ package com.dickow.chortlin.core.api.implementations.trigger
 import com.dickow.chortlin.core.api.interfaces.trigger.ITriggerAPI
 import com.dickow.chortlin.core.api.interfaces.trigger.ITriggerMapAPI
 import com.dickow.chortlin.core.api.interfaces.trigger.ITriggerProcessAPI
-import com.dickow.chortlin.core.configuration.Definition
 import com.dickow.chortlin.core.configuration.map.Mapper
 import com.dickow.chortlin.core.configuration.process.Processor1
+import com.dickow.chortlin.core.configuration.trigger.TriggerBuilder
 import com.dickow.chortlin.core.handlers.IHandler
 
-class MapAPI constructor(private val definition: Definition) : ITriggerMapAPI {
+class MapAPI constructor(private val definition: TriggerBuilder) : ITriggerMapAPI {
 
     override fun <TMapped, R> handleWith(handler: IHandler<TMapped, R>): ITriggerAPI {
         definition.mapper = Mapper(handler::mapInput)
