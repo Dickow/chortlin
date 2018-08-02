@@ -1,7 +1,6 @@
 package com.dickow.chortlin.core.test.interaction
 
 import com.dickow.chortlin.core.Chortlin
-import com.dickow.chortlin.core.configuration.trigger.Trigger
 import com.dickow.chortlin.core.handlers.IHandler2
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -16,7 +15,7 @@ class TriggerTest {
         val trigger = Chortlin.choreography()
                 .onTrigger(TriggerTest::endpoint)
                 .handleWith(Handler(strInput, intInput))
-                .end() as Trigger
+                .end()
 
         trigger.applyTo(arrayOf(strInput, intInput))
     }
