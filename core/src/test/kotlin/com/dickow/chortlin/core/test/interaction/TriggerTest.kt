@@ -13,7 +13,7 @@ class TriggerTest {
     @Test
     fun `invoke configured trigger and test input and output`() {
         val trigger = Chortlin.choreography()
-                .onTrigger(TriggerTest::endpoint)
+                .onTrigger(TriggerTest::class.java, "endpoint", TriggerTest::endpoint)
                 .handleWith(Handler(strInput, intInput))
                 .end()
 

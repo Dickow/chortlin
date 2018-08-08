@@ -13,12 +13,12 @@ class JavaSequentialInteractionTest {
         Mapper mapper = new Mapper();
         Processor1 processor1 = new Processor1();
         Chortlin.INSTANCE.choreography()
-                .onTrigger(TestReceiver::receiveMsg)
+                .onTrigger(TestReceiver.class, "receiveMsg", TestReceiver::receiveMsg)
                 .mapInputTo(mapper::map1)
                 .processWith(processor1::process)
                 .thenInteractWith(
                         Chortlin.INSTANCE.interaction()
-                                .onInteraction(TestReceiver2::receiveMsg)
+                                .onInteraction(TestReceiver2.class, "receiveMsg", TestReceiver2::receiveMsg)
                                 .mapTo(mapper::map2)
                                 .processWith(o -> new TestMessage())
                                 .end()

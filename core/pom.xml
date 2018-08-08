@@ -16,7 +16,6 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <kotlin.version>1.2.60</kotlin.version>
         <kotlin.compiler.jvmTarget>1.8</kotlin.compiler.jvmTarget>
-        <kotlin.compiler.incremental>true</kotlin.compiler.incremental>
         <experimentalCoroutines>enable</experimentalCoroutines>
     </properties>
 
@@ -49,8 +48,6 @@
     </dependencies>
 
     <build>
-        <sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
-        <testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
         <plugins>
             <plugin>
                 <artifactId>kotlin-maven-plugin</artifactId>
@@ -58,6 +55,11 @@
                 <version>${kotlin.version}</version>
                 <executions>
                     <execution>
+                        <configuration>
+                            <sourceDirs>
+                                <sourceDir>${project.basedir}/src/main/kotlin</sourceDir>
+                            </sourceDirs>
+                        </configuration>
                         <id>compile</id>
                         <goals>
                             <goal>compile</goal>
@@ -65,6 +67,11 @@
                     </execution>
                     <execution>
                         <id>test-compile</id>
+                        <configuration>
+                            <sourceDirs>
+                                <sourceDir>${project.basedir}/src/test/kotlin</sourceDir>
+                            </sourceDirs>
+                        </configuration>
                         <goals>
                             <goal>test-compile</goal>
                         </goals>

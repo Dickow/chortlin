@@ -14,14 +14,14 @@ class JavaTriggerTest {
     @Test
     void InvokeConfiguredTriggerAndTestInputAndOutput() {
         Trigger trigger = Chortlin.INSTANCE.choreography()
-                .onTrigger(JavaTriggerTest::endpoint)
+                .onTrigger(JavaTriggerTest.class, "endpoint", JavaTriggerTest::endpoint)
                 .handleWith(new Handler(strInput, intInput))
                 .end();
 
         trigger.applyTo(new Object[]{strInput, intInput});
     }
 
-    int endpoint(String input, int number) {
+    private int endpoint(String input, int number) {
         return number + Integer.parseInt(input);
     }
 

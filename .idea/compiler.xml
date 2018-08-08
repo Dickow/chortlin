@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="AjcSettings">
-    <option name="ajcPath" value="$MAVEN_REPOSITORY$/org/aspectj/aspectjtools/1.8.13/aspectjtools-1.8.13.jar" />
+    <option name="ajcPath" value="$MAVEN_REPOSITORY$/org/aspectj/aspectjtools/1.9.1/aspectjtools-1.9.1.jar" />
+    <option name="cmdLineParams" value="-showWeaveInfo -Xlint:ignore" />
     <option name="delegateToJavac" value="true" />
   </component>
   <component name="CompilerConfiguration">

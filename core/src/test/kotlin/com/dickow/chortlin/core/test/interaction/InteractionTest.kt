@@ -6,6 +6,7 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
+@Suppress("UNUSED_PARAMETER")
 class InteractionTest {
 
     private val inputMap = mapOf(
@@ -17,14 +18,14 @@ class InteractionTest {
     @Test
     fun `verify interaction can correctly be applied to input`() {
         val interaction = Chortlin.interaction()
-                .onInteraction(InteractionTest::endpoint)
+                .onInteraction(InteractionTest::class.java, "endpoint", InteractionTest::endpoint)
                 .handleWith(Handler(inputMap))
                 .end()
 
         interaction.applyTo(arrayOf(inputMap))
     }
 
-    fun endpoint(map: Map<String, String>): Int {
+    private fun endpoint(map: Map<String, String>): Int {
         return 400
     }
 

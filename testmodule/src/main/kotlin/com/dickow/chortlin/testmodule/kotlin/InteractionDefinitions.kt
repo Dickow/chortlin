@@ -1,22 +1,22 @@
-package com.dickow.chortlin.scenariotests.shared
+package com.dickow.chortlin.testmodule.kotlin
 
 import com.dickow.chortlin.aspect.annotation.ChortlinEndpoint
 import kotlin.test.fail
 
-class InteractionDefinitions {
+open class InteractionDefinitions {
 
     @ChortlinEndpoint
-    fun interaction(input: String): Int {
+    open fun interaction(input: String): Int {
         fail("This is an endpoint and must not be called")
     }
 
     @ChortlinEndpoint
-    fun interaction2(i1: String, i2: String): Int {
+    open fun interaction2(i1: String, i2: String): Int {
         fail("This is an endpoint and must not be called")
     }
 
     @ChortlinEndpoint
-    fun interactionInteger(input: Int): Int {
+    open fun interactionInteger(input: Int): Int {
         fail("This is an endpoint and must not be called")
     }
 }

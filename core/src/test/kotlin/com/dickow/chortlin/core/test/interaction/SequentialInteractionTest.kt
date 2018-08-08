@@ -4,17 +4,18 @@ import com.dickow.chortlin.core.Chortlin
 import com.dickow.chortlin.core.message.IMessage
 import kotlin.test.Test
 
+@Suppress("UNUSED_PARAMETER")
 class SequentialInteractionTest {
 
     @Test
     fun `setup simple sequential choreography`() {
         Chortlin.choreography()
-                .onTrigger(TestReceiver::receiveMsg)
+                .onTrigger(TestReceiver::class.java, "receiveMsg", TestReceiver::receiveMsg)
                 .mapInputTo { _, _, _ -> InputObject() }
                 .processWith { _ -> TestMessage() }
                 .thenInteractWith(
                         Chortlin.interaction()
-                                .onInteraction(TestReceiver2::receiveMsg)
+                                .onInteraction(TestReceiver2::class.java, "receiveMsg", TestReceiver2::receiveMsg)
                                 .mapTo { _ -> InputObject2() }
                                 .processWith { _ -> TestMessage() }
                                 .end()
@@ -33,7 +34,6 @@ class SequentialInteractionTest {
 
     class TestReceiver {
         fun receiveMsg(p1: String, p2: Int, p3: Boolean) {
-
         }
     }
 

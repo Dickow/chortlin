@@ -3,8 +3,8 @@ package com.dickow.chortlin.scenariotests
 import com.dickow.chortlin.core.Chortlin
 import com.dickow.chortlin.core.configuration.IChannel
 import com.dickow.chortlin.core.message.IMessage
-import com.dickow.chortlin.scenariotests.shared.EndpointDefinitions
-import com.dickow.chortlin.scenariotests.shared.InteractionDefinitions
+import com.dickow.chortlin.testmodule.kotlin.EndpointDefinitions
+import com.dickow.chortlin.testmodule.kotlin.InteractionDefinitions
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -14,14 +14,20 @@ class ScenarioTest5 {
     private val output = 123456
 
     @Test
-    fun `Create a sequential Interaction that does not involve network traffic`() {
+    fun `create a sequential Interaction that does not involve network traffic`() {
         Chortlin.choreography()
-                .onTrigger(EndpointDefinitions::endpointWithStringInput)
+                .onTrigger(
+                        EndpointDefinitions::class.java,
+                        "endpointWithStringInput",
+                        EndpointDefinitions::endpointWithStringInput)
                 .mapInputTo(this::map)
                 .processWith(this::process)
                 .thenInteractWith(
                         Chortlin.interaction()
-                                .onInteraction(InteractionDefinitions::interactionInteger)
+                                .onInteraction(
+                                        InteractionDefinitions::class.java,
+                                        "interactionInteger",
+                                        InteractionDefinitions::interactionInteger)
                                 .mapTo(this::map2)
                                 .processWith(this::process2)
                                 .end())

@@ -1,17 +1,17 @@
-package com.dickow.chortlin.scenariotests.shared
+package com.dickow.chortlin.testmodule.kotlin
 
 import com.dickow.chortlin.aspect.annotation.ChortlinEndpoint
 import kotlin.test.fail
 
-class EndpointDefinitions {
+open class EndpointDefinitions {
 
     @ChortlinEndpoint
-    fun endpointWithStringInput(str: String): Int {
+    open fun endpointWithStringInput(str: String): Int {
         fail("This is an endpoint and must not be called")
     }
 
     @ChortlinEndpoint
-    fun endpointWithMapInput(map: Map<String, Any>): String {
+    open fun endpointWithMapInput(map: Map<String, Any>): String {
         fail("This is an endpoint and must not be called")
     }
 }

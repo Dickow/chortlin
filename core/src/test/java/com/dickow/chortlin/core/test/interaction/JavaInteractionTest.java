@@ -19,14 +19,14 @@ class JavaInteractionTest {
         inputMap.put("Kotlin", "Is Great");
 
         Interaction interaction = Chortlin.INSTANCE.interaction()
-                .onInteraction(JavaInteractionTest::endpoint)
+                .onInteraction(JavaInteractionTest.class, "endpoint", JavaInteractionTest::endpoint)
                 .handleWith(new Handler(inputMap))
                 .end();
 
         interaction.applyTo(new Object[]{inputMap});
     }
 
-    Integer endpoint(Map<String, String> input) {
+    private Integer endpoint(Map<String, String> input) {
         return 400;
     }
 
