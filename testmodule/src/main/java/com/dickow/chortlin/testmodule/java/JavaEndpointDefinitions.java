@@ -8,4 +8,9 @@ public class JavaEndpointDefinitions {
     public Integer endpoint1() {
         throw new RuntimeException("Error I was allowed to run");
     }
+
+    @ChortlinEndpoint
+    public Integer endpointWithStringInput(String input) {
+        throw new RuntimeException("Error I was allowed to run");
+    }
 }

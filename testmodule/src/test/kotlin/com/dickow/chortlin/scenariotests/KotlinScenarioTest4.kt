@@ -2,36 +2,36 @@ package com.dickow.chortlin.scenariotests
 
 import com.dickow.chortlin.core.Chortlin
 import com.dickow.chortlin.core.configuration.trigger.Trigger
-import com.dickow.chortlin.testmodule.kotlin.EndpointDefinitions
-import com.dickow.chortlin.testmodule.kotlin.InteractionDefinitions
-import com.dickow.chortlin.testmodule.kotlin.SinkChannel
+import com.dickow.chortlin.testmodule.kotlin.KotlinEndpointDefinitions
+import com.dickow.chortlin.testmodule.kotlin.KotlinInteractionDefinitions
+import com.dickow.chortlin.testmodule.kotlin.KotlinSinkChannel
 import kotlin.test.Test
 import kotlin.test.assertTrue
 
-class ScenarioTest4 {
+class KotlinScenarioTest4 {
 
     @Test
     fun `create a sequential Interaction involving three methods`() {
-        val sinkChannel = SinkChannel()
+        val sinkChannel = KotlinSinkChannel()
 
         val choreography = Chortlin.choreography()
-                .onTrigger(EndpointDefinitions::class.java, "endpointWithStringInput", EndpointDefinitions::endpointWithStringInput)
+                .onTrigger(KotlinEndpointDefinitions::class.java, "endpointWithStringInput", KotlinEndpointDefinitions::endpointWithStringInput)
                 .mapInputTo { str -> str }
                 .processWith { s -> s }
                 .thenInteractWith(
                         Chortlin.interaction()
                                 .onInteraction(
-                                        InteractionDefinitions::class.java,
+                                        KotlinInteractionDefinitions::class.java,
                                         "interaction",
-                                        InteractionDefinitions::interaction)
+                                        KotlinInteractionDefinitions::interaction)
                                 .mapTo { s -> s }
                                 .processWith { s -> s }
                                 .thenInteractWith(
                                         Chortlin.interaction()
                                                 .onInteraction(
-                                                        InteractionDefinitions::class.java,
+                                                        KotlinInteractionDefinitions::class.java,
                                                         "interaction",
-                                                        InteractionDefinitions::interaction)
+                                                        KotlinInteractionDefinitions::interaction)
                                                 .mapTo { s -> s }
                                                 .processWith { s -> s }
                                                 .end())

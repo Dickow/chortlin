@@ -3,7 +3,7 @@ package com.dickow.chortlin.testmodule.kotlin
 import com.dickow.chortlin.core.configuration.IChannel
 import com.dickow.chortlin.core.message.IMessage
 
-class SinkChannel : IChannel<String> {
+class KotlinSinkChannel : IChannel<String> {
     override fun send(message: IMessage<String>) {
         println("Om nom nom ${message.getPayload()}")
     }
