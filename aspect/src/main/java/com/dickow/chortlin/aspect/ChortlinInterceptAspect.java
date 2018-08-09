@@ -32,11 +32,9 @@ public class ChortlinInterceptAspect {
 
             return null;
         } else {
-            if (joinPoint.getArgs().length > 0) {
-                return joinPoint.proceed(joinPoint.getArgs());
-            } else {
-                return joinPoint.proceed();
-            }
+            return joinPoint.getArgs().length > 0
+                    ? joinPoint.proceed(joinPoint.getArgs())
+                    : joinPoint.proceed();
         }
     }
 
