@@ -16,7 +16,7 @@ class JavaTriggerTest {
         Trigger trigger = Chortlin.INSTANCE.choreography()
                 .onTrigger(JavaTriggerTest.class, "endpoint", JavaTriggerTest::endpoint)
                 .handleWith(new Handler(strInput, intInput))
-                .end();
+                .finish();
 
         trigger.applyTo(new Object[]{strInput, intInput});
     }

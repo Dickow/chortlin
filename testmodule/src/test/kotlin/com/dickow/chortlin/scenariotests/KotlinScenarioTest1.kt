@@ -20,7 +20,7 @@ class KotlinScenarioTest1 {
                         "endpointWith3Inputs",
                         KotlinEndpointDefinitions::endpointWith3Inputs)
                 .handleWith(Handler(arg1, arg2, arg3))
-                .end()
+                .finish()
 
         KotlinEndpointDefinitions().endpointWith3Inputs(arg1, arg2, arg3)
     }

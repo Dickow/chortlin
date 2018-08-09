@@ -1,24 +1,27 @@
 package com.dickow.chortlin.scenariotests
 
 import com.dickow.chortlin.core.Chortlin
-import com.dickow.chortlin.core.configuration.trigger.Trigger
 import com.dickow.chortlin.testmodule.kotlin.KotlinEndpointDefinitions
 import com.dickow.chortlin.testmodule.kotlin.KotlinInteractionDefinitions
+import com.dickow.chortlin.testmodule.kotlin.KotlinNoTransform
 import com.dickow.chortlin.testmodule.kotlin.KotlinSinkChannel
 import kotlin.test.Test
-import kotlin.test.assertTrue
 
 class KotlinScenarioTest4 {
 
     @Test
     fun `create a sequential Interaction involving three methods`() {
-        val sinkChannel = KotlinSinkChannel()
+        val sinkChannel = KotlinSinkChannel<String>()
 
-        val choreography = Chortlin.choreography()
-                .onTrigger(KotlinEndpointDefinitions::class.java, "endpointWithStringInput", KotlinEndpointDefinitions::endpointWithStringInput)
+        Chortlin.choreography()
+                .onTrigger(
+                        KotlinEndpointDefinitions::class.java,
+                        "endpointWithStringInput",
+                        KotlinEndpointDefinitions::endpointWithStringInput)
                 .mapInputTo { str -> str }
                 .processWith { s -> s }
-                .thenInteractWith(
+                .addInteraction(
+                        KotlinNoTransform(),
                         Chortlin.interaction()
                                 .onInteraction(
                                         KotlinInteractionDefinitions::class.java,
@@ -26,7 +29,8 @@ class KotlinScenarioTest4 {
                                         KotlinInteractionDefinitions::interaction)
                                 .mapTo { s -> s }
                                 .processWith { s -> s }
-                                .thenInteractWith(
+                                .addInteraction(
+                                        KotlinNoTransform(),
                                         Chortlin.interaction()
                                                 .onInteraction(
                                                         KotlinInteractionDefinitions::class.java,
@@ -34,9 +38,8 @@ class KotlinScenarioTest4 {
                                                         KotlinInteractionDefinitions::interaction)
                                                 .mapTo { s -> s }
                                                 .processWith { s -> s }
-                                                .end())
-                                .configureChannel(sinkChannel))
-                .configureChannel(sinkChannel)
-        assertTrue(choreography is Trigger)
+                                                .finish(sinkChannel))
+                                .finish(sinkChannel))
+                .finish()
     }
 }

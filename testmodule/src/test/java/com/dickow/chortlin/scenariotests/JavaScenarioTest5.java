@@ -5,6 +5,7 @@ import com.dickow.chortlin.core.handlers.IHandler;
 import com.dickow.chortlin.core.handlers.IHandler1;
 import com.dickow.chortlin.testmodule.java.JavaEndpointDefinitions;
 import com.dickow.chortlin.testmodule.java.JavaInteractionDefinitions;
+import com.dickow.chortlin.testmodule.java.JavaSinkChannel;
 import org.junit.jupiter.api.Test;
 
 class JavaScenarioTest5 {
@@ -12,17 +13,21 @@ class JavaScenarioTest5 {
     @Test
     void CreateASequentialInteractionThatDoesNotInvolveNetworkTraffic() {
         Chortlin.INSTANCE.choreography()
-                .onTrigger(JavaEndpointDefinitions.class, "endpoint1", JavaEndpointDefinitions::endpoint1)
+                .onTrigger(
+                        JavaEndpointDefinitions.class,
+                        "endpoint1",
+                        JavaEndpointDefinitions::endpoint1)
                 .handleWith(new TestHandler())
-                .thenInteractWith(
+                .addInteraction(
+                        value -> value,
                         Chortlin.INSTANCE.interaction()
                                 .onInteraction(
                                         JavaInteractionDefinitions.class,
                                         "interactionPoint1",
                                         JavaInteractionDefinitions::interactionPoint1)
                                 .handleWith(new TestHandlerForString())
-                                .end())
-                .noChannel();
+                                .finish(new JavaSinkChannel()))
+                .finish();
         new JavaEndpointDefinitions().endpoint1();
     }
 

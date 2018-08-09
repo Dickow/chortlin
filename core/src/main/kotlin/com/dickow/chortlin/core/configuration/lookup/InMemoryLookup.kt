@@ -4,7 +4,7 @@ import com.dickow.chortlin.core.api.endpoint.Endpoint
 import com.dickow.chortlin.core.configuration.ChortlinConfiguration
 import com.dickow.chortlin.core.configuration.trigger.Trigger
 
-class InMemoryLookup : ILookup {
+class InMemoryLookup : Lookup {
 
     private val lookupStore: MutableMap<Endpoint, ChortlinConfiguration> = hashMapOf()
 
@@ -16,7 +16,7 @@ class InMemoryLookup : ILookup {
         lookupStore.putIfAbsent(config.getEndpoint(), config)
         when (config) {
             is Trigger -> {
-                config.interactions.forEach { lookupStore.putIfAbsent(it.getEndpoint(), it) }
+                config.continuations.forEach { lookupStore.putIfAbsent(it.getEndpoint(), it.getConfiguration()) }
             }
         }
     }

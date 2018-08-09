@@ -11,13 +11,13 @@ import com.dickow.chortlin.core.handlers.IHandler1
 class MapAPI1<T1> constructor(private val interactionBuilder: InteractionBuilder)
     : IInteractionMapAPI1<T1> {
 
-    override fun <T1, TMapped, R> handleWith(handler: IHandler1<T1, TMapped, R>): IInteractionAPI {
+    override fun <T1, TMapped, R> handleWith(handler: IHandler1<T1, TMapped, R>): IInteractionAPI<T1, R> {
         interactionBuilder.mapper = Mapper1(handler::mapInput)
         interactionBuilder.processor = Processor1(handler::process)
         return InteractionAPI(interactionBuilder)
     }
 
-    override fun <TMapped> mapTo(mapper: (T1) -> TMapped): IInteractionProcessAPI<TMapped> {
+    override fun <TMapped> mapTo(mapper: (T1) -> TMapped): IInteractionProcessAPI<T1, TMapped> {
         interactionBuilder.mapper = Mapper1(mapper)
         return InteractionProcessAPI(interactionBuilder)
     }

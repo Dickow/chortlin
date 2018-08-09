@@ -15,7 +15,7 @@ class TriggerTest {
         val trigger = Chortlin.choreography()
                 .onTrigger(TriggerTest::class.java, "endpoint", TriggerTest::endpoint)
                 .handleWith(Handler(strInput, intInput))
-                .end()
+                .finish()
 
         trigger.applyTo(arrayOf(strInput, intInput))
     }

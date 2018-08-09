@@ -1,14 +1,17 @@
 package com.dickow.chortlin.core.configuration.interaction
 
-import com.dickow.chortlin.core.configuration.Definition
-import com.dickow.chortlin.core.configuration.IChannel
+import com.dickow.chortlin.core.configuration.DefinitionBuilder
+import com.dickow.chortlin.core.continuation.Continuation
+import com.dickow.chortlin.core.message.Channel
 
-class InteractionBuilder : Definition() {
-    override fun noChannel(): Interaction {
-        return Interaction(endpoint, mapper, processor, interactions)
+class InteractionBuilder : DefinitionBuilder() {
+    private val continuations: MutableCollection<Continuation> = mutableListOf()
+
+    override fun addContinuation(continuation: Continuation) {
+        continuations.add(continuation)
     }
 
-    override fun <TMsg> configureChannel(channel: IChannel<TMsg>): Interaction {
-        return Interaction(endpoint, mapper, processor, interactions)
+    fun <TMsg> build(channel: Channel<TMsg>): Interaction<TMsg> {
+        return Interaction(endpoint, mapper, processor, channel, continuations)
     }
 }

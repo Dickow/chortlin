@@ -1,8 +1,9 @@
 package com.dickow.chortlin.core.test.interaction;
 
 import com.dickow.chortlin.core.Chortlin;
-import com.dickow.chortlin.core.configuration.IChannel;
+import com.dickow.chortlin.core.message.Channel;
 import com.dickow.chortlin.core.message.IMessage;
+import com.dickow.chortlin.core.test.interaction.shared.JavaSinkChannel;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
@@ -16,13 +17,14 @@ class JavaSequentialInteractionTest {
                 .onTrigger(TestReceiver.class, "receiveMsg", TestReceiver::receiveMsg)
                 .mapInputTo(mapper::map1)
                 .processWith(processor1::process)
-                .thenInteractWith(
+                .addInteraction(
+                        value -> value,
                         Chortlin.INSTANCE.interaction()
                                 .onInteraction(TestReceiver2.class, "receiveMsg", TestReceiver2::receiveMsg)
                                 .mapTo(mapper::map2)
                                 .processWith(o -> new TestMessage())
-                                .end()
-                );
+                                .finish(new JavaSinkChannel<>())
+                ).finish();
     }
 
     private class TestReceiver {
@@ -44,7 +46,7 @@ class JavaSequentialInteractionTest {
     private class InputObject2 {
     }
 
-    private class TestChannel implements IChannel<TestMessage> {
+    private class TestChannel implements Channel<TestMessage> {
 
         @Override
         public void send(@NotNull IMessage<TestMessage> message) {

@@ -1,13 +1,13 @@
 package com.dickow.chortlin.core.test.interaction.lookup
 
 import com.dickow.chortlin.core.api.endpoint.Endpoint
-import com.dickow.chortlin.core.configuration.lookup.ILookup
 import com.dickow.chortlin.core.configuration.lookup.InMemoryLookup
+import com.dickow.chortlin.core.configuration.lookup.Lookup
 import kotlin.test.*
 
 class LookupTests {
 
-    private var lookup: ILookup = InMemoryLookup()
+    private var lookup: Lookup = InMemoryLookup()
     private val configurationFactory = TestConfigurationFactory()
 
     // Reset the stored configurations for every test.
@@ -36,7 +36,7 @@ class LookupTests {
                 listOf(configurationFactory.createInteraction(LookupTests::class.java, "endpoint2")))
         lookup.add(trigger)
         val interaction = lookup.lookup(Endpoint(LookupTests::class.java, "endpoint2"))
-        val expected = trigger.interactions.stream().findFirst().get()
+        val expected = trigger.continuations.stream().findFirst().get().getConfiguration()
         assertEquals(expected, interaction)
         assertNotEquals(trigger, interaction)
     }
@@ -45,11 +45,5 @@ class LookupTests {
     fun `retrieve endpoint that does not exist`() {
         val retrieved = lookup.lookup(Endpoint(LookupTests::class.java, "endpoint2"))
         assertNull(retrieved)
-    }
-
-    fun endpoint1() {
-    }
-
-    fun endpoint2() {
     }
 }

@@ -23,7 +23,7 @@ class JavaScenarioTest1 {
                         "endpointWith3Inputs",
                         JavaEndpointDefinitions::endpointWith3Inputs)
                 .handleWith(new Handler(arg1, arg2, arg3))
-                .end();
+                .finish();
 
         new JavaEndpointDefinitions().endpointWith3Inputs(arg1, arg2, arg3);
     }

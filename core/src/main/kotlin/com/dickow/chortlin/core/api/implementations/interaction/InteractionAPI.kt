@@ -3,21 +3,22 @@ package com.dickow.chortlin.core.api.implementations.interaction
 import com.dickow.chortlin.core.api.interfaces.interaction.IInteractionAPI
 import com.dickow.chortlin.core.configuration.interaction.Interaction
 import com.dickow.chortlin.core.configuration.interaction.InteractionBuilder
+import com.dickow.chortlin.core.continuation.ChortlinContinuation
+import com.dickow.chortlin.core.continuation.Transform
+import com.dickow.chortlin.core.message.Channel
 
-class InteractionAPI constructor(private val interactionBuilder: InteractionBuilder) : IInteractionAPI {
+class InteractionAPI<TIn, TProcessed> constructor(
+        private val interactionBuilder: InteractionBuilder) : IInteractionAPI<TIn, TProcessed> {
 
-    override fun thenInteractWith(interactions: Collection<Interaction>): InteractionBuilder {
-        interactionBuilder.interactions = interactions
-        return interactionBuilder
+    override fun <TOut> addInteraction(
+            transform: Transform<TProcessed, TOut>,
+            interaction: Interaction<TOut>): IInteractionAPI<TIn, TProcessed> {
+        val continuation = ChortlinContinuation(transform, interaction)
+        interactionBuilder.addContinuation(continuation)
+        return this
     }
 
-    override fun end(): Interaction {
-        interactionBuilder.interactions = emptyList()
-        return interactionBuilder.noChannel()
-    }
-
-    override fun thenInteractWith(interaction: Interaction): InteractionBuilder {
-        interactionBuilder.interactions = listOf(interaction)
-        return interactionBuilder
+    override fun finish(channel: Channel<TIn>): Interaction<TIn> {
+        return interactionBuilder.build(channel)
     }
 }

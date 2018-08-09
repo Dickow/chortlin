@@ -2,6 +2,7 @@ package com.dickow.chortlin.core.test.interaction
 
 import com.dickow.chortlin.core.Chortlin
 import com.dickow.chortlin.core.handlers.IHandler1
+import com.dickow.chortlin.core.test.interaction.shared.KotlinSinkChannel
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -20,7 +21,7 @@ class InteractionTest {
         val interaction = Chortlin.interaction()
                 .onInteraction(InteractionTest::class.java, "endpoint", InteractionTest::endpoint)
                 .handleWith(Handler(inputMap))
-                .end()
+                .finish(KotlinSinkChannel())
 
         interaction.applyTo(arrayOf(inputMap))
     }

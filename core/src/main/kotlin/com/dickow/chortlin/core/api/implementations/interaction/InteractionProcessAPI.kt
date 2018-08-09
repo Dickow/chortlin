@@ -5,10 +5,10 @@ import com.dickow.chortlin.core.api.interfaces.interaction.IInteractionProcessAP
 import com.dickow.chortlin.core.configuration.interaction.InteractionBuilder
 import com.dickow.chortlin.core.configuration.process.Processor1
 
-class InteractionProcessAPI<TInput>
-constructor(private val interactionBuilder: InteractionBuilder) : IInteractionProcessAPI<TInput> {
+class InteractionProcessAPI<TIn, TInput>
+constructor(private val interactionBuilder: InteractionBuilder) : IInteractionProcessAPI<TIn, TInput> {
 
-    override fun <TReturnMsg> processWith(processor: (TInput) -> TReturnMsg): IInteractionAPI {
+    override fun <TReturnMsg> processWith(processor: (TInput) -> TReturnMsg): IInteractionAPI<TIn, TReturnMsg> {
         interactionBuilder.processor = Processor1(processor)
         return InteractionAPI(interactionBuilder)
     }

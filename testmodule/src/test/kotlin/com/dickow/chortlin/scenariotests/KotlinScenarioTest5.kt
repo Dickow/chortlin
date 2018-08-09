@@ -1,10 +1,11 @@
 package com.dickow.chortlin.scenariotests
 
 import com.dickow.chortlin.core.Chortlin
-import com.dickow.chortlin.core.configuration.IChannel
 import com.dickow.chortlin.core.message.IMessage
 import com.dickow.chortlin.testmodule.kotlin.KotlinEndpointDefinitions
 import com.dickow.chortlin.testmodule.kotlin.KotlinInteractionDefinitions
+import com.dickow.chortlin.testmodule.kotlin.KotlinNoTransform
+import com.dickow.chortlin.testmodule.kotlin.KotlinSinkChannel
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -22,7 +23,8 @@ class KotlinScenarioTest5 {
                         KotlinEndpointDefinitions::endpointWithStringInput)
                 .mapInputTo(this::map)
                 .processWith(this::process)
-                .thenInteractWith(
+                .addInteraction(
+                        KotlinNoTransform(),
                         Chortlin.interaction()
                                 .onInteraction(
                                         KotlinInteractionDefinitions::class.java,
@@ -30,8 +32,8 @@ class KotlinScenarioTest5 {
                                         KotlinInteractionDefinitions::interactionInteger)
                                 .mapTo(this::map2)
                                 .processWith(this::process2)
-                                .end())
-                .configureChannel(Channel())
+                                .finish(KotlinSinkChannel()))
+                .finish()
 
         KotlinEndpointDefinitions().endpointWithStringInput(input)
     }
@@ -56,7 +58,7 @@ class KotlinScenarioTest5 {
         return str.toInt()
     }
 
-    class Channel : IChannel<Int> {
+    class Channel : com.dickow.chortlin.core.message.Channel<Int> {
         override fun send(message: IMessage<Int>) {
             KotlinInteractionDefinitions().interactionInteger(message.getPayload())
         }

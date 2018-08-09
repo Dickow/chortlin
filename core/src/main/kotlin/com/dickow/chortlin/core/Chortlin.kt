@@ -6,11 +6,11 @@ import com.dickow.chortlin.core.api.implementations.trigger.TriggerEndpointAPI
 import com.dickow.chortlin.core.api.interfaces.interaction.IInteractionEndpointAPI
 import com.dickow.chortlin.core.api.interfaces.trigger.ITriggerEndpointAPI
 import com.dickow.chortlin.core.configuration.ChortlinConfiguration
-import com.dickow.chortlin.core.configuration.lookup.ILookup
 import com.dickow.chortlin.core.configuration.lookup.InMemoryLookup
+import com.dickow.chortlin.core.configuration.lookup.Lookup
 
 object Chortlin {
-    private val lookup: ILookup = InMemoryLookup()
+    private val lookup: Lookup = InMemoryLookup()
 
     fun addConfiguration(config: ChortlinConfiguration) {
         lookup.add(config)

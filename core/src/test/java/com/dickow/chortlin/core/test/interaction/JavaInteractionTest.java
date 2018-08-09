@@ -3,6 +3,7 @@ package com.dickow.chortlin.core.test.interaction;
 import com.dickow.chortlin.core.Chortlin;
 import com.dickow.chortlin.core.configuration.interaction.Interaction;
 import com.dickow.chortlin.core.handlers.IHandler1;
+import com.dickow.chortlin.core.test.interaction.shared.JavaSinkChannel;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
@@ -21,7 +22,7 @@ class JavaInteractionTest {
         Interaction interaction = Chortlin.INSTANCE.interaction()
                 .onInteraction(JavaInteractionTest.class, "endpoint", JavaInteractionTest::endpoint)
                 .handleWith(new Handler(inputMap))
-                .end();
+                .finish(new JavaSinkChannel<>());
 
         interaction.applyTo(new Object[]{inputMap});
     }

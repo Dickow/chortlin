@@ -1,20 +1,19 @@
 package com.dickow.chortlin.core.configuration.trigger
 
 import com.dickow.chortlin.core.Chortlin
-import com.dickow.chortlin.core.configuration.Definition
-import com.dickow.chortlin.core.configuration.IChannel
+import com.dickow.chortlin.core.configuration.DefinitionBuilder
+import com.dickow.chortlin.core.continuation.Continuation
 
-class TriggerBuilder : Definition() {
+class TriggerBuilder : DefinitionBuilder() {
+    private val continuations: MutableCollection<Continuation> = mutableListOf()
 
-    override fun noChannel(): Trigger {
-        val trigger = Trigger(endpoint, mapper, processor, interactions)
+    fun build(): Trigger {
+        val trigger = Trigger(endpoint, mapper, processor, continuations)
         Chortlin.addConfiguration(trigger)
         return trigger
     }
 
-    override fun <TMsg> configureChannel(channel: IChannel<TMsg>): Trigger {
-        val trigger = Trigger(endpoint, mapper, processor, interactions)
-        Chortlin.addConfiguration(trigger)
-        return trigger
+    override fun addContinuation(continuation: Continuation) {
+        continuations.add(continuation)
     }
 }

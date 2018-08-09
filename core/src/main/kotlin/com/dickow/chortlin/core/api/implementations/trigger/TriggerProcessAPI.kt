@@ -6,7 +6,7 @@ import com.dickow.chortlin.core.configuration.process.Processor1
 import com.dickow.chortlin.core.configuration.trigger.TriggerBuilder
 
 class TriggerProcessAPI<TInput> constructor(private val definition: TriggerBuilder) : ITriggerProcessAPI<TInput> {
-    override fun <TReturnMsg> processWith(processor: (TInput) -> TReturnMsg): ITriggerAPI {
+    override fun <TReturnMsg> processWith(processor: (TInput) -> TReturnMsg): ITriggerAPI<TReturnMsg> {
         definition.processor = Processor1(processor)
         return TriggerAPI(definition)
     }

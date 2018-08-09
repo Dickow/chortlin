@@ -10,7 +10,7 @@ import com.dickow.chortlin.core.handlers.IHandler2
 
 class MapAPI2<T1, T2> constructor(private val definition: TriggerBuilder) : ITriggerMapAPI2<T1, T2> {
 
-    override fun <T1, T2, TMapped, R> handleWith(handler: IHandler2<T1, T2, TMapped, R>): ITriggerAPI {
+    override fun <T1, T2, TMapped, R> handleWith(handler: IHandler2<T1, T2, TMapped, R>): ITriggerAPI<R> {
         definition.mapper = Mapper2(handler::mapInput)
         definition.processor = Processor1(handler::process)
         return TriggerAPI(definition)
