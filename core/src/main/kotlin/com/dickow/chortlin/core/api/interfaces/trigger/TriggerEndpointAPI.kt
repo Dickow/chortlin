@@ -1,6 +1,6 @@
 package com.dickow.chortlin.core.api.interfaces.trigger
 
-interface ITriggerEndpointAPI {
+interface TriggerEndpointAPI {
     fun <TClass, R> onTrigger(clazz: Class<TClass>, name: String, method: (TClass) -> R): ITriggerMapAPI
     fun <TClass, T1, R> onTrigger(clazz: Class<TClass>, name: String, method: (TClass, T1) -> R): ITriggerMapAPI1<T1>
     fun <TClass, T1, T2, R> onTrigger(clazz: Class<TClass>, name: String, method: (TClass, T1, T2) -> R): ITriggerMapAPI2<T1, T2>

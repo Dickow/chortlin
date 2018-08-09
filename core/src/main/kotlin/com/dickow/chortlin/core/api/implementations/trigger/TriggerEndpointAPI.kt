@@ -2,9 +2,10 @@ package com.dickow.chortlin.core.api.implementations.trigger
 
 import com.dickow.chortlin.core.api.endpoint.Endpoint
 import com.dickow.chortlin.core.api.interfaces.trigger.*
+import com.dickow.chortlin.core.api.interfaces.trigger.TriggerEndpointAPI
 import com.dickow.chortlin.core.configuration.trigger.TriggerBuilder
 
-class TriggerEndpointAPI : ITriggerEndpointAPI {
+class TriggerEndpointAPI : TriggerEndpointAPI {
 
     override fun <TClass, R> onTrigger(clazz: Class<TClass>, name: String, method: (TClass) -> R): ITriggerMapAPI {
         val definition = TriggerBuilder()

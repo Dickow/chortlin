@@ -4,10 +4,10 @@ import com.dickow.chortlin.core.configuration.interaction.Interaction
 import com.dickow.chortlin.core.continuation.Transform
 import com.dickow.chortlin.core.message.Channel
 
-interface IInteractionAPI<TIn, TProcessed> {
+interface InteractionAPI<TIn, TProcessed> {
     fun <TOut> addInteraction(
             transform: Transform<TProcessed, TOut>,
-            interaction: Interaction<TOut>): IInteractionAPI<TIn, TProcessed>
+            interaction: Interaction<TOut>): InteractionAPI<TIn, TProcessed>
 
     fun finish(channel: Channel<TIn>): Interaction<TIn>
 }
