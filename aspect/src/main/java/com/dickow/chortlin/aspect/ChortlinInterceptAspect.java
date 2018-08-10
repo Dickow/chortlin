@@ -50,7 +50,6 @@ public class ChortlinInterceptAspect {
         }
     }
 
-    @SuppressWarnings("unchecked")
     private ChortlinConfiguration tryToGetInteractionConfiguration(Message msg, Endpoint endpoint) {
         Optional<Integer> rootHash = msg.getHashes().stream().findFirst();
         return rootHash.map(integer -> Chortlin.get().lookupConfiguration(integer, endpoint)).orElse(null);

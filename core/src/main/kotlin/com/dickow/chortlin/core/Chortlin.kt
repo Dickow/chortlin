@@ -13,6 +13,9 @@ class Chortlin(private val lookup: Lookup, private val subscriber: Subscriber) {
     companion object Factory {
         private var chortlin: Chortlin? = null
 
+        /**
+         * Gets an instance of Chortlin, if an instance have not yet been made a new instance will be created.
+         */
         @JvmStatic
         @Synchronized
         fun get(): Chortlin {
@@ -24,6 +27,13 @@ class Chortlin(private val lookup: Lookup, private val subscriber: Subscriber) {
             return chortlin as Chortlin
         }
 
+        /**
+         * This method overwrites the statically configured instance of Chortlin.
+         * Beware when calling this as it overwrites all configurations
+         * already present in the current Chortlin instance.
+         * If you require an instance of Chortlin please refer to 'get' instead.
+         * @see Chortlin.get
+         */
         @JvmStatic
         @Synchronized
         fun getNew(): Chortlin {
