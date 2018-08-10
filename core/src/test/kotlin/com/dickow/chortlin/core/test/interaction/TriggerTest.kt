@@ -1,6 +1,8 @@
 package com.dickow.chortlin.core.test.interaction
 
 import com.dickow.chortlin.core.Chortlin
+import com.dickow.chortlin.core.api.endpoint.Endpoint
+import com.dickow.chortlin.core.continuation.Accumulator
 import com.dickow.chortlin.core.handlers.IHandler2
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -17,7 +19,8 @@ class TriggerTest {
                 .handleWith(Handler(strInput, intInput))
                 .finish()
 
-        trigger.applyTo(arrayOf(strInput, intInput))
+        val endpoint = Endpoint(TriggerTest::class.java, "endpoint")
+        trigger.applyTo(arrayOf(strInput, intInput), Accumulator(endpoint))
     }
 
     fun endpoint(input: String, number: Int): Int {

@@ -7,7 +7,8 @@ import com.dickow.chortlin.core.message.SimpleSender
 
 class ChortlinContinuation<in TIn, out TOut> constructor(
         private val transformer: Transform<TIn, TOut>,
-        private val interaction: Interaction<TOut>) : Continuation {
+        private val interaction: Interaction<TOut>)
+    : Continuation {
     override fun getEndpoint(): Endpoint {
         return interaction.getEndpoint()
     }
@@ -17,8 +18,8 @@ class ChortlinContinuation<in TIn, out TOut> constructor(
     }
 
     @Suppress("UNCHECKED_CAST")
-    override fun continueToNext(input: Any?) {
+    override fun continueToNext(input: Any?, accumulator: Accumulator) {
         val sender = SimpleSender(interaction.channel)
-        sender.send(transformer.transform(input as TIn) as Any?)
+        sender.send(transformer.transform(input as TIn) as Any?, accumulator)
     }
 }

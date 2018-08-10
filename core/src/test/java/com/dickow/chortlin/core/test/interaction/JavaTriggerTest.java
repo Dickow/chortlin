@@ -1,11 +1,14 @@
 package com.dickow.chortlin.core.test.interaction;
 
 import com.dickow.chortlin.core.Chortlin;
+import com.dickow.chortlin.core.api.endpoint.Endpoint;
 import com.dickow.chortlin.core.configuration.trigger.Trigger;
+import com.dickow.chortlin.core.continuation.Accumulator;
 import com.dickow.chortlin.core.handlers.IHandler2;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
+@SuppressWarnings("FieldCanBeLocal")
 class JavaTriggerTest {
 
     private final String strInput = "Test input";
@@ -17,8 +20,8 @@ class JavaTriggerTest {
                 .onTrigger(JavaTriggerTest.class, "endpoint", JavaTriggerTest::endpoint)
                 .handleWith(new Handler(strInput, intInput))
                 .finish();
-
-        trigger.applyTo(new Object[]{strInput, intInput});
+        Endpoint endpoint = new Endpoint(JavaTriggerTest.class, "endpoint");
+        trigger.applyTo(new Object[]{strInput, intInput}, new Accumulator(endpoint));
     }
 
     private int endpoint(String input, int number) {

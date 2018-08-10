@@ -1,6 +1,8 @@
 package com.dickow.chortlin.core.test.interaction
 
 import com.dickow.chortlin.core.Chortlin
+import com.dickow.chortlin.core.api.endpoint.Endpoint
+import com.dickow.chortlin.core.continuation.Accumulator
 import com.dickow.chortlin.core.handlers.IHandler1
 import com.dickow.chortlin.core.test.interaction.shared.KotlinSinkChannel
 import kotlin.test.Test
@@ -22,8 +24,8 @@ class InteractionTest {
                 .onInteraction(InteractionTest::class.java, "endpoint", InteractionTest::endpoint)
                 .handleWith(Handler(inputMap))
                 .finish(KotlinSinkChannel())
-
-        interaction.applyTo(arrayOf(inputMap))
+        val endpoint = Endpoint(InteractionTest::class.java, "endpoint")
+        interaction.applyTo(arrayOf(inputMap), Accumulator(endpoint))
     }
 
     private fun endpoint(map: Map<String, String>): Int {

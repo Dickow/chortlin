@@ -1,10 +1,10 @@
 package com.dickow.chortlin.core.test.interaction.shared
 
 import com.dickow.chortlin.core.message.Channel
-import com.dickow.chortlin.core.message.IMessage
+import com.dickow.chortlin.core.message.Message
 
 class KotlinSinkChannel<TMsg> : Channel<TMsg> {
-    override fun send(message: IMessage<TMsg>) {
-        println("Dumped in the sink ${message.getPayload()}")
+    override fun send(message: Message<TMsg>) {
+        println("Dumped in the sink ${message.payload}")
     }
 }

@@ -2,7 +2,7 @@ package com.dickow.chortlin.scenariotests;
 
 import com.dickow.chortlin.core.Chortlin;
 import com.dickow.chortlin.core.message.Channel;
-import com.dickow.chortlin.core.message.IMessage;
+import com.dickow.chortlin.core.message.Message;
 import com.dickow.chortlin.testmodule.java.scenario2.*;
 import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
@@ -37,7 +37,7 @@ class JavaScenarioTest2 {
 
     class InMemoryChannel implements Channel<Integer> {
         @Override
-        public void send(@NotNull IMessage<Integer> message) {
+        public void send(@NotNull Message<Integer> message) {
             new Scenario2JavaInteractionEndpoint().revokeRights(message.getPayload());
         }
     }

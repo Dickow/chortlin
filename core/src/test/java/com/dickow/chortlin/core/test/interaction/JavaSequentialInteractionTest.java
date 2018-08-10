@@ -1,12 +1,12 @@
 package com.dickow.chortlin.core.test.interaction;
 
 import com.dickow.chortlin.core.Chortlin;
-import com.dickow.chortlin.core.message.Channel;
-import com.dickow.chortlin.core.message.IMessage;
+import com.dickow.chortlin.core.message.Message;
 import com.dickow.chortlin.core.test.interaction.shared.JavaSinkChannel;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 
+
+@SuppressWarnings("unused")
 class JavaSequentialInteractionTest {
 
     @Test
@@ -22,7 +22,7 @@ class JavaSequentialInteractionTest {
                         Chortlin.INSTANCE.interaction()
                                 .onInteraction(TestReceiver2.class, "receiveMsg", TestReceiver2::receiveMsg)
                                 .mapTo(mapper::map2)
-                                .processWith(o -> new TestMessage())
+                                .processWith(o -> "")
                                 .finish(new JavaSinkChannel<>())
                 ).finish();
     }
@@ -33,25 +33,10 @@ class JavaSequentialInteractionTest {
         }
     }
 
-    private class TestMessage implements IMessage<String> {
-        @Override
-        public String getPayload() {
-            return "Hello world";
-        }
-    }
-
     private class InputObject {
     }
 
     private class InputObject2 {
-    }
-
-    private class TestChannel implements Channel<TestMessage> {
-
-        @Override
-        public void send(@NotNull IMessage<TestMessage> message) {
-
-        }
     }
 
     private class Mapper {
@@ -59,19 +44,19 @@ class JavaSequentialInteractionTest {
             return new InputObject();
         }
 
-        InputObject2 map2(TestMessage msg) {
+        InputObject2 map2(Message<String> msg) {
             return new InputObject2();
         }
     }
 
     private class Processor1 {
-        TestMessage process(InputObject input) {
-            return new TestMessage();
+        Message<String> process(InputObject input) {
+            return new Message<>();
         }
     }
 
     private class TestReceiver2 {
-        int receiveMsg(TestMessage msg) {
+        int receiveMsg(Message<String> msg) {
             return 4;
         }
     }

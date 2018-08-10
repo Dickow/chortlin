@@ -1,7 +1,6 @@
 package com.dickow.chortlin.scenariotests
 
 import com.dickow.chortlin.core.Chortlin
-import com.dickow.chortlin.core.message.IMessage
 import com.dickow.chortlin.testmodule.kotlin.KotlinEndpointDefinitions
 import com.dickow.chortlin.testmodule.kotlin.KotlinInteractionDefinitions
 import com.dickow.chortlin.testmodule.kotlin.KotlinNoTransform
@@ -56,12 +55,5 @@ class KotlinScenarioTest5 {
     fun process2(str: String): Int {
         assertEquals(output.toString(), str)
         return str.toInt()
-    }
-
-    class Channel : com.dickow.chortlin.core.message.Channel<Int> {
-        override fun send(message: IMessage<Int>) {
-            KotlinInteractionDefinitions().interactionInteger(message.getPayload())
-        }
-
     }
 }

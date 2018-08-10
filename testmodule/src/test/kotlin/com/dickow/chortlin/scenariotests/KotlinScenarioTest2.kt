@@ -2,7 +2,7 @@ package com.dickow.chortlin.scenariotests
 
 import com.dickow.chortlin.core.Chortlin
 import com.dickow.chortlin.core.message.Channel
-import com.dickow.chortlin.core.message.IMessage
+import com.dickow.chortlin.core.message.Message
 import com.dickow.chortlin.testmodule.kotlin.scenario2.*
 import kotlin.test.Test
 
@@ -35,8 +35,8 @@ class KotlinScenarioTest2 {
     }
 
     class InMemoryChannel : Channel<Int> {
-        override fun send(message: IMessage<Int>) {
-            Scenario2KotlinInteractionEndpoint().revokeRights(message.getPayload())
+        override fun send(message: Message<Int>) {
+            Scenario2KotlinInteractionEndpoint().revokeRights(message.payload!!)
         }
 
     }

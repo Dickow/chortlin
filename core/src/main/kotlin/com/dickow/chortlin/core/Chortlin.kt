@@ -20,8 +20,12 @@ object Chortlin {
         return InteractionEndpointAPI(subscriber)
     }
 
-    fun lookupConfiguration(endpoint: Endpoint): ChortlinConfiguration? {
-        return lookup.lookup(endpoint)
+    fun lookupConfiguration(rootKey: Int, endpoint: Endpoint): ChortlinConfiguration? {
+        return lookup.lookup(rootKey, endpoint.hashCode())
+    }
+
+    fun lookupConfiguration(root: Endpoint, endpoint: Endpoint): ChortlinConfiguration? {
+        return lookup.lookup(root.hashCode(), endpoint.hashCode())
     }
 }
 

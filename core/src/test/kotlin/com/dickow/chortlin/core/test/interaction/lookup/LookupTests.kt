@@ -24,7 +24,8 @@ class LookupTests {
         lookup.add(trigger1)
         lookup.add(trigger2)
 
-        val retrieved = lookup.lookup(Endpoint(LookupTests::class.java, "endpoint1"))
+        val endpoint = Endpoint(LookupTests::class.java, "endpoint1")
+        val retrieved = lookup.lookup(endpoint, endpoint)
         assertEquals(trigger1, retrieved)
         assertNotEquals(trigger2, retrieved)
     }
@@ -35,7 +36,8 @@ class LookupTests {
                 LookupTests::class.java, "endpoint1",
                 listOf(configurationFactory.createInteraction(LookupTests::class.java, "endpoint2")))
         lookup.add(trigger)
-        val interaction = lookup.lookup(Endpoint(LookupTests::class.java, "endpoint2"))
+        val endpoint = Endpoint(LookupTests::class.java, "endpoint2")
+        val interaction = lookup.lookup(endpoint, endpoint)
         val expected = trigger.continuations.stream().findFirst().get().getConfiguration()
         assertEquals(expected, interaction)
         assertNotEquals(trigger, interaction)
@@ -43,7 +45,8 @@ class LookupTests {
 
     @Test
     fun `retrieve endpoint that does not exist`() {
-        val retrieved = lookup.lookup(Endpoint(LookupTests::class.java, "endpoint2"))
+        val endpoint = Endpoint(LookupTests::class.java, "endpoint2")
+        val retrieved = lookup.lookup(endpoint, endpoint)
         assertNull(retrieved)
     }
 }
