@@ -3,6 +3,7 @@ package com.dickow.chortlin.scenariotests;
 import com.dickow.chortlin.core.Chortlin;
 import com.dickow.chortlin.core.handlers.IHandler;
 import com.dickow.chortlin.core.handlers.IHandler1;
+import com.dickow.chortlin.core.message.Message;
 import com.dickow.chortlin.testmodule.java.JavaEndpointDefinitions;
 import com.dickow.chortlin.testmodule.java.JavaInteractionDefinitions;
 import com.dickow.chortlin.testmodule.java.JavaSinkChannel;
@@ -12,7 +13,8 @@ class JavaScenarioTest5 {
 
     @Test
     void CreateASequentialInteractionThatDoesNotInvolveNetworkTraffic() {
-        Chortlin.INSTANCE.choreography()
+        Chortlin chortlin = Chortlin.getNew();
+        chortlin.choreography()
                 .onTrigger(
                         JavaEndpointDefinitions.class,
                         "endpoint1",
@@ -20,7 +22,7 @@ class JavaScenarioTest5 {
                 .handleWith(new TestHandler())
                 .addInteraction(
                         value -> value,
-                        Chortlin.INSTANCE.interaction()
+                        chortlin.interaction()
                                 .onInteraction(
                                         JavaInteractionDefinitions.class,
                                         "interactionPoint1",
@@ -31,7 +33,7 @@ class JavaScenarioTest5 {
         new JavaEndpointDefinitions().endpoint1();
     }
 
-    class TestHandlerForString implements IHandler1<String, String, String> {
+    class TestHandlerForString implements IHandler1<Message<String>, String, String> {
 
         @Override
         public String process(String input) {
@@ -39,7 +41,7 @@ class JavaScenarioTest5 {
         }
 
         @Override
-        public String mapInput(String arg) {
+        public String mapInput(Message<String> arg) {
             return null;
         }
     }

@@ -14,7 +14,7 @@ class KotlinScenarioTest1 {
         val arg2 = "101"
         val arg3 = listOf("101", "102", "103")
 
-        Chortlin.choreography()
+        Chortlin.getNew().choreography()
                 .onTrigger(
                         KotlinEndpointDefinitions::class.java,
                         "endpointWith3Inputs",

@@ -13,7 +13,9 @@ class KotlinScenarioTest4 {
     fun `create a sequential Interaction involving three methods`() {
         val sinkChannel = KotlinSinkChannel<String>()
 
-        Chortlin.choreography()
+        val chortlin = Chortlin.getNew()
+
+        chortlin.choreography()
                 .onTrigger(
                         KotlinEndpointDefinitions::class.java,
                         "endpointWithStringInput",
@@ -22,7 +24,7 @@ class KotlinScenarioTest4 {
                 .processWith { s -> s }
                 .addInteraction(
                         KotlinNoTransform(),
-                        Chortlin.interaction()
+                        chortlin.interaction()
                                 .onInteraction(
                                         KotlinInteractionDefinitions::class.java,
                                         "interaction",
@@ -31,7 +33,7 @@ class KotlinScenarioTest4 {
                                 .processWith { s -> s }
                                 .addInteraction(
                                         KotlinNoTransform(),
-                                        Chortlin.interaction()
+                                        chortlin.interaction()
                                                 .onInteraction(
                                                         KotlinInteractionDefinitions::class.java,
                                                         "interaction",

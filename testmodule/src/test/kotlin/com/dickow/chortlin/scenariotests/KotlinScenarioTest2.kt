@@ -14,7 +14,8 @@ class KotlinScenarioTest2 {
         val name = "Test man"
         val isAdmin = false
 
-        Chortlin.choreography()
+        val chortlin = Chortlin.getNew()
+        chortlin.choreography()
                 .onTrigger(
                         Scenario2KotlinTriggerEndpoint::class.java,
                         "reduceRightsForUser",
@@ -22,7 +23,7 @@ class KotlinScenarioTest2 {
                 .handleWith(Scenario2KotlinTriggerHandler())
                 .addInteraction(
                         Scenario2KotlinInputTransformer(),
-                        Chortlin.interaction()
+                        chortlin.interaction()
                                 .onInteraction(
                                         Scenario2KotlinInteractionEndpoint::class.java,
                                         "revokeRights",
@@ -36,7 +37,7 @@ class KotlinScenarioTest2 {
 
     class InMemoryChannel : Channel<Int> {
         override fun send(message: Message<Int>) {
-            Scenario2KotlinInteractionEndpoint().revokeRights(message.payload!!)
+            Scenario2KotlinInteractionEndpoint().revokeRights(message)
         }
 
     }

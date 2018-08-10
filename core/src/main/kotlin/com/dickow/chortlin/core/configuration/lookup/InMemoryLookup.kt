@@ -20,7 +20,7 @@ class InMemoryLookup : Lookup {
             is Trigger -> {
                 val rootKey = config.getEndpoint().hashCode()
                 if (lookupStore.containsKey(rootKey)) {
-                    throw ChortlinConfigurationException("Endpoint already added: $rootKey")
+                    throw ChortlinConfigurationException("Endpoint already added: ${config.endpoint}")
                 }
 
                 lookupStore[rootKey] = buildNode(config)

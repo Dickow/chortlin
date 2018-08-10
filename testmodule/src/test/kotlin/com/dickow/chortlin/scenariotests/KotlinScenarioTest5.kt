@@ -15,7 +15,8 @@ class KotlinScenarioTest5 {
 
     @Test
     fun `create a sequential Interaction that does not involve network traffic`() {
-        Chortlin.choreography()
+        val chortlin = Chortlin.getNew()
+        chortlin.choreography()
                 .onTrigger(
                         KotlinEndpointDefinitions::class.java,
                         "endpointWithStringInput",
@@ -24,7 +25,7 @@ class KotlinScenarioTest5 {
                 .processWith(this::process)
                 .addInteraction(
                         KotlinNoTransform(),
-                        Chortlin.interaction()
+                        chortlin.interaction()
                                 .onInteraction(
                                         KotlinInteractionDefinitions::class.java,
                                         "interactionInteger",

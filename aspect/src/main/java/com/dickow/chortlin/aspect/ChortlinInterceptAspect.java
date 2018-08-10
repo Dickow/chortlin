@@ -32,7 +32,7 @@ public class ChortlinInterceptAspect {
             config = tryToGetInteractionConfiguration(msg, endpoint);
             accumulator.setHashes(msg.getHashes());
         } else {
-            config = Chortlin.INSTANCE.lookupConfiguration(endpoint, endpoint);
+            config = Chortlin.get().lookupConfiguration(endpoint, endpoint);
         }
 
         if (config != null) {
@@ -53,7 +53,7 @@ public class ChortlinInterceptAspect {
     @SuppressWarnings("unchecked")
     private ChortlinConfiguration tryToGetInteractionConfiguration(Message msg, Endpoint endpoint) {
         Optional<Integer> rootHash = msg.getHashes().stream().findFirst();
-        return rootHash.map(integer -> Chortlin.INSTANCE.lookupConfiguration(integer, endpoint)).orElse(null);
+        return rootHash.map(integer -> Chortlin.get().lookupConfiguration(integer, endpoint)).orElse(null);
     }
 
     private boolean methodIsAnInteraction(ProceedingJoinPoint joinPoint) {

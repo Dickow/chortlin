@@ -32,12 +32,14 @@ class LookupTests {
 
     @Test
     fun `insert and retrieve nested interaction`() {
+        val createdInteraction =
+                configurationFactory.createInteraction<String, LookupTests>(LookupTests::class.java, "endpoint2")
         val trigger = configurationFactory.createTrigger(
                 LookupTests::class.java, "endpoint1",
-                listOf(configurationFactory.createInteraction(LookupTests::class.java, "endpoint2")))
+                listOf(createdInteraction))
         lookup.add(trigger)
-        val endpoint = Endpoint(LookupTests::class.java, "endpoint2")
-        val interaction = lookup.lookup(endpoint, endpoint)
+        val triggerEndpoint = Endpoint(LookupTests::class.java, "endpoint1")
+        val interaction = lookup.lookup(triggerEndpoint, createdInteraction.endpoint)
         val expected = trigger.continuations.stream().findFirst().get().getConfiguration()
         assertEquals(expected, interaction)
         assertNotEquals(trigger, interaction)

@@ -13,13 +13,15 @@ class JavaSequentialInteractionTest {
     void SetupSimpleSequentialChoreography() {
         Mapper mapper = new Mapper();
         Processor1 processor1 = new Processor1();
-        Chortlin.INSTANCE.choreography()
+        Chortlin chortlin = Chortlin.getNew();
+
+        chortlin.choreography()
                 .onTrigger(TestReceiver.class, "receiveMsg", TestReceiver::receiveMsg)
                 .mapInputTo(mapper::map1)
                 .processWith(processor1::process)
                 .addInteraction(
-                        value -> value,
-                        Chortlin.INSTANCE.interaction()
+                        Message::getPayload,
+                        chortlin.interaction()
                                 .onInteraction(TestReceiver2.class, "receiveMsg", TestReceiver2::receiveMsg)
                                 .mapTo(mapper::map2)
                                 .processWith(o -> "")
@@ -44,7 +46,7 @@ class JavaSequentialInteractionTest {
             return new InputObject();
         }
 
-        InputObject2 map2(Message<String> msg) {
+        InputObject2 map2(String msg) {
             return new InputObject2();
         }
     }

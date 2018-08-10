@@ -17,7 +17,7 @@ class JavaScenarioTest1 {
         String arg2 = "101";
         List<String> arg3 = Arrays.asList("101", "102", "103");
 
-        Chortlin.INSTANCE.choreography()
+        Chortlin.getNew().choreography()
                 .onTrigger(
                         JavaEndpointDefinitions.class,
                         "endpointWith3Inputs",

@@ -1,7 +1,6 @@
 package com.dickow.chortlin.scenariotests;
 
 import com.dickow.chortlin.core.Chortlin;
-import com.dickow.chortlin.core.configuration.ChortlinConfiguration;
 import com.dickow.chortlin.testmodule.java.JavaEndpointDefinitions;
 import com.dickow.chortlin.testmodule.java.JavaInteractionDefinitions;
 import com.dickow.chortlin.testmodule.java.JavaSinkChannel;
@@ -12,7 +11,8 @@ class JavaScenarioTest4 {
     @Test
     void createASequentialInteractionInvolvingThreeMethods() {
         JavaSinkChannel channel = new JavaSinkChannel();
-        ChortlinConfiguration config = Chortlin.INSTANCE.choreography()
+        Chortlin chortlin = Chortlin.getNew();
+        chortlin.choreography()
                 .onTrigger(
                         JavaEndpointDefinitions.class,
                         "endpointWithStringInput",
@@ -21,7 +21,7 @@ class JavaScenarioTest4 {
                 .processWith(s -> s)
                 .addInteraction(
                         value -> value,
-                        Chortlin.INSTANCE.interaction()
+                        chortlin.interaction()
                                 .onInteraction(
                                         JavaInteractionDefinitions.class,
                                         "interactionPoint1",
@@ -30,7 +30,7 @@ class JavaScenarioTest4 {
                                 .processWith(s -> s)
                                 .addInteraction(
                                         value -> value,
-                                        Chortlin.INSTANCE.interaction()
+                                        chortlin.interaction()
                                                 .onInteraction(
                                                         JavaInteractionDefinitions.class,
                                                         "interactionPoint1",

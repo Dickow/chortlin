@@ -5,13 +5,14 @@ import com.dickow.chortlin.core.api.endpoint.Endpoint;
 import com.dickow.chortlin.core.configuration.interaction.Interaction;
 import com.dickow.chortlin.core.continuation.Accumulator;
 import com.dickow.chortlin.core.handlers.IHandler1;
+import com.dickow.chortlin.core.message.Message;
 import com.dickow.chortlin.core.test.interaction.shared.JavaSinkChannel;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import java.util.*;
 
-@SuppressWarnings("unused")
+@SuppressWarnings("ALL")
 class JavaInteractionTest {
 
     private final Map<String, String> inputMap = new Hashtable<>();
@@ -22,19 +23,22 @@ class JavaInteractionTest {
         inputMap.put("Yo", "Test");
         inputMap.put("Kotlin", "Is Great");
 
-        Interaction interaction = Chortlin.INSTANCE.interaction()
+        Chortlin chortlin = Chortlin.getNew();
+        Interaction interaction = chortlin.interaction()
                 .onInteraction(JavaInteractionTest.class, "endpoint", JavaInteractionTest::endpoint)
                 .handleWith(new Handler(inputMap))
                 .finish(new JavaSinkChannel<>());
         Endpoint endpoint = new Endpoint(JavaInteractionTest.class, "endpoint");
-        interaction.applyTo(new Object[]{inputMap}, new Accumulator(endpoint));
+        Message<Map<String, String>> msg = new Message<>();
+        msg.setPayload(inputMap);
+        interaction.applyTo(new Object[]{msg}, new Accumulator(endpoint));
     }
 
-    private Integer endpoint(Map<String, String> input) {
+    private Integer endpoint(Message<Map<String, String>> input) {
         return 400;
     }
 
-    class Handler implements IHandler1<Map<String, String>, Collection<String>, Set<String>> {
+    class Handler implements IHandler1<Message<Map<String, String>>, Collection<String>, Set<String>> {
         private final Map<String, String> expectedMap;
 
         Handler(Map<String, String> expectedMap) {
@@ -43,9 +47,9 @@ class JavaInteractionTest {
 
 
         @Override
-        public Collection<String> mapInput(Map<String, String> arg) {
-            Assertions.assertEquals(expectedMap, arg);
-            return arg.keySet();
+        public Collection<String> mapInput(Message<Map<String, String>> arg) {
+            Assertions.assertEquals(expectedMap, arg.getPayload());
+            return arg.getPayload().keySet();
         }
 
         @Override

@@ -2,6 +2,7 @@ package com.dickow.chortlin.core.test.interaction
 
 import com.dickow.chortlin.core.Chortlin
 import com.dickow.chortlin.core.continuation.Transform
+import com.dickow.chortlin.core.message.Message
 import com.dickow.chortlin.core.test.interaction.shared.KotlinSinkChannel
 import kotlin.test.Test
 
@@ -10,13 +11,14 @@ class SequentialInteractionTest {
 
     @Test
     fun `setup simple sequential choreography`() {
-        Chortlin.choreography()
+        val chortlin = Chortlin.getNew()
+        chortlin.choreography()
                 .onTrigger(TestReceiver::class.java, "receiveMsg", TestReceiver::receiveMsg)
                 .mapInputTo { _, _, _ -> InputObject() }
                 .processWith { _ -> "" }
                 .addInteraction(
                         TestMessageTransformer(),
-                        Chortlin.interaction()
+                        chortlin.interaction()
                                 .onInteraction(TestReceiver2::class.java, "receiveMsg", TestReceiver2::receiveMsg)
                                 .mapTo { _ -> InputObject2() }
                                 .processWith { _ -> "" }
@@ -40,7 +42,7 @@ class SequentialInteractionTest {
     }
 
     class TestReceiver2 {
-        fun receiveMsg(msg: String): Int {
+        fun receiveMsg(msg: Message<String>): Int {
             return 4
         }
     }

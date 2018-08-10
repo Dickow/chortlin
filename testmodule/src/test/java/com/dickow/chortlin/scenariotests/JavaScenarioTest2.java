@@ -13,8 +13,8 @@ class JavaScenarioTest2 {
     void setupTwoRegularJavaMethodsAndAnnotateOneOfThemWithEndpoint() {
         Long id = 100L;
         String name = "Test man";
-
-        Chortlin.INSTANCE.choreography()
+        Chortlin chortlin = Chortlin.getNew();
+        chortlin.choreography()
                 .onTrigger(
                         Scenario2JavaTriggerEndpoint.class,
                         "reduceRightsForUser",
@@ -22,7 +22,7 @@ class JavaScenarioTest2 {
                 .handleWith(new Scenario2JavaTriggerHandler())
                 .addInteraction(
                         new Scenario2JavaInputTransformer(),
-                        Chortlin.INSTANCE.interaction()
+                        chortlin.interaction()
                                 .onInteraction(
                                         Scenario2JavaInteractionEndpoint.class,
                                         "revokeRights",
@@ -38,7 +38,7 @@ class JavaScenarioTest2 {
     class InMemoryChannel implements Channel<Integer> {
         @Override
         public void send(@NotNull Message<Integer> message) {
-            new Scenario2JavaInteractionEndpoint().revokeRights(message.getPayload());
+            new Scenario2JavaInteractionEndpoint().revokeRights(message);
         }
     }
 }

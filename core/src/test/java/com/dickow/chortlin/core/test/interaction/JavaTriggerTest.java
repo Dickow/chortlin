@@ -16,7 +16,8 @@ class JavaTriggerTest {
 
     @Test
     void InvokeConfiguredTriggerAndTestInputAndOutput() {
-        Trigger trigger = Chortlin.INSTANCE.choreography()
+        Chortlin chortlin = Chortlin.getNew();
+        Trigger trigger = chortlin.choreography()
                 .onTrigger(JavaTriggerTest.class, "endpoint", JavaTriggerTest::endpoint)
                 .handleWith(new Handler(strInput, intInput))
                 .finish();

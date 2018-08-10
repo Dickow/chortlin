@@ -8,12 +8,13 @@ import com.dickow.chortlin.core.configuration.interaction.InteractionBuilder
 import com.dickow.chortlin.core.configuration.map.Mapper1
 import com.dickow.chortlin.core.configuration.process.Processor1
 import com.dickow.chortlin.core.handlers.IHandler1
+import com.dickow.chortlin.core.message.Message
 
 class MapAPI1<T1> constructor(
         private val interactionBuilder: InteractionBuilder, private val subscriber: Subscriber)
     : InteractionMapAPI1<T1> {
 
-    override fun <T1, TMapped, R> handleWith(handler: IHandler1<T1, TMapped, R>): InteractionAPI<T1, R> {
+    override fun <T1, TMapped, R> handleWith(handler: IHandler1<Message<T1>, TMapped, R>): InteractionAPI<T1, R> {
         interactionBuilder.mapper = Mapper1(handler::mapInput)
         interactionBuilder.processor = Processor1(handler::process)
         return InteractionAPI(interactionBuilder, subscriber)

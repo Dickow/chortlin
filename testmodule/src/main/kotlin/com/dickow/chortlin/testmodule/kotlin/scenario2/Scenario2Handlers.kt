@@ -4,6 +4,7 @@ package com.dickow.chortlin.testmodule.kotlin.scenario2
 
 import com.dickow.chortlin.core.handlers.IHandler1
 import com.dickow.chortlin.core.handlers.IHandler3
+import com.dickow.chortlin.core.message.Message
 import kotlin.test.assertEquals
 
 class Scenario2KotlinTriggerHandler : IHandler3<Long, String, Boolean, Scenario2User, Scenario2User> {
@@ -16,10 +17,10 @@ class Scenario2KotlinTriggerHandler : IHandler3<Long, String, Boolean, Scenario2
     }
 }
 
-class Scenario2KotlinInteractionHandler(private val passedId: Long) : IHandler1<Int, Long, Boolean> {
-    override fun mapInput(id: Int): Long {
-        assertEquals(passedId, id.toLong())
-        return id.toLong()
+class Scenario2KotlinInteractionHandler(private val passedId: Long) : IHandler1<Message<Int>, Long, Boolean> {
+    override fun mapInput(id: Message<Int>): Long {
+        assertEquals(passedId, id.payload?.toLong())
+        return id.payload!!.toLong()
     }
 
     override fun process(input: Long): Boolean {
