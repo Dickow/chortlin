@@ -11,6 +11,7 @@
         <module>core</module>
         <module>aspect</module>
         <module>testmodule</module>
+        <module>bytebuddytest</module>
     </modules>
     <packaging>pom</packaging>
 </project>
