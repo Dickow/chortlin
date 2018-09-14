@@ -12,11 +12,13 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="aspect" />
         <module name="bytebuddytest" />
         <module name="core" />
-        <module name="testmodule" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="aspect" target="1.8" />
+      <module name="testmodule" target="1.8" />
+    </bytecodeTargetLevel>
   </component>
 </project>
