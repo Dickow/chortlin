@@ -8,12 +8,13 @@ import com.dickow.chortlin.core.api.type.start.StartTypeAPI;
 import com.dickow.chortlin.core.test.shared.MethodReferenceClass;
 import org.junit.jupiter.api.Test;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class StartTypeAPITest {
 
-    private final IStartTypeAPI typeAPI = new StartTypeAPI();
     private final IParticipantTypeAPI participantTypeAPI = new ParticipantTypeAPI();
+    private final IStartTypeAPI typeAPI = new StartTypeAPI(participantTypeAPI);
 
     @Test
     void createStartTypeFromClassAndMethodThatIsUnique() {
@@ -25,5 +26,17 @@ class StartTypeAPITest {
     void createStartTypeWhenMethodDoesNotExist() {
         assertThrows(TypeAPIException.class,
                 () -> typeAPI.start(participantTypeAPI.participant(MethodReferenceClass.class, "no")));
+    }
+
+    @Test
+    void createStartUsingConvenienceWrappers() {
+        var start = typeAPI.start(MethodReferenceClass.class, "intReturn1InputMethod");
+        assertNotNull(start);
+    }
+
+    @Test
+    void createStartTypeWithConvenienceWrapperWhenMethodDoesNotExist() {
+        assertThrows(TypeAPIException.class,
+                () -> typeAPI.start(MethodReferenceClass.class, "no"));
     }
 }
