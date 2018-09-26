@@ -1,0 +1,37 @@
+package com.dickow.chortlin.core.api.type
+
+import com.dickow.chortlin.core.api.type.participant.IParticipantTypeAPI
+import com.dickow.chortlin.core.api.type.send.ISendTypeAPI
+import com.dickow.chortlin.core.api.type.start.IStartTypeAPI
+import com.dickow.chortlin.core.types.Participant
+import com.dickow.chortlin.core.types.Path
+import com.dickow.chortlin.core.types.Start
+
+class TypeADIDelegate constructor(
+        private val participantTypeAPI: IParticipantTypeAPI,
+        private val startTypeAPI: IStartTypeAPI,
+        private val sendTypeAPI: ISendTypeAPI) : TypeAPI {
+    override fun <T> asyncSend(participant: Participant<T>): Path {
+        return sendTypeAPI.asyncSend(participant)
+    }
+
+    override fun <T> syncSend(participant: Participant<T>): Path {
+        return sendTypeAPI.syncSend(participant)
+    }
+
+    override fun <T> start(participant: Participant<T>): Start<T> {
+        return startTypeAPI.start(participant)
+    }
+
+    override fun <T> participant(clazz: Class<T>, method: String): Participant<T> {
+        return participantTypeAPI.participant(clazz, method)
+    }
+
+    override fun <T> participant(clazz: Class<T>, returnType: Class<*>, vararg paramTypes: Class<*>): Participant<T> {
+        return participantTypeAPI.participant(clazz, returnType, *paramTypes)
+    }
+
+    override fun <T> participant(clazz: Class<T>, methodName: String, vararg paramTypes: Class<*>): Participant<T> {
+        return participantTypeAPI.participant(clazz, methodName, *paramTypes)
+    }
+}
