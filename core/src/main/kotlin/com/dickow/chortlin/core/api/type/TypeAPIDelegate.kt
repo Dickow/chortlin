@@ -7,7 +7,7 @@ import com.dickow.chortlin.core.types.Participant
 import com.dickow.chortlin.core.types.Path
 import com.dickow.chortlin.core.types.Start
 
-class TypeADIDelegate constructor(
+class TypeAPIDelegate constructor(
         private val participantTypeAPI: IParticipantTypeAPI,
         private val startTypeAPI: IStartTypeAPI,
         private val sendTypeAPI: ISendTypeAPI) : TypeAPI {

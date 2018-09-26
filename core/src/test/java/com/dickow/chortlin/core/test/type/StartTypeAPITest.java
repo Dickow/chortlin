@@ -6,10 +6,10 @@ import com.dickow.chortlin.core.api.type.participant.ParticipantTypeAPI;
 import com.dickow.chortlin.core.api.type.start.IStartTypeAPI;
 import com.dickow.chortlin.core.api.type.start.StartTypeAPI;
 import com.dickow.chortlin.core.test.shared.MethodReferenceClass;
+import com.dickow.chortlin.core.types.Start;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 class StartTypeAPITest {
 
@@ -38,5 +38,15 @@ class StartTypeAPITest {
     void createStartTypeWithConvenienceWrapperWhenMethodDoesNotExist() {
         assertThrows(TypeAPIException.class,
                 () -> typeAPI.start(MethodReferenceClass.class, "no"));
+    }
+
+    @Test
+    void testReturnTypeForConvenienceMethods() {
+        var send = typeAPI.start(MethodReferenceClass.class,
+                "voidReturn2InputMethod",
+                String.class, Integer.class);
+        assertEquals(Start.class, send.getClass());
+        send = typeAPI.start(MethodReferenceClass.class, Void.TYPE, String.class, Integer.class);
+        assertEquals(Start.class, send.getClass());
     }
 }
