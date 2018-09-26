@@ -11,6 +11,31 @@ class TypeADIDelegate constructor(
         private val participantTypeAPI: IParticipantTypeAPI,
         private val startTypeAPI: IStartTypeAPI,
         private val sendTypeAPI: ISendTypeAPI) : TypeAPI {
+
+    override fun <T> asyncSend(clazz: Class<T>, method: String): Path {
+        return sendTypeAPI.asyncSend(clazz, method)
+    }
+
+    override fun <T> asyncSend(clazz: Class<T>, returnType: Class<*>, vararg paramTypes: Class<*>): Path {
+        return sendTypeAPI.asyncSend(clazz, returnType, *paramTypes)
+    }
+
+    override fun <T> asyncSend(clazz: Class<T>, methodName: String, vararg paramTypes: Class<*>): Path {
+        return sendTypeAPI.asyncSend(clazz, methodName, *paramTypes)
+    }
+
+    override fun <T> syncSend(clazz: Class<T>, method: String): Path {
+        return sendTypeAPI.syncSend(clazz, method)
+    }
+
+    override fun <T> syncSend(clazz: Class<T>, returnType: Class<*>, vararg paramTypes: Class<*>): Path {
+        return sendTypeAPI.syncSend(clazz, returnType, *paramTypes)
+    }
+
+    override fun <T> syncSend(clazz: Class<T>, methodName: String, vararg paramTypes: Class<*>): Path {
+        return sendTypeAPI.syncSend(clazz, methodName, *paramTypes)
+    }
+
     override fun <T> start(clazz: Class<T>, method: String): Start<T> {
         return startTypeAPI.start(clazz, method)
     }

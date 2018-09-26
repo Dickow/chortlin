@@ -18,4 +18,10 @@ public class MethodReferenceClass {
 
     public void duplicateMethod(String str) {
     }
+
+    public void tooMany1() {
+    }
+
+    public void tooMany2() {
+    }
 }

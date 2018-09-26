@@ -61,4 +61,25 @@ class ParticipantTypeApiTest {
                         Integer.TYPE, String.class
                 ));
     }
+
+    @Test
+    void createParticipantWithTypeSpecificationExceptionOnTooManyMethods() {
+        Assertions.assertThrows(
+                TypeAPIException.class,
+                () -> typeApi.participant(
+                        MethodReferenceClass.class,
+                        Void.TYPE
+                ));
+    }
+
+    @Test
+    void createParticipantWithTypeSpecificationExceptionOnNoMethodFound() {
+        Assertions.assertThrows(
+                TypeAPIException.class,
+                () -> typeApi.participant(
+                        MethodReferenceClass.class,
+                        Void.TYPE,
+                        Boolean.class
+                ));
+    }
 }
