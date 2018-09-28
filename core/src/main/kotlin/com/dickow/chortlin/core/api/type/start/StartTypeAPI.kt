@@ -2,7 +2,7 @@ package com.dickow.chortlin.core.api.type.start
 
 import com.dickow.chortlin.core.api.type.participant.IParticipantTypeAPI
 import com.dickow.chortlin.core.types.Participant
-import com.dickow.chortlin.core.types.Start
+import com.dickow.chortlin.core.types.path.Start
 
 class StartTypeAPI(private val participantTypeAPI: IParticipantTypeAPI) : IStartTypeAPI {
 

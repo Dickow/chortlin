@@ -1,10 +1,10 @@
 package com.dickow.chortlin.core.api.type.send
 
 import com.dickow.chortlin.core.api.type.participant.IParticipantTypeAPI
-import com.dickow.chortlin.core.types.AsyncSend
 import com.dickow.chortlin.core.types.Participant
-import com.dickow.chortlin.core.types.Path
-import com.dickow.chortlin.core.types.SyncSend
+import com.dickow.chortlin.core.types.path.AsyncSend
+import com.dickow.chortlin.core.types.path.Path
+import com.dickow.chortlin.core.types.path.SyncSend
 
 class SendTypeAPI(private val participantTypeAPI: IParticipantTypeAPI) : ISendTypeAPI {
     override fun <T> asyncSend(clazz: Class<T>, method: String): Path {

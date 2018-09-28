@@ -6,12 +6,12 @@ class TypeApiExceptionFactory {
     companion object {
         fun <T> tooManyMethods(clazz: Class<T>, methodName: String): TypeAPIException {
             return TypeAPIException(
-                    "class: ${clazz.canonicalName} had more than one method with the name: $methodName")
+                    "class: ${clazz.canonicalName} had more than one method with the name: '$methodName'")
         }
 
         fun <T> noMethodFound(clazz: Class<T>, methodName: String): TypeAPIException {
             return TypeAPIException(
-                    "class: ${clazz.canonicalName} had no method with the name: $methodName")
+                    "class: ${clazz.canonicalName} had no method with the name: '$methodName'")
         }
 
         fun <T> tooManyMethods(clazz: Class<T>, returnType: Class<*>, concreteMethods: List<Method>, paramTypes: Array<out Class<*>>): TypeAPIException {

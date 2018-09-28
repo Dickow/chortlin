@@ -6,7 +6,7 @@ import com.dickow.chortlin.core.api.type.participant.ParticipantTypeAPI;
 import com.dickow.chortlin.core.api.type.send.ISendTypeAPI;
 import com.dickow.chortlin.core.api.type.send.SendTypeAPI;
 import com.dickow.chortlin.core.test.shared.MethodReferenceClass;
-import com.dickow.chortlin.core.types.AsyncSend;
+import com.dickow.chortlin.core.types.path.AsyncSend;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

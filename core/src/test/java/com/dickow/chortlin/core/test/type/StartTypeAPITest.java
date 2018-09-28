@@ -6,7 +6,7 @@ import com.dickow.chortlin.core.api.type.participant.ParticipantTypeAPI;
 import com.dickow.chortlin.core.api.type.start.IStartTypeAPI;
 import com.dickow.chortlin.core.api.type.start.StartTypeAPI;
 import com.dickow.chortlin.core.test.shared.MethodReferenceClass;
-import com.dickow.chortlin.core.types.Start;
+import com.dickow.chortlin.core.types.path.Start;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
