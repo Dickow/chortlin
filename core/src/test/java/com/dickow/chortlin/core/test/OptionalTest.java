@@ -1,11 +1,5 @@
 package com.dickow.chortlin.core.test;
 
-import com.dickow.chortlin.core.api.type.TypeAPI;
-import com.dickow.chortlin.core.api.type.TypeAPIDelegate;
-import com.dickow.chortlin.core.api.type.participant.IParticipantTypeAPI;
-import com.dickow.chortlin.core.api.type.participant.ParticipantTypeAPI;
-import com.dickow.chortlin.core.api.type.send.SendTypeAPI;
-import com.dickow.chortlin.core.api.type.start.StartTypeAPI;
 import com.dickow.chortlin.core.test.shared.MethodReferenceClass;
 import com.dickow.chortlin.core.types.choreography.PathChoreography;
 import com.dickow.chortlin.core.types.path.AsyncSend;
@@ -15,10 +9,7 @@ import com.dickow.chortlin.core.types.path.SyncSend;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-class OptionalTest {
-    private final IParticipantTypeAPI participantApi = new ParticipantTypeAPI();
-    private final TypeAPI api =
-            new TypeAPIDelegate(participantApi, new StartTypeAPI(participantApi), new SendTypeAPI(participantApi));
+class OptionalTest extends BasePathTest {
 
     @Test
     void createSimpleSequence() {
