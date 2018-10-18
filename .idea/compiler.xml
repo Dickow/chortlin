@@ -6,7 +6,6 @@
     <option name="delegateToJavac" value="true" />
   </component>
   <component name="CompilerConfiguration">
-    <option name="DEFAULT_COMPILER" value="ajc" />
     <annotationProcessing>
       <profile name="Maven default annotation processors profile" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
@@ -14,11 +13,8 @@
         <outputRelativeToContentRoot value="true" />
         <module name="bytebuddytest" />
         <module name="core" />
+        <module name="dtupayexample" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="aspect" target="1.8" />
-      <module name="testmodule" target="1.8" />
-    </bytecodeTargetLevel>
   </component>
 </project>
