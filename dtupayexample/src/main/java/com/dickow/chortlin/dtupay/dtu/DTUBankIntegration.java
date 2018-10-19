@@ -22,6 +22,7 @@ public class DTUBankIntegration {
             var body = objectMapper.writeValueAsString(transaction);
             var request = HttpRequest.newBuilder(new URI(Constants.BANK_BASE_URL+"transactions"))
                     .POST(HttpRequest.BodyPublisher.fromString(body))
+                    .header("content-type", "application/json")
                     .build();
             httpClient.send(request, HttpResponse.BodyHandler.asString());
         }

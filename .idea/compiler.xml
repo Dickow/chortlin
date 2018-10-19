@@ -13,6 +13,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="bytebuddytest" />
         <module name="core" />
+        <module name="dtu-pay-example" />
         <module name="dtupayexample" />
       </profile>
     </annotationProcessing>

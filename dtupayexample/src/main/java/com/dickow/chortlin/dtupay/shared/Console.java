@@ -1,7 +1,10 @@
 package com.dickow.chortlin.dtupay.shared;
 
+import java.time.LocalDateTime;
+
 public abstract class Console {
     public static void println(String str, Object... formattings){
+        System.out.print(String.format("%s ---- ", LocalDateTime.now().toString()));
         System.out.println(String.format(str, formattings));
     }
 

@@ -1,5 +1,6 @@
 package com.dickow.chortlin.dtupay.merchant;
 
+import com.dickow.chortlin.dtupay.shared.Console;
 import com.dickow.chortlin.dtupay.shared.Constants;
 import com.dickow.chortlin.dtupay.shared.dto.PaymentDTO;
 import jdk.incubator.http.HttpClient;
@@ -18,21 +19,19 @@ public class Merchant {
 
     @PostMapping(value = "{merchant}/pay")
     public ResponseEntity pay(@PathVariable String merchant, @RequestBody PaymentDTO payment){
+        Console.invocation(this.getClass());
         try {
             var request = HttpRequest.newBuilder(new URI(Constants.DTUPAY_BASE_URL+merchant+"/"+payment.getToken()))
                     .POST(HttpRequest.BodyPublisher.fromString(String.valueOf(payment.getAmount())))
+                    .header("content-type", "application/json")
                     .build();
-            httpClient.send(request, HttpResponse.BodyHandler.asString());
+            var response = httpClient.send(request, HttpResponse.BodyHandler.asString());
+            response.body();
         }
         catch(Exception e){
             return new ResponseEntity(HttpStatus.BAD_REQUEST);
         }
 
         return new ResponseEntity(HttpStatus.OK);
-    }
-
-    @GetMapping(value = "hello")
-    public String hello(){
-        return "Hello world";
     }
 }
