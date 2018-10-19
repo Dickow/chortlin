@@ -1,6 +1,6 @@
 package com.dickow.chortlin.core.api.type.participant
 
-import com.dickow.chortlin.core.types.Participant
+import com.dickow.chortlin.core.ast.participant.Participant
 
 interface IParticipantTypeAPI {
     fun <T> participant(clazz: Class<T>, method: String): Participant<T>

@@ -3,8 +3,8 @@ package com.dickow.chortlin.core.test.type;
 import com.dickow.chortlin.core.api.exceptions.TypeAPIException;
 import com.dickow.chortlin.core.api.type.participant.IParticipantTypeAPI;
 import com.dickow.chortlin.core.api.type.participant.ParticipantTypeAPI;
+import com.dickow.chortlin.core.ast.participant.Participant;
 import com.dickow.chortlin.core.test.shared.MethodReferenceClass;
-import com.dickow.chortlin.core.types.Participant;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 

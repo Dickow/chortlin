@@ -1,11 +1,12 @@
-package com.dickow.chortlin.core.api.type.participant
+package com.dickow.chortlin.core.ast.participant
 
 import com.dickow.chortlin.core.api.exceptions.TypeApiExceptionFactory
-import com.dickow.chortlin.core.ast.participant.Participant
 import com.dickow.chortlin.core.util.type.TypeUtil
 
-class ParticipantTypeAPI : IParticipantTypeAPI {
-    override fun <T> participant(clazz: Class<T>, method: String): Participant<T> {
+
+object ParticipantFactory {
+    @JvmStatic
+    fun <T> participant(clazz: Class<T>, method: String): Participant<T> {
         val concreteMethods = clazz.methods.filter { m -> m.name == method }
         if (concreteMethods.size > 1) {
             throw TypeApiExceptionFactory.tooManyMethods(clazz, method)
@@ -17,7 +18,8 @@ class ParticipantTypeAPI : IParticipantTypeAPI {
         return Participant(clazz, concreteMethods[0])
     }
 
-    override fun <T> participant(clazz: Class<T>, returnType: Class<*>, vararg paramTypes: Class<*>): Participant<T> {
+    @JvmStatic
+    fun <T> participant(clazz: Class<T>, returnType: Class<*>, vararg paramTypes: Class<*>): Participant<T> {
         val concreteMethods = clazz.methods
                 .filter { m -> m.returnType == returnType && TypeUtil.typesMatch(m.parameterTypes, paramTypes) }
         if (concreteMethods.size > 1) {
@@ -30,7 +32,8 @@ class ParticipantTypeAPI : IParticipantTypeAPI {
         return Participant(clazz, concreteMethods[0])
     }
 
-    override fun <T> participant(clazz: Class<T>, methodName: String, vararg paramTypes: Class<*>): Participant<T> {
+    @JvmStatic
+    fun <T> participant(clazz: Class<T>, methodName: String, vararg paramTypes: Class<*>): Participant<T> {
         try {
             val concreteMethod = clazz.getDeclaredMethod(methodName, *paramTypes)
             return Participant(clazz, concreteMethod)

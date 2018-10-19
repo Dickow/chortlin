@@ -1,7 +1,7 @@
 package com.dickow.chortlin.core.api.type.send
 
 import com.dickow.chortlin.core.api.type.participant.IParticipantTypeAPI
-import com.dickow.chortlin.core.types.Participant
+import com.dickow.chortlin.core.ast.participant.Participant
 import com.dickow.chortlin.core.types.path.AsyncSend
 import com.dickow.chortlin.core.types.path.Path
 import com.dickow.chortlin.core.types.path.SyncSend

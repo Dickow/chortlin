@@ -3,8 +3,8 @@
   <component name="AutoImportedSourceRoots">
     <option name="directories">
       <list>
-        <option value="C:\Users\SharkGaming\git\chortlin\core/src/main/kotlin" />
-        <option value="C:\Users\SharkGaming\git\chortlin\core/src/test/kotlin" />
+        <option value="src/test/java" />
+        <option value="src/test/kotlin" />
       </list>
     </option>
   </component>

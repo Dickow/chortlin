@@ -1,6 +1,6 @@
 package com.dickow.chortlin.core.api.type.send
 
-import com.dickow.chortlin.core.types.Participant
+import com.dickow.chortlin.core.ast.participant.Participant
 import com.dickow.chortlin.core.types.path.Path
 
 interface ISendTypeAPI {
