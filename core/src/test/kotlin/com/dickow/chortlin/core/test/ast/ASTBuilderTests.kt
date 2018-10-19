@@ -1,11 +1,11 @@
 package com.dickow.chortlin.core.test.ast
 
 import com.dickow.chortlin.core.ast.Label
-import com.dickow.chortlin.core.ast.participant.ParticipantFactory.participant
 import com.dickow.chortlin.core.ast.types.End
 import com.dickow.chortlin.core.ast.types.FoundMessage
 import com.dickow.chortlin.core.ast.types.Interaction
 import com.dickow.chortlin.core.choreography.Choreography
+import com.dickow.chortlin.core.choreography.participant.ParticipantFactory.participant
 import kotlin.test.Test
 import kotlin.test.assertEquals
 

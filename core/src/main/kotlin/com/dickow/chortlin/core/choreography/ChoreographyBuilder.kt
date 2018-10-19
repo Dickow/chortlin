@@ -1,6 +1,6 @@
 package com.dickow.chortlin.core.choreography
 
-import com.dickow.chortlin.core.ast.participant.Participant
+import com.dickow.chortlin.core.choreography.participant.Participant
 
 interface ChoreographyBuilder {
     fun <C> foundMessage(receiver: Participant<C>, label: String): ChoreographyBuilder

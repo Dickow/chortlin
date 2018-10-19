@@ -1,4 +1,4 @@
-package com.dickow.chortlin.core.ast.participant
+package com.dickow.chortlin.core.choreography.participant
 
 import java.lang.reflect.Method
 

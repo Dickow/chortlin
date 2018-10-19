@@ -6,6 +6,7 @@ module dtupayexample {
     requires com.fasterxml.jackson.databind;
     requires spring.context;
     requires spring.beans;
+    requires com.dickow.chortlin.core;
 
     opens com.dickow.chortlin.dtupay.app to spring.core, spring.beans, spring.context, spring.web;
     opens com.dickow.chortlin.dtupay.bank to spring.core, spring.beans, spring.context, spring.web;

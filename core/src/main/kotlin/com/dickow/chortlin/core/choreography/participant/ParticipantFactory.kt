@@ -1,4 +1,4 @@
-package com.dickow.chortlin.core.ast.participant
+package com.dickow.chortlin.core.choreography.participant
 
 import com.dickow.chortlin.core.api.exceptions.TypeApiExceptionFactory
 import com.dickow.chortlin.core.util.type.TypeUtil

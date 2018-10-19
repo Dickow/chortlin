@@ -1,9 +1,9 @@
 package com.dickow.chortlin.core.ast.types
 
 import com.dickow.chortlin.core.ast.Label
-import com.dickow.chortlin.core.ast.participant.Participant
 import com.dickow.chortlin.core.choreography.Choreography
 import com.dickow.chortlin.core.choreography.ChoreographyBuilder
+import com.dickow.chortlin.core.choreography.participant.Participant
 
 abstract class ASTNode(open val previous: ASTNode?, open var next: ASTNode?) : ChoreographyBuilder {
 

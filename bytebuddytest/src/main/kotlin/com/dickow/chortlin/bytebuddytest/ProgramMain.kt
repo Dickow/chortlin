@@ -1,6 +1,5 @@
 package com.dickow.chortlin.bytebuddytest
 
-import net.bytebuddy.agent.ByteBuddyAgent
 import net.bytebuddy.agent.builder.AgentBuilder
 import net.bytebuddy.asm.Advice
 import net.bytebuddy.matcher.ElementMatchers
@@ -11,7 +10,7 @@ fun main(args: Array<String>) {
 }
 
 fun testStuff() {
-    ByteBuddyAgent.install()
+    //ByteBuddyAgent.install()
     AgentBuilder.Default()
             .disableClassFormatChanges()
             .with(AgentBuilder.RedefinitionStrategy.RETRANSFORMATION)

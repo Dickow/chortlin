@@ -1,7 +1,7 @@
 package com.dickow.chortlin.core.ast.types
 
 import com.dickow.chortlin.core.ast.Label
-import com.dickow.chortlin.core.ast.participant.Participant
+import com.dickow.chortlin.core.choreography.participant.Participant
 
 class FoundMessage<T>(
         private val receiver: Participant<T>,
