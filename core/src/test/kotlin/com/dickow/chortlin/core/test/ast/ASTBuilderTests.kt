@@ -8,8 +8,7 @@ import com.dickow.chortlin.core.choreography.Choreography
 import com.dickow.chortlin.core.choreography.participant.ParticipantFactory.participant
 import com.dickow.chortlin.core.test.shared.A
 import com.dickow.chortlin.core.test.shared.B
-import kotlin.test.Test
-import kotlin.test.assertEquals
+import kotlin.test.*
 
 class ASTBuilderTests {
 

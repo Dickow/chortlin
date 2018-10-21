@@ -1,7 +1,5 @@
 module com.dickow.chortlin.core {
-    requires kotlin.reflect;
     requires kotlin.stdlib;
-    requires kotlin.test;
 
     exports com.dickow.chortlin.core.choreography;
     exports com.dickow.chortlin.core.choreography.participant;

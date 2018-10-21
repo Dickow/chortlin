@@ -1,6 +1,6 @@
 package com.dickow.chortlin.core.test.checker
 
-import kotlin.test.Test
+import kotlin.test.*
 
 
 class ChoreographyCheckerTests {
