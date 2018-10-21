@@ -1,14 +1,19 @@
 package com.dickow.chortlin.core.ast.types
 
 import com.dickow.chortlin.core.ast.Label
+import com.dickow.chortlin.core.checker.ASTVisitor
 import com.dickow.chortlin.core.choreography.participant.Participant
 
 class Interaction<C1, C2>(
-        private val sender: Participant<C1>,
-        private val receiver: Participant<C2>,
-        private val label: Label,
+        val sender: Participant<C1>,
+        val receiver: Participant<C2>,
+        val label: Label,
         override val previous: ASTNode?,
         override var next: ASTNode?) : ASTNode(previous, next) {
+
+    override fun accept(visitor: ASTVisitor) {
+        visitor.visitInteraction(this)
+    }
 
     override fun equals(other: Any?): Boolean {
         return if (other is Interaction<*, *>) {

@@ -1,4 +1,4 @@
-package com.dickow.chortlin.core.test.ast
+package com.dickow.chortlin.core.test.shared
 
 class A {
 

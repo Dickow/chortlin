@@ -1,13 +1,18 @@
 package com.dickow.chortlin.core.ast.types
 
 import com.dickow.chortlin.core.ast.Label
+import com.dickow.chortlin.core.checker.ASTVisitor
 import com.dickow.chortlin.core.choreography.participant.Participant
 
 class FoundMessage<T>(
-        private val receiver: Participant<T>,
-        private val label: Label,
+        val receiver: Participant<T>,
+        val label: Label,
         override val previous: ASTNode?,
         override var next: ASTNode?) : ASTNode(previous, next) {
+
+    override fun accept(visitor: ASTVisitor) {
+        visitor.visitFoundMessage(this)
+    }
 
     override fun equals(other: Any?): Boolean {
         return if (other is FoundMessage<*>) {

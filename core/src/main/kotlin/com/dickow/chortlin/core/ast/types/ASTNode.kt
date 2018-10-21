@@ -1,11 +1,14 @@
 package com.dickow.chortlin.core.ast.types
 
 import com.dickow.chortlin.core.ast.Label
+import com.dickow.chortlin.core.checker.ASTVisitor
 import com.dickow.chortlin.core.choreography.Choreography
 import com.dickow.chortlin.core.choreography.ChoreographyBuilder
 import com.dickow.chortlin.core.choreography.participant.Participant
 
 abstract class ASTNode(open val previous: ASTNode?, open var next: ASTNode?) : ChoreographyBuilder {
+
+    abstract fun accept(visitor: ASTVisitor)
 
     override fun <C> foundMessage(receiver: Participant<C>, label: String): ChoreographyBuilder {
         val next = FoundMessage(receiver, Label(label), this, null)
