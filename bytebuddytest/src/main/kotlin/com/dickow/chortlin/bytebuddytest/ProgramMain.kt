@@ -10,7 +10,7 @@ fun main(args: Array<String>) {
 }
 
 fun testStuff() {
-    //ByteBuddyAgent.install()
+    //
     AgentBuilder.Default()
             .disableClassFormatChanges()
             .with(AgentBuilder.RedefinitionStrategy.RETRANSFORMATION)

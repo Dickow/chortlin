@@ -1,7 +1,6 @@
 package com.dickow.chortlin.core.test.shared
 
 class A {
-
     fun receive(): String {
         return "Hello world!"
     }
