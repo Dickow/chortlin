@@ -6,4 +6,16 @@ class EmptyPattern(childNodes: MutableList<Pattern>) : Pattern(childNodes) {
     override fun match(trace: Trace): Boolean {
         return childNodes.all { child -> child.match(trace) }
     }
+
+    override fun equals(other: Any?): Boolean {
+        return if (other is EmptyPattern) {
+            this.childNodes.size == other.childNodes.size && this.childNodes == other.childNodes
+        } else {
+            false
+        }
+    }
+
+    override fun hashCode(): Int {
+        return javaClass.hashCode()
+    }
 }

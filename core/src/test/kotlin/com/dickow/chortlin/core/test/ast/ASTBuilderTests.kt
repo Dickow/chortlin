@@ -8,7 +8,8 @@ import com.dickow.chortlin.core.choreography.Choreography
 import com.dickow.chortlin.core.choreography.participant.ParticipantFactory.participant
 import com.dickow.chortlin.core.test.shared.A
 import com.dickow.chortlin.core.test.shared.B
-import kotlin.test.*
+import kotlin.test.Test
+import kotlin.test.assertEquals
 
 class ASTBuilderTests {
 
@@ -34,6 +35,26 @@ class ASTBuilderTests {
         found.next = interaction
         interaction.next = end
 
+        val expected = Choreography(found)
+        assertEquals(expected, choreography)
+    }
+
+    @Test
+    fun `build single element ast`() {
+        val choreography = Choreography.builder().end().build()
+        val end = End(null, null)
+        val expected = Choreography(end)
+        assertEquals(expected, choreography)
+    }
+
+    @Test
+    fun `build single found msg element ast`() {
+        val choreography = Choreography.builder()
+                .foundMessage(participant(A::class.java, "receive"), "receive")
+                .build()
+        val found = FoundMessage(
+                participant(A::class.java, "receive"),
+                Label("receive"), null, null)
         val expected = Choreography(found)
         assertEquals(expected, choreography)
     }
