@@ -6,6 +6,7 @@ import com.dickow.chortlin.core.trace.TraceElement
 import net.bytebuddy.asm.Advice
 import java.lang.reflect.Method
 
+@Suppress("UNUSED_PARAMETER")
 class BeforeAdvisor {
     companion object {
         @JvmStatic

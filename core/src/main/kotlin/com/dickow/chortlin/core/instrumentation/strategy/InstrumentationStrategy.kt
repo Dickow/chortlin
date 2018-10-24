@@ -4,6 +4,7 @@ object InstrumentationStrategy {
     @JvmStatic
     var strategy: StorageStrategy = defaultStrategy()
 
+    @JvmStatic
     fun defaultStrategy(): StorageStrategy {
         return InMemory()
     }

@@ -1,12 +1,13 @@
 module dtupayexample {
     requires spring.web;
-    requires jdk.incubator.httpclient;
+    requires transitive jdk.incubator.httpclient;
     requires spring.boot.autoconfigure;
     requires spring.boot;
     requires com.fasterxml.jackson.databind;
     requires spring.context;
     requires spring.beans;
-    requires com.dickow.chortlin.core;
+    requires chortlin.core;
+    requires annotations;
 
     opens com.dickow.chortlin.dtupay.app to spring.core, spring.beans, spring.context, spring.web;
     opens com.dickow.chortlin.dtupay.bank to spring.core, spring.beans, spring.context, spring.web;

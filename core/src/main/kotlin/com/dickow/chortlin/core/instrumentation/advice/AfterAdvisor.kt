@@ -3,6 +3,7 @@ package com.dickow.chortlin.core.instrumentation.advice
 import net.bytebuddy.asm.Advice
 import java.lang.reflect.Method
 
+@Suppress("UNUSED_PARAMETER")
 class AfterAdvisor {
     companion object {
         @JvmStatic

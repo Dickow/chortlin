@@ -13,10 +13,11 @@ import com.dickow.chortlin.core.trace.TraceElement
 import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class ApplyInstrumentationTests {
-    private val instrumentationVisitor = ASTInstrumentation(ByteBuddyInstrumentation())
+    private val instrumentationVisitor = ASTInstrumentation(ByteBuddyInstrumentation)
     val traces: MutableList<TraceElement<*>> = LinkedList()
     private val storageStrategy: StorageStrategy = object : StorageStrategy {
 
@@ -27,6 +28,7 @@ class ApplyInstrumentationTests {
 
     @Test
     fun `apply instrumentation to simple in memory communication`() {
+        traces.clear()
         InstrumentationStrategy.strategy = storageStrategy
         val checker = Choreography.builder()
                 .foundMessage(participant(Initial::class.java, "begin"), "start")
@@ -39,5 +41,23 @@ class ApplyInstrumentationTests {
         Initial().begin()
         assertEquals(3, traces.size)
         assertTrue(checker.check(Trace(traces.toTypedArray())))
+    }
+
+
+    @Test
+    fun `validate that instrumentation catches an error in the invocation`() {
+        traces.clear()
+        InstrumentationStrategy.strategy = storageStrategy
+        val checker = Choreography.builder()
+                .foundMessage(participant(Initial::class.java, "delegate"), "start")
+                .interaction(participant(Initial::class.java, "begin"),
+                        participant(Second::class.java, "process"), "interaction")
+                .end()
+                .build()
+                .applyInstrumentation(instrumentationVisitor)
+                .createChecker()
+        Initial().begin()
+        assertEquals(3, traces.size)
+        assertFalse(checker.check(Trace(traces.toTypedArray())))
     }
 }

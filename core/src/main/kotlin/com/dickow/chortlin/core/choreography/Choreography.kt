@@ -7,7 +7,7 @@ import com.dickow.chortlin.core.checker.ChoreographyChecker
 import com.dickow.chortlin.core.instrumentation.ASTInstrumentation
 
 data class Choreography(val start: ASTNode) {
-    companion object {
+    companion object Instance {
         fun builder(): ChoreographyBuilder {
             return Marker()
         }

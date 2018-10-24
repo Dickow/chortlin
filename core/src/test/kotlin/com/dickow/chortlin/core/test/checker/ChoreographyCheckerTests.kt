@@ -13,6 +13,7 @@ import com.dickow.chortlin.core.trace.TraceElement
 import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class ChoreographyCheckerTests {
@@ -90,6 +91,25 @@ class ChoreographyCheckerTests {
         val checker = choreography.createChecker()
         assertTrue(checker.check(trace))
         assertTrue(checker.check(trace))
+    }
+
+    @Test
+    fun `check that invalid trace is not accepted`() {
+        val choreography = Choreography.builder()
+                .foundMessage(participant(A::class.java, "receive"), "receive")
+                .interaction(participant(A::class.java, "b"),
+                        participant(B::class.java, "b"),
+                        "delegate processing")
+                .end()
+                .build()
+        val trace = Trace(arrayOf(
+                TraceElement(participant(A::class.java, "b")),
+                TraceElement(participant(A::class.java, "receive")),
+                TraceElement(participant(B::class.java, "b"))))
+
+        val checker = choreography.createChecker()
+        assertFalse(checker.check(trace))
+        assertFalse(checker.check(trace))
     }
 
 

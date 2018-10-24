@@ -1,4 +1,4 @@
-module com.dickow.chortlin.core {
+module chortlin.core {
     requires kotlin.stdlib;
     requires kotlin.test;
     requires kotlin.test.junit5;
@@ -11,4 +11,7 @@ module com.dickow.chortlin.core {
     exports com.dickow.chortlin.core.choreography.participant;
     exports com.dickow.chortlin.core.ast.exception;
     exports com.dickow.chortlin.core.api.exceptions;
+    exports com.dickow.chortlin.core.instrumentation;
+    exports com.dickow.chortlin.core.instrumentation.strategy;
+    exports com.dickow.chortlin.core.trace;
 }
