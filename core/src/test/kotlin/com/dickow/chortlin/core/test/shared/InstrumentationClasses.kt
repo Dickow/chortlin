@@ -14,3 +14,23 @@ class Second {
     fun process() {
     }
 }
+
+
+class FirstClass {
+    fun first() {
+        SecondClass().second()
+    }
+}
+
+class SecondClass {
+    fun second() {
+        ThirdClass().third()
+        return
+    }
+}
+
+class ThirdClass {
+    fun third() {
+        return
+    }
+}

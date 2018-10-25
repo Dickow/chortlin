@@ -17,7 +17,7 @@ class ChoreographyValidator : ASTVisitor {
 
     override fun <C> visitFoundMessage(astNode: FoundMessage<C>) {
         scope.beginNewScope(astNode)
-        astNode.next?.accept(this)
+        nextNode(astNode)
         scope.exitScope()
     }
 
@@ -27,14 +27,14 @@ class ChoreographyValidator : ASTVisitor {
                     "The node causing the error was $astNode")
         } else {
             scope.beginNewScope(astNode)
-            astNode.next?.accept(this)
+            nextNode(astNode)
             scope.exitScope()
         }
     }
 
     override fun <C1, C2> visitInteraction(astNode: Interaction<C1, C2>) {
         scope.beginNewScope(astNode)
-        astNode.next?.accept(this)
+        nextNode(astNode)
         scope.exitScope()
     }
 
@@ -44,8 +44,16 @@ class ChoreographyValidator : ASTVisitor {
                     "The node causing the error was $astNode")
         } else {
             scope.beginNewScope(astNode)
-            astNode.next?.accept(this)
+            nextNode(astNode)
             scope.exitScope()
+        }
+    }
+
+    private fun nextNode(astNode: ASTNode) {
+        if (astNode.next == null && astNode !is End) {
+            throw InvalidASTException("Encountered a path without an END at: $astNode")
+        } else {
+            astNode.next?.accept(this)
         }
     }
 

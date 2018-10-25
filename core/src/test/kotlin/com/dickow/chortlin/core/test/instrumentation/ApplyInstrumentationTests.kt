@@ -6,8 +6,7 @@ import com.dickow.chortlin.core.instrumentation.ASTInstrumentation
 import com.dickow.chortlin.core.instrumentation.ByteBuddyInstrumentation
 import com.dickow.chortlin.core.instrumentation.strategy.InstrumentationStrategy
 import com.dickow.chortlin.core.instrumentation.strategy.StorageStrategy
-import com.dickow.chortlin.core.test.shared.Initial
-import com.dickow.chortlin.core.test.shared.Second
+import com.dickow.chortlin.core.test.shared.*
 import com.dickow.chortlin.core.trace.Trace
 import com.dickow.chortlin.core.trace.TraceElement
 import java.util.*
@@ -58,6 +57,48 @@ class ApplyInstrumentationTests {
                 .createChecker()
         Initial().begin()
         assertEquals(3, traces.size)
+        assertFalse(checker.check(Trace(traces.toTypedArray())))
+    }
+
+    @Test
+    fun `validate instrumentation when returns are used correctly`() {
+        traces.clear()
+        InstrumentationStrategy.strategy = storageStrategy
+        val checker = Choreography.builder()
+                .interaction(participant(FirstClass::class.java, "first"),
+                        participant(SecondClass::class.java, "second"), "initial call")
+                .foundMessage(participant(ThirdClass::class.java, "third"), "last call")
+                .foundMessageReturn(participant(ThirdClass::class.java, "third"), "return from third call")
+                .interactionReturn(participant(FirstClass::class.java, "first"),
+                        participant(SecondClass::class.java, "second"), "return from initial call")
+                .end()
+                .build()
+                .runVisitor(instrumentationVisitor)
+                .createChecker()
+
+        FirstClass().first()
+        assertEquals(5, traces.size)
+        assertTrue(checker.check(Trace(traces.toTypedArray())))
+    }
+
+    @Test
+    fun `check that checker invalidates gathered traces for wrong call sequence`() {
+        traces.clear()
+        InstrumentationStrategy.strategy = storageStrategy
+        val checker = Choreography.builder()
+                .interaction(participant(FirstClass::class.java, "first"),
+                        participant(SecondClass::class.java, "second"), "initial call")
+                .foundMessage(participant(ThirdClass::class.java, "third"), "last call")
+                .foundMessageReturn(participant(ThirdClass::class.java, "third"), "return from third call")
+                .interactionReturn(participant(FirstClass::class.java, "first"),
+                        participant(SecondClass::class.java, "second"), "return from initial call")
+                .end()
+                .build()
+                .runVisitor(instrumentationVisitor)
+                .createChecker()
+
+        SecondClass().second()
+        assertEquals(4, traces.size)
         assertFalse(checker.check(Trace(traces.toTypedArray())))
     }
 }
