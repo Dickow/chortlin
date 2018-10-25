@@ -2,4 +2,4 @@ package com.dickow.chortlin.core.trace
 
 import com.dickow.chortlin.core.choreography.participant.Participant
 
-abstract class TraceElement<C>(private val participant: Participant<C>)
+data class Return<C>(val participant: Participant<C>) : TraceElement<C>(participant)

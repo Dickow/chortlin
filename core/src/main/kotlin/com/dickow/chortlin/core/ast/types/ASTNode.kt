@@ -10,6 +10,18 @@ abstract class ASTNode(open val previous: ASTNode?, open var next: ASTNode?) : C
 
     abstract fun accept(visitor: ASTVisitor)
 
+    override fun <C> foundMessageReturn(receiver: Participant<C>, label: String): ChoreographyBuilder {
+        val next = FoundMessageReturn(receiver, Label(label), this, null)
+        this.next = next
+        return next
+    }
+
+    override fun <C1, C2> interactionReturn(sender: Participant<C1>, receiver: Participant<C2>, label: String): ChoreographyBuilder {
+        val next = InteractionReturn(sender, receiver, Label(label), this, null)
+        this.next = next
+        return next
+    }
+
     override fun <C> foundMessage(receiver: Participant<C>, label: String): ChoreographyBuilder {
         val next = FoundMessage(receiver, Label(label), this, null)
         this.next = next

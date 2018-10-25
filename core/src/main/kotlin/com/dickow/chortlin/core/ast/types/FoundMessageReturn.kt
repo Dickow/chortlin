@@ -4,18 +4,18 @@ import com.dickow.chortlin.core.ast.Label
 import com.dickow.chortlin.core.checker.ASTVisitor
 import com.dickow.chortlin.core.choreography.participant.Participant
 
-class FoundMessage<T>(
-        val receiver: Participant<T>,
+class FoundMessageReturn<C>(
+        val receiver: Participant<C>,
         val label: Label,
-        override val previous: ASTNode?,
-        override var next: ASTNode?) : ASTNode(previous, next) {
+        previous: ASTNode?,
+        next: ASTNode?) : ASTNode(previous, next) {
 
     override fun accept(visitor: ASTVisitor) {
-        visitor.visitFoundMessage(this)
+        visitor.visitFoundMessageReturn(this)
     }
 
     override fun equals(other: Any?): Boolean {
-        return if (other is FoundMessage<*>) {
+        return if (other is FoundMessageReturn<*>) {
             this.receiver == other.receiver && this.label == other.label && super.equals(other)
         } else {
             false
@@ -28,4 +28,5 @@ class FoundMessage<T>(
         result = 31 * result + label.hashCode()
         return result
     }
+
 }

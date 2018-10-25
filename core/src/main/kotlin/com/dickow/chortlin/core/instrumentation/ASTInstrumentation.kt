@@ -1,11 +1,19 @@
 package com.dickow.chortlin.core.instrumentation
 
-import com.dickow.chortlin.core.ast.types.End
-import com.dickow.chortlin.core.ast.types.FoundMessage
-import com.dickow.chortlin.core.ast.types.Interaction
+import com.dickow.chortlin.core.ast.types.*
 import com.dickow.chortlin.core.checker.ASTVisitor
 
 class ASTInstrumentation(private val instrumentation: Instrumentation) : ASTVisitor {
+
+    override fun <C> visitFoundMessageReturn(astNode: FoundMessageReturn<C>) {
+        instrumentation.after(astNode.receiver)
+        astNode.next?.accept(this)
+    }
+
+    override fun <C1, C2> visitInteractionReturn(astNode: InteractionReturn<C1, C2>) {
+        instrumentation.after(astNode.receiver)
+        astNode.next?.accept(this)
+    }
 
     override fun visitEnd(astNode: End) {
         astNode.next?.accept(this)

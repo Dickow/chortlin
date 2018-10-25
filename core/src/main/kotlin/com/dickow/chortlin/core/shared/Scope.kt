@@ -1,39 +1,39 @@
-package com.dickow.chortlin.core.checker
+package com.dickow.chortlin.core.shared
 
 import java.util.*
 
-class Scope<T> {
+open class Scope<T> {
     private var outerScope: T? = null
-    private val currentScope: Stack<T> = Stack()
+    protected val scopes: Stack<T> = Stack()
 
     fun beginNewScope(scope: T) {
         if (outerScope == null) {
             outerScope = scope
         }
-        currentScope.add(scope)
+        scopes.add(scope)
     }
 
     fun exitScope() {
-        currentScope.pop()
+        scopes.pop()
     }
 
     fun getCurrentScope(): T? {
-        return if (currentScope.isEmpty()) {
+        return if (scopes.isEmpty()) {
             null
         } else {
-            currentScope.peek()
+            scopes.peek()
         }
     }
 
     fun isInScope(): Boolean {
-        return currentScope.isNotEmpty()
-    }
-
-    fun getOuterScope(): T? {
-        return outerScope
+        return scopes.isNotEmpty()
     }
 
     fun hasOuterScope(): Boolean {
         return outerScope != null
+    }
+
+    fun getOuterScope(): T? {
+        return outerScope
     }
 }

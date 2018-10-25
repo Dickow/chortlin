@@ -8,6 +8,4 @@ class InMemory : StorageStrategy {
     override fun <C> store(trace: TraceElement<C>) {
         synchronized(this) { traces.add(trace) }
     }
-
-
 }

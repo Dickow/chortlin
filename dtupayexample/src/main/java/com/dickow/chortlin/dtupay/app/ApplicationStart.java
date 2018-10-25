@@ -37,7 +37,7 @@ public class ApplicationStart {
                         participant(BankController.class, "transfer"), "bank transfer")
                 .end()
                 .build()
-                .applyInstrumentation(new ASTInstrumentation(ByteBuddyInstrumentation.INSTANCE))
+                .runVisitor(new ASTInstrumentation(ByteBuddyInstrumentation.INSTANCE))
                 .createChecker();
         InstrumentationStrategy.setStrategy(new StorageStrategy() {
             @Override

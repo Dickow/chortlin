@@ -28,8 +28,6 @@ class Interaction<C1, C2>(
         result = 31 * result + sender.hashCode()
         result = 31 * result + receiver.hashCode()
         result = 31 * result + label.hashCode()
-        result = 31 * result + (previous?.hashCode() ?: 0)
-        result = 31 * result + (next?.hashCode() ?: 0)
         return result
     }
 }

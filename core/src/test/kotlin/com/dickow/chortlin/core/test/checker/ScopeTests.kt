@@ -1,6 +1,6 @@
 package com.dickow.chortlin.core.test.checker
 
-import com.dickow.chortlin.core.checker.Scope
+import com.dickow.chortlin.core.shared.Scope
 import kotlin.test.*
 
 class ScopeTests {

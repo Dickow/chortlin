@@ -4,7 +4,7 @@ import com.dickow.chortlin.core.ast.types.ASTNode
 import com.dickow.chortlin.core.ast.types.Marker
 import com.dickow.chortlin.core.checker.ASTVisitor
 import com.dickow.chortlin.core.checker.ChoreographyChecker
-import com.dickow.chortlin.core.instrumentation.ASTInstrumentation
+import com.dickow.chortlin.core.validation.ChoreographyValidator
 
 data class Choreography(val start: ASTNode) {
     companion object Instance {
@@ -14,15 +14,12 @@ data class Choreography(val start: ASTNode) {
     }
 
     fun createChecker(): ChoreographyChecker {
+        runVisitor(ChoreographyValidator())
         return ChoreographyChecker(this)
     }
 
-    fun applyInstrumentation(instrumentationVisitor: ASTInstrumentation): Choreography {
-        runVisitor(instrumentationVisitor)
-        return this
-    }
-
-    fun runVisitor(visitor: ASTVisitor) {
+    fun runVisitor(visitor: ASTVisitor): Choreography {
         start.accept(visitor)
+        return this
     }
 }

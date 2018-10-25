@@ -1,17 +1,16 @@
 package com.dickow.chortlin.core.checker
 
 import com.dickow.chortlin.core.ast.exception.InvalidASTException
-import com.dickow.chortlin.core.ast.types.ASTNode
-import com.dickow.chortlin.core.ast.types.End
-import com.dickow.chortlin.core.ast.types.FoundMessage
-import com.dickow.chortlin.core.ast.types.Interaction
+import com.dickow.chortlin.core.ast.types.*
 import com.dickow.chortlin.core.checker.pattern.DoublePattern
 import com.dickow.chortlin.core.checker.pattern.EmptyPattern
 import com.dickow.chortlin.core.checker.pattern.Pattern
 import com.dickow.chortlin.core.checker.pattern.SinglePattern
 import com.dickow.chortlin.core.choreography.Choreography
+import com.dickow.chortlin.core.shared.Scope
+import com.dickow.chortlin.core.trace.Invocation
+import com.dickow.chortlin.core.trace.Return
 import com.dickow.chortlin.core.trace.Trace
-import com.dickow.chortlin.core.trace.TraceElement
 import java.util.*
 
 class ChoreographyChecker(choreography: Choreography) : ASTVisitor {
@@ -28,18 +27,28 @@ class ChoreographyChecker(choreography: Choreography) : ASTVisitor {
         }
     }
 
+    override fun <C> visitFoundMessageReturn(astNode: FoundMessageReturn<C>) {
+        val foundMessageReturnPattern = SinglePattern(Return(astNode.receiver), LinkedList())
+        handleCurrentNode(astNode, foundMessageReturnPattern)
+    }
+
+    override fun <C1, C2> visitInteractionReturn(astNode: InteractionReturn<C1, C2>) {
+        val interactionReturnPattern = SinglePattern(Return(astNode.receiver), LinkedList())
+        handleCurrentNode(astNode, interactionReturnPattern)
+    }
+
     override fun visitEnd(astNode: End) {
         val endPattern = EmptyPattern(LinkedList())
         handleCurrentNode(astNode, endPattern)
     }
 
     override fun <C> visitFoundMessage(astNode: FoundMessage<C>) {
-        val foundPattern = SinglePattern(TraceElement(astNode.receiver), LinkedList())
+        val foundPattern = SinglePattern(Invocation(astNode.receiver), LinkedList())
         handleCurrentNode(astNode, foundPattern)
     }
 
     override fun <C1, C2> visitInteraction(astNode: Interaction<C1, C2>) {
-        val pattern = DoublePattern(TraceElement(astNode.sender), TraceElement(astNode.receiver), LinkedList())
+        val pattern = DoublePattern(Invocation(astNode.sender), Invocation(astNode.receiver), LinkedList())
         handleCurrentNode(astNode, pattern)
     }
 
