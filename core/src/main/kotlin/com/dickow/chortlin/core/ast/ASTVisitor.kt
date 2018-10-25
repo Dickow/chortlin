@@ -8,4 +8,5 @@ interface ASTVisitor {
     fun <C> visitFoundMessageReturn(astNode: FoundMessageReturn<C>)
     fun <C1, C2> visitInteraction(astNode: Interaction<C1, C2>)
     fun <C1, C2> visitInteractionReturn(astNode: InteractionReturn<C1, C2>)
+    fun visitParallel(astNode: Parallel)
 }

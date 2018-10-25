@@ -7,8 +7,8 @@ import com.dickow.chortlin.core.choreography.participant.Participant
 class FoundMessage<T>(
         val receiver: Participant<T>,
         val label: Label,
-        override val previous: ASTNode?,
-        override var next: ASTNode?) : ASTNode(previous, next) {
+        previous: ASTNode?,
+        next: ASTNode?) : ASTNode(previous, next) {
 
     override fun accept(visitor: ASTVisitor) {
         visitor.visitFoundMessage(this)

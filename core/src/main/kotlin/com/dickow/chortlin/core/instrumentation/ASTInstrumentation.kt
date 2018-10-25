@@ -5,6 +5,11 @@ import com.dickow.chortlin.core.ast.types.*
 
 class ASTInstrumentation(private val instrumentation: Instrumentation) : ASTVisitor {
 
+    override fun visitParallel(astNode: Parallel) {
+        astNode.accept(this)
+        astNode.next?.accept(this)
+    }
+
     override fun <C> visitFoundMessageReturn(astNode: FoundMessageReturn<C>) {
         instrumentation.after(astNode.receiver)
         astNode.next?.accept(this)

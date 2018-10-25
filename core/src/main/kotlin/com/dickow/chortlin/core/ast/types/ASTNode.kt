@@ -6,9 +6,15 @@ import com.dickow.chortlin.core.choreography.Choreography
 import com.dickow.chortlin.core.choreography.ChoreographyBuilder
 import com.dickow.chortlin.core.choreography.participant.Participant
 
-abstract class ASTNode(open val previous: ASTNode?, open var next: ASTNode?) : ChoreographyBuilder {
+abstract class ASTNode(val previous: ASTNode?, var next: ASTNode?) : ChoreographyBuilder {
 
     abstract fun accept(visitor: ASTVisitor)
+
+    override fun parallel(choreography: (ChoreographyBuilder) -> Choreography): ChoreographyBuilder {
+        val next = Parallel(choreography(Choreography.builder()), this, null)
+        this.next = next
+        return next
+    }
 
     override fun <C> foundMessageReturn(receiver: Participant<C>, label: String): ChoreographyBuilder {
         val next = FoundMessageReturn(receiver, Label(label), this, null)

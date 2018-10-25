@@ -28,6 +28,10 @@ class ChoreographyChecker(choreography: Choreography) : ASTVisitor {
         }
     }
 
+    override fun visitParallel(astNode: Parallel) {
+
+    }
+
     override fun <C> visitFoundMessageReturn(astNode: FoundMessageReturn<C>) {
         val foundMessageReturnPattern = SinglePattern(Return(astNode.receiver), LinkedList())
         handleCurrentNode(astNode, foundMessageReturnPattern)

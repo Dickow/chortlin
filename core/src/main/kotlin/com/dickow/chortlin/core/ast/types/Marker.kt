@@ -8,6 +8,7 @@ import com.dickow.chortlin.core.choreography.participant.Participant
 import com.dickow.chortlin.core.exceptions.InvalidASTException
 
 class Marker : ASTNode(null, null) {
+
     override fun accept(visitor: ASTVisitor) {
         throw InvalidASTException("Attempting to call visit on a Marker, this is not valid. " +
                 "You probably asked for a builder and forgot to configure the choreography.")
@@ -15,6 +16,10 @@ class Marker : ASTNode(null, null) {
 
     override fun build(): Choreography {
         throw InvalidASTException("You must configure a valid choreography before calling build")
+    }
+
+    override fun parallel(choreography: (ChoreographyBuilder) -> Choreography): ChoreographyBuilder {
+        return Parallel(choreography(Choreography.builder()), null, null)
     }
 
     override fun <C> foundMessageReturn(receiver: Participant<C>, label: String): ChoreographyBuilder {

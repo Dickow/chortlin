@@ -8,6 +8,11 @@ import java.util.function.Predicate
 class ASTValidator : ASTVisitor {
     private val scope: ValidationScope<ASTNode> = ValidationScope()
 
+    override fun visitParallel(astNode: Parallel) {
+        astNode.accept(this)
+        nextNode(astNode)
+    }
+
     override fun visitEnd(astNode: End) {
         if (astNode.next != null) {
             throw InvalidASTException("Found an end node with subsequent activities, this is not allowed. " +

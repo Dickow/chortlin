@@ -8,8 +8,8 @@ class Interaction<C1, C2>(
         val sender: Participant<C1>,
         val receiver: Participant<C2>,
         val label: Label,
-        override val previous: ASTNode?,
-        override var next: ASTNode?) : ASTNode(previous, next) {
+        previous: ASTNode?,
+        next: ASTNode?) : ASTNode(previous, next) {
 
     override fun accept(visitor: ASTVisitor) {
         visitor.visitInteraction(this)
