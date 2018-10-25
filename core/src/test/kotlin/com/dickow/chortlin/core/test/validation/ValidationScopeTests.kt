@@ -1,6 +1,6 @@
 package com.dickow.chortlin.core.test.validation
 
-import com.dickow.chortlin.core.validation.ValidationScope
+import com.dickow.chortlin.core.ast.validation.ValidationScope
 import java.util.function.Predicate
 import kotlin.test.Test
 import kotlin.test.assertFalse

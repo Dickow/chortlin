@@ -1,11 +1,11 @@
-package com.dickow.chortlin.core.validation
+package com.dickow.chortlin.core.ast.validation
 
-import com.dickow.chortlin.core.ast.exception.InvalidASTException
+import com.dickow.chortlin.core.ast.ASTVisitor
 import com.dickow.chortlin.core.ast.types.*
-import com.dickow.chortlin.core.checker.ASTVisitor
+import com.dickow.chortlin.core.exceptions.InvalidASTException
 import java.util.function.Predicate
 
-class ChoreographyValidator : ASTVisitor {
+class ASTValidator : ASTVisitor {
     private val scope: ValidationScope<ASTNode> = ValidationScope()
 
     override fun visitEnd(astNode: End) {

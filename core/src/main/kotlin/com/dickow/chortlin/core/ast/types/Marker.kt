@@ -1,11 +1,11 @@
 package com.dickow.chortlin.core.ast.types
 
+import com.dickow.chortlin.core.ast.ASTVisitor
 import com.dickow.chortlin.core.ast.Label
-import com.dickow.chortlin.core.ast.exception.InvalidASTException
-import com.dickow.chortlin.core.checker.ASTVisitor
 import com.dickow.chortlin.core.choreography.Choreography
 import com.dickow.chortlin.core.choreography.ChoreographyBuilder
 import com.dickow.chortlin.core.choreography.participant.Participant
+import com.dickow.chortlin.core.exceptions.InvalidASTException
 
 class Marker : ASTNode(null, null) {
     override fun accept(visitor: ASTVisitor) {

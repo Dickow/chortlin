@@ -1,3 +1,3 @@
-package com.dickow.chortlin.core.api.exceptions
+package com.dickow.chortlin.core.exceptions
 
 class TypeAPIException(message: String?) : RuntimeException(message)

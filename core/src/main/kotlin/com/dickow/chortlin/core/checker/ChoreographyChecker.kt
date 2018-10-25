@@ -1,12 +1,13 @@
 package com.dickow.chortlin.core.checker
 
-import com.dickow.chortlin.core.ast.exception.InvalidASTException
+import com.dickow.chortlin.core.ast.ASTVisitor
 import com.dickow.chortlin.core.ast.types.*
 import com.dickow.chortlin.core.checker.pattern.DoublePattern
 import com.dickow.chortlin.core.checker.pattern.EmptyPattern
 import com.dickow.chortlin.core.checker.pattern.Pattern
 import com.dickow.chortlin.core.checker.pattern.SinglePattern
 import com.dickow.chortlin.core.choreography.Choreography
+import com.dickow.chortlin.core.exceptions.InvalidASTException
 import com.dickow.chortlin.core.shared.Scope
 import com.dickow.chortlin.core.trace.Invocation
 import com.dickow.chortlin.core.trace.Return

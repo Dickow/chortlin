@@ -1,4 +1,4 @@
-package com.dickow.chortlin.core.util.type
+package com.dickow.chortlin.core.util
 
 object TypeUtil {
     fun typesMatch(types1: Array<Class<*>>, types2: Array<out Class<*>>): Boolean {

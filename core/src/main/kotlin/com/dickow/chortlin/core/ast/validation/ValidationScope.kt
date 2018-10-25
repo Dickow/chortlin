@@ -1,4 +1,4 @@
-package com.dickow.chortlin.core.validation
+package com.dickow.chortlin.core.ast.validation
 
 import com.dickow.chortlin.core.shared.Scope
 import java.util.function.Predicate

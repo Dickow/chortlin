@@ -12,7 +12,6 @@ class AfterAdvisor {
         @JvmStatic
         @Advice.OnMethodExit
         fun afterMethod(@Advice.AllArguments allArguments: Array<Any>, @Advice.Origin method: Method) {
-            println("After invocation of ${method.name}")
             InstrumentationStrategy.strategy.store(Return(Participant(method.declaringClass, method)))
         }
     }

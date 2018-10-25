@@ -12,7 +12,6 @@ class BeforeAdvisor {
         @JvmStatic
         @Advice.OnMethodEnter
         fun beforeMethod(@Advice.AllArguments allArguments: Array<Any>, @Advice.Origin method: Method) {
-            println("Before invocation of ${method.name}")
             InstrumentationStrategy.strategy.store(Invocation(Participant(method.declaringClass, method)))
         }
     }

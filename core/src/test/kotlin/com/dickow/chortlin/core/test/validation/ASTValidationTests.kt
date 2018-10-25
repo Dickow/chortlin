@@ -1,10 +1,10 @@
 package com.dickow.chortlin.core.test.validation
 
-import com.dickow.chortlin.core.ast.exception.InvalidASTException
+import com.dickow.chortlin.core.ast.validation.ASTValidator
 import com.dickow.chortlin.core.choreography.Choreography
 import com.dickow.chortlin.core.choreography.participant.ParticipantFactory.participant
+import com.dickow.chortlin.core.exceptions.InvalidASTException
 import com.dickow.chortlin.core.test.shared.A
-import com.dickow.chortlin.core.validation.ChoreographyValidator
 import org.junit.jupiter.api.Test
 import kotlin.test.assertFailsWith
 
@@ -16,7 +16,7 @@ class ASTValidationTests {
                 .foundMessageReturn(participant(A::class.java, "receive"), "error")
                 .end()
                 .build()
-        assertFailsWith(InvalidASTException::class) { choreography.runVisitor(ChoreographyValidator()) }
+        assertFailsWith(InvalidASTException::class) { choreography.runVisitor(ASTValidator()) }
     }
 
     @Test
@@ -25,7 +25,7 @@ class ASTValidationTests {
                 .foundMessage(participant(A::class.java, "receive"), "valid")
                 .end()
                 .build()
-        choreography.runVisitor(ChoreographyValidator())
+        choreography.runVisitor(ASTValidator())
     }
 
     @Test
@@ -33,6 +33,6 @@ class ASTValidationTests {
         val choreography = Choreography.builder()
                 .foundMessage(participant(A::class.java, "receive"), "valid")
                 .build()
-        assertFailsWith(InvalidASTException::class) { choreography.runVisitor(ChoreographyValidator()) }
+        assertFailsWith(InvalidASTException::class) { choreography.runVisitor(ASTValidator()) }
     }
 }

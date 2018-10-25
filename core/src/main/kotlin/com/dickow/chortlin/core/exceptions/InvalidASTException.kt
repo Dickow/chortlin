@@ -1,3 +1,3 @@
-package com.dickow.chortlin.core.ast.exception
+package com.dickow.chortlin.core.exceptions
 
 class InvalidASTException(message: String?) : RuntimeException(message)

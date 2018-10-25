@@ -1,7 +1,7 @@
 package com.dickow.chortlin.core.instrumentation
 
+import com.dickow.chortlin.core.ast.ASTVisitor
 import com.dickow.chortlin.core.ast.types.*
-import com.dickow.chortlin.core.checker.ASTVisitor
 
 class ASTInstrumentation(private val instrumentation: Instrumentation) : ASTVisitor {
 

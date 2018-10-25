@@ -1,4 +1,4 @@
-package com.dickow.chortlin.core.checker
+package com.dickow.chortlin.core.ast
 
 import com.dickow.chortlin.core.ast.types.*
 

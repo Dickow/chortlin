@@ -1,10 +1,10 @@
 package com.dickow.chortlin.core.choreography
 
+import com.dickow.chortlin.core.ast.ASTVisitor
 import com.dickow.chortlin.core.ast.types.ASTNode
 import com.dickow.chortlin.core.ast.types.Marker
-import com.dickow.chortlin.core.checker.ASTVisitor
+import com.dickow.chortlin.core.ast.validation.ASTValidator
 import com.dickow.chortlin.core.checker.ChoreographyChecker
-import com.dickow.chortlin.core.validation.ChoreographyValidator
 
 data class Choreography(val start: ASTNode) {
     companion object Instance {
@@ -14,7 +14,7 @@ data class Choreography(val start: ASTNode) {
     }
 
     fun createChecker(): ChoreographyChecker {
-        runVisitor(ChoreographyValidator())
+        runVisitor(ASTValidator())
         return ChoreographyChecker(this)
     }
 

@@ -9,8 +9,7 @@ module chortlin.core {
 
     exports com.dickow.chortlin.core.choreography;
     exports com.dickow.chortlin.core.choreography.participant;
-    exports com.dickow.chortlin.core.ast.exception;
-    exports com.dickow.chortlin.core.api.exceptions;
+    exports com.dickow.chortlin.core.exceptions;
     exports com.dickow.chortlin.core.instrumentation;
     exports com.dickow.chortlin.core.instrumentation.strategy;
     exports com.dickow.chortlin.core.trace;

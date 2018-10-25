@@ -1,7 +1,7 @@
 package com.dickow.chortlin.core.choreography.participant
 
-import com.dickow.chortlin.core.api.exceptions.TypeApiExceptionFactory
-import com.dickow.chortlin.core.util.type.TypeUtil
+import com.dickow.chortlin.core.exceptions.factory.TypeApiExceptionFactory
+import com.dickow.chortlin.core.util.TypeUtil
 
 
 object ParticipantFactory {

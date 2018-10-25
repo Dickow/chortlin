@@ -1,5 +1,6 @@
-package com.dickow.chortlin.core.api.exceptions
+package com.dickow.chortlin.core.exceptions.factory
 
+import com.dickow.chortlin.core.exceptions.TypeAPIException
 import java.lang.reflect.Method
 
 object TypeApiExceptionFactory {
