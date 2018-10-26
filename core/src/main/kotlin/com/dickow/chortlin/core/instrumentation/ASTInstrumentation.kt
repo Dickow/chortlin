@@ -6,7 +6,7 @@ import com.dickow.chortlin.core.ast.types.*
 class ASTInstrumentation(private val instrumentation: Instrumentation) : ASTVisitor {
 
     override fun visitParallel(astNode: Parallel) {
-        astNode.accept(this)
+        astNode.parallelChoreography.runVisitor(this)
         astNode.next?.accept(this)
     }
 

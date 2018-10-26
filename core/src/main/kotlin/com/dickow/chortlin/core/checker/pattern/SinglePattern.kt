@@ -3,16 +3,22 @@ package com.dickow.chortlin.core.checker.pattern
 import com.dickow.chortlin.core.trace.Trace
 import com.dickow.chortlin.core.trace.TraceElement
 
-class SinglePattern<C>(private val element : TraceElement<C>, childNodes: MutableList<Pattern>) : Pattern(childNodes) {
+class SinglePattern(
+        private val element: TraceElement,
+        previous: Pattern?,
+        child: Pattern?) :
+        Pattern(previous, child) {
+
     override fun match(trace: Trace): Boolean {
         val traceList = trace.getNotConsumed()
         return if (traceList.isEmpty()) {
             false
         } else {
-            val element = traceList.first()
-            if (this.element == element) {
-                trace.consume(1)
-                return childNodes.all { child -> child.match(trace) }
+            val element = traceList.firstOrNull { t -> t.traceElement == this.element && causalityRespected(t) }
+            if (element != null) {
+                trace.consume(element)
+                super.setMatched(element)
+                return child?.match(trace) ?: true
             } else {
                 false
             }
@@ -20,10 +26,9 @@ class SinglePattern<C>(private val element : TraceElement<C>, childNodes: Mutabl
     }
 
     override fun equals(other: Any?): Boolean {
-        return if (other is SinglePattern<*>) {
+        return if (other is SinglePattern) {
             this.element == other.element
-                    && this.childNodes.size == other.childNodes.size
-                    && this.childNodes == other.childNodes
+                    && this.child == other.child
         } else {
             false
         }

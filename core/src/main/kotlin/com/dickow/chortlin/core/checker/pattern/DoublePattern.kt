@@ -3,21 +3,27 @@ package com.dickow.chortlin.core.checker.pattern
 import com.dickow.chortlin.core.trace.Trace
 import com.dickow.chortlin.core.trace.TraceElement
 
-class DoublePattern<C1, C2>(
-        private val element1: TraceElement<C1>,
-        private val element2: TraceElement<C2>,
-        childNodes: MutableList<Pattern>) : Pattern(childNodes)
+class DoublePattern(
+        private val element1: TraceElement,
+        private val element2: TraceElement,
+        previous: Pattern?,
+        child: Pattern?) : Pattern(previous, child)
 {
     override fun match(trace: Trace): Boolean {
         val traceList = trace.getNotConsumed()
         return if (traceList.isEmpty() || traceList.size < 2) {
             false
         } else {
-            val element1 = traceList[0]
-            val element2 = traceList[1]
-            if (this.element1 == element1 && this.element2 == element2) {
-                trace.consume(2)
-                return childNodes.all { child -> child.match(trace) }
+            val firstElement = traceList.firstOrNull { t -> t.traceElement == element1 && causalityRespected(t) }
+            if (firstElement != null) {
+                val secondElement = traceList.firstOrNull { t -> t.traceElement == element2 && t.index > firstElement.index }
+                if (secondElement != null) {
+                    trace.consume(firstElement, secondElement)
+                    super.setMatched(secondElement)
+                    return child?.match(trace) ?: true
+                } else {
+                    false
+                }
             } else {
                 false
             }
@@ -25,11 +31,10 @@ class DoublePattern<C1, C2>(
     }
 
     override fun equals(other: Any?): Boolean {
-        return if (other is DoublePattern<*, *>) {
+        return if (other is DoublePattern) {
             this.element1 == other.element1
                     && this.element2 == other.element2
-                    && this.childNodes.size == other.childNodes.size
-                    && this.childNodes == other.childNodes
+                    && this.child == other.child
         } else {
             false
         }

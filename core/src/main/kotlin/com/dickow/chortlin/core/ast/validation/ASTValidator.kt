@@ -9,7 +9,7 @@ class ASTValidator : ASTVisitor {
     private val scope: ValidationScope<ASTNode> = ValidationScope()
 
     override fun visitParallel(astNode: Parallel) {
-        astNode.accept(this)
+        astNode.parallelChoreography.runVisitor(this)
         nextNode(astNode)
     }
 

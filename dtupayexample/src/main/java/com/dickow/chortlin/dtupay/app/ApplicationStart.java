@@ -4,14 +4,11 @@ import com.dickow.chortlin.core.choreography.Choreography;
 import com.dickow.chortlin.core.instrumentation.ASTInstrumentation;
 import com.dickow.chortlin.core.instrumentation.ByteBuddyInstrumentation;
 import com.dickow.chortlin.core.instrumentation.strategy.InstrumentationStrategy;
-import com.dickow.chortlin.core.instrumentation.strategy.StorageStrategy;
-import com.dickow.chortlin.core.trace.TraceElement;
 import com.dickow.chortlin.dtupay.bank.BankController;
 import com.dickow.chortlin.dtupay.dtu.DTUBankIntegration;
 import com.dickow.chortlin.dtupay.dtu.DTUPayController;
 import com.dickow.chortlin.dtupay.merchant.Merchant;
 import com.dickow.chortlin.dtupay.shared.Console;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
@@ -39,11 +36,6 @@ public class ApplicationStart {
                 .build()
                 .runVisitor(new ASTInstrumentation(ByteBuddyInstrumentation.INSTANCE))
                 .createChecker();
-        InstrumentationStrategy.setStrategy(new StorageStrategy() {
-            @Override
-            public <C> void store(@NotNull TraceElement<C> trace) {
-                Console.println("Storage of trace %s", trace.toString());
-            }
-        });
+        InstrumentationStrategy.setStrategy(trace -> Console.println("Storage of trace %s", trace.toString()));
     }
 }

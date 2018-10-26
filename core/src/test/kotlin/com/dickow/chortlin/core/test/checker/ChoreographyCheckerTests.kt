@@ -1,20 +1,16 @@
 package com.dickow.chortlin.core.test.checker
 
 import com.dickow.chortlin.core.checker.pattern.DoublePattern
-import com.dickow.chortlin.core.checker.pattern.EmptyPattern
 import com.dickow.chortlin.core.checker.pattern.SinglePattern
 import com.dickow.chortlin.core.choreography.Choreography
 import com.dickow.chortlin.core.choreography.participant.ParticipantFactory.participant
+import com.dickow.chortlin.core.exceptions.InvalidASTException
 import com.dickow.chortlin.core.test.shared.A
 import com.dickow.chortlin.core.test.shared.B
 import com.dickow.chortlin.core.trace.Invocation
 import com.dickow.chortlin.core.trace.Return
 import com.dickow.chortlin.core.trace.Trace
-import java.util.*
-import kotlin.test.Test
-import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import kotlin.test.*
 
 class ChoreographyCheckerTests {
 
@@ -30,15 +26,14 @@ class ChoreographyCheckerTests {
 
         DoublePattern(Invocation(participant(A::class.java, "b")),
                 Invocation(participant(B::class.java, "b")),
-                mutableListOf())
+                null, null)
         val checker = choreography.createChecker()
-        val firstNode = SinglePattern(Invocation(participant(A::class.java, "receive")), mutableListOf())
+        val firstNode = SinglePattern(Invocation(participant(A::class.java, "receive")), null, null)
         val secondNode = DoublePattern(Invocation(participant(A::class.java, "b")),
                 Invocation(participant(B::class.java, "b")),
-                mutableListOf())
-        val thirdNode = EmptyPattern(mutableListOf())
-        firstNode.addChild(secondNode)
-        secondNode.addChild(thirdNode)
+                null, null)
+        firstNode.child = secondNode
+        secondNode.previous = firstNode
         assertEquals(firstNode, checker.pattern)
     }
 
@@ -49,9 +44,7 @@ class ChoreographyCheckerTests {
                 .end()
                 .build()
         val checker = choreography.createChecker()
-        val end = EmptyPattern(LinkedList())
-        val expected = SinglePattern(Invocation(participant(A::class.java, "receive")), LinkedList())
-        expected.addChild(end)
+        val expected = SinglePattern(Invocation(participant(A::class.java, "receive")), null, null)
         assertEquals(expected, checker.pattern)
     }
 
@@ -68,14 +61,10 @@ class ChoreographyCheckerTests {
     }
 
     @Test
-    fun `check that single end is always valid`() {
+    fun `ensure that single end is invalid as everything matches a single end`() {
         val choreography = Choreography.builder().end().build()
         val trace = Trace(emptyArray())
-        val checker = choreography.createChecker()
-        assert(checker.check(trace))
-
-        val nonEmptyTrace = Trace(arrayOf(Invocation(participant(A::class.java, "receive"))))
-        assertTrue(checker.check(nonEmptyTrace))
+        assertFailsWith(InvalidASTException::class) { choreography.createChecker().check(trace) }
     }
 
     @Test

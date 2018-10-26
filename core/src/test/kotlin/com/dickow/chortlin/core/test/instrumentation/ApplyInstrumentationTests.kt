@@ -17,10 +17,10 @@ import kotlin.test.assertTrue
 
 class ApplyInstrumentationTests {
     private val instrumentationVisitor = ASTInstrumentation(ByteBuddyInstrumentation)
-    val traces: MutableList<TraceElement<*>> = LinkedList()
+    val traces: MutableList<TraceElement> = LinkedList()
     private val storageStrategy: StorageStrategy = object : StorageStrategy {
 
-        override fun <C> store(trace: TraceElement<C>) {
+        override fun store(trace: TraceElement) {
             traces.add(trace)
         }
     }
