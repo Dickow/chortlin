@@ -1,6 +1,7 @@
 package com.dickow.chortlin.core.checker.pattern
 
 import com.dickow.chortlin.core.trace.Trace
+import com.dickow.chortlin.core.trace.TraceElementIndexed
 
 class MultiPattern(
         private val pattern: Pattern,
@@ -10,6 +11,10 @@ class MultiPattern(
 
     override fun match(trace: Trace): Boolean {
         return pattern.match(trace) && (child?.match(trace) ?: true)
+    }
+
+    override fun causalityRespected(t: TraceElementIndexed): Boolean {
+        return this.previous?.causalityRespected(t) ?: true
     }
 
     override fun equals(other: Any?): Boolean {

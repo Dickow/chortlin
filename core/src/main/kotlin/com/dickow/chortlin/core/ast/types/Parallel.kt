@@ -11,4 +11,18 @@ class Parallel(
     override fun accept(visitor: ASTVisitor) {
         visitor.visitParallel(this)
     }
+
+    override fun equals(other: Any?): Boolean {
+        return if (other is Parallel) {
+            this.parallelChoreography == other.parallelChoreography && super.equals(other)
+        } else {
+            false
+        }
+    }
+
+    override fun hashCode(): Int {
+        var result = super.hashCode()
+        result = 31 * result + parallelChoreography.hashCode()
+        return result
+    }
 }

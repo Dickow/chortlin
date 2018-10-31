@@ -13,24 +13,29 @@ import com.dickow.chortlin.core.trace.Invocation
 import com.dickow.chortlin.core.trace.Return
 import com.dickow.chortlin.core.trace.Trace
 
-class ChoreographyChecker(choreography: Choreography) : ASTVisitor {
-    val pattern : Pattern
-    private val scope = Scope<Pattern>()
-
-    init {
-        choreography.start.accept(this)
-        if (scope.hasOuterScope()) {
-            pattern = scope.getOuterScope()!!
-        } else {
-            throw InvalidASTException(
-                    "Unable to build a correct pattern matching tree, did you make an error in your choreography?")
-        }
+class ChoreographyChecker : ASTVisitor {
+    constructor(choreography: Choreography) {
+        this.choreography = choreography
+        this.scope = Scope()
+        pattern = init()
     }
+
+    constructor(choreography: Choreography, inheritedScope: Scope<Pattern>) {
+        this.choreography = choreography
+        this.scope = inheritedScope
+        pattern = init()
+    }
+
+    val pattern : Pattern
+    private val choreography: Choreography
+    private val scope: Scope<Pattern>
+    private var latestScope: Pattern? = null
 
     override fun visitParallel(astNode: Parallel) {
         val previous = scope.getCurrentScope()
-        val parallelChoreography = Choreography(astNode).createChecker().pattern
+        val parallelChoreography = ChoreographyChecker(astNode.parallelChoreography, scope).pattern
         val parallelPattern = MultiPattern(parallelChoreography, previous, null)
+        parallelChoreography.previous = parallelPattern // Assign the multi pattern as the previous for both
         handleCurrentNode(astNode, parallelPattern)
     }
 
@@ -64,7 +69,8 @@ class ChoreographyChecker(choreography: Choreography) : ASTVisitor {
 
     fun check(trace : Trace) : Boolean{
         trace.markAllNonConsumed()
-        return pattern.match(trace)
+        val wasMatched = pattern.match(trace)
+        return wasMatched && trace.getNotConsumed().isEmpty()
     }
 
     private fun handleCurrentNode(astNode: ASTNode, pattern: Pattern) {
@@ -73,6 +79,17 @@ class ChoreographyChecker(choreography: Choreography) : ASTVisitor {
         }
         scope.beginNewScope(pattern)
         astNode.next?.accept(this)
+        this.latestScope = scope.getCurrentScope()
         scope.exitScope()
+    }
+
+    private fun init(): Pattern {
+        choreography.start.accept(this)
+        return when {
+            latestScope != null -> latestScope!!
+            scope.hasOuterScope() -> scope.getOuterScope()!!
+            else -> throw InvalidASTException(
+                    "Unable to build a correct pattern matching tree, did you make an error in your choreography?")
+        }
     }
 }

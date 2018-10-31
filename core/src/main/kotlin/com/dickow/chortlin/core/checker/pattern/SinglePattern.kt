@@ -2,6 +2,7 @@ package com.dickow.chortlin.core.checker.pattern
 
 import com.dickow.chortlin.core.trace.Trace
 import com.dickow.chortlin.core.trace.TraceElement
+import com.dickow.chortlin.core.trace.TraceElementIndexed
 
 class SinglePattern(
         private val element: TraceElement,
@@ -14,7 +15,7 @@ class SinglePattern(
         return if (traceList.isEmpty()) {
             false
         } else {
-            val element = traceList.firstOrNull { t -> t.traceElement == this.element && causalityRespected(t) }
+            val element = getMatchingElement(traceList)
             if (element != null) {
                 trace.consume(element)
                 super.setMatched(element)
@@ -36,5 +37,11 @@ class SinglePattern(
 
     override fun hashCode(): Int {
         return element.hashCode()
+    }
+
+    private fun getMatchingElement(traceList: MutableList<TraceElementIndexed>): TraceElementIndexed? {
+        return traceList.firstOrNull { t ->
+            t.traceElement == this.element && (if (previous == null) true else previous?.causalityRespected(t) ?: false)
+        }
     }
 }

@@ -4,6 +4,7 @@ import com.dickow.chortlin.core.ast.Label
 import com.dickow.chortlin.core.ast.types.End
 import com.dickow.chortlin.core.ast.types.FoundMessage
 import com.dickow.chortlin.core.ast.types.Interaction
+import com.dickow.chortlin.core.ast.types.Parallel
 import com.dickow.chortlin.core.choreography.Choreography
 import com.dickow.chortlin.core.choreography.participant.ParticipantFactory.participant
 import com.dickow.chortlin.core.test.shared.A
@@ -55,6 +56,34 @@ class ASTBuilderTests {
         val found = FoundMessage(
                 participant(A::class.java, "receive"),
                 Label("receive"), null, null)
+        val expected = Choreography(found)
+        assertEquals(expected, choreography)
+    }
+
+    @Test
+    fun `construct ast with parallel node`() {
+        val choreography = Choreography.builder()
+                .foundMessage(participant(A::class.java, "receive"), "receive")
+                .parallel { c ->
+                    c
+                            .foundMessage(participant(A::class.java, "b"), "receive in parallel")
+                            .end()
+                            .build()
+                }
+                .foundMessage(participant(B::class.java, "b"), "b receiver")
+                .end()
+                .build()
+        val found = FoundMessage(participant(A::class.java, "receive"), Label("receive"), null, null)
+        val parallelFound = FoundMessage(participant(A::class.java, "b"), Label("receive in parallel"), found, null)
+        parallelFound.next = End(parallelFound, null)
+
+        val parallel = Parallel(Choreography(parallelFound), found, null)
+        val finalFound = FoundMessage(participant(B::class.java, "b"), Label("b receiver"), parallel, null)
+        val end = End(finalFound, null)
+        found.next = parallel
+        parallel.next = finalFound
+        finalFound.next = end
+
         val expected = Choreography(found)
         assertEquals(expected, choreography)
     }
