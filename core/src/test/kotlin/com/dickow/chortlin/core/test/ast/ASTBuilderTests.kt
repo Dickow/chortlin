@@ -9,6 +9,8 @@ import com.dickow.chortlin.core.choreography.Choreography
 import com.dickow.chortlin.core.choreography.participant.ParticipantFactory.participant
 import com.dickow.chortlin.core.test.shared.A
 import com.dickow.chortlin.core.test.shared.B
+import com.dickow.chortlin.core.test.shared.ParallelClassA
+import com.dickow.chortlin.core.test.shared.ParallelClassB
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
@@ -85,6 +87,27 @@ class ASTBuilderTests {
         finalFound.next = end
 
         val expected = Choreography(found)
+        assertEquals(expected, choreography)
+    }
+
+    @Test
+    fun `create fully parallel choreography`() {
+        val choreography = Choreography.builder()
+                .parallel { c -> c.foundMessage(participant(ParallelClassA::class.java, "method1"), "a receive").end().build() }
+                .foundMessage(participant(ParallelClassB::class.java, "method1"), "b receive")
+                .end()
+                .build()
+
+        val parallelFound = FoundMessage(participant(ParallelClassA::class.java, "method1"), Label("a receive"), null, null)
+        val parallelEnd = End(parallelFound, null)
+        parallelFound.next = parallelEnd
+        val parallel = Parallel(Choreography(parallelFound), null, null)
+        val found = FoundMessage(participant(ParallelClassB::class.java, "method1"), Label("b receive"), parallel, null)
+        val end = End(found, null)
+        found.next = end
+        parallel.next = found
+
+        val expected = Choreography(parallel)
         assertEquals(expected, choreography)
     }
 }
