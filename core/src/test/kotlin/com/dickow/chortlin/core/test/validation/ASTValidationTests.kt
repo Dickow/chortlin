@@ -4,10 +4,7 @@ import com.dickow.chortlin.core.ast.validation.ASTValidator
 import com.dickow.chortlin.core.choreography.Choreography
 import com.dickow.chortlin.core.choreography.participant.ParticipantFactory.participant
 import com.dickow.chortlin.core.exceptions.InvalidASTException
-import com.dickow.chortlin.core.test.shared.A
-import com.dickow.chortlin.core.test.shared.ParallelClassA
-import com.dickow.chortlin.core.test.shared.ParallelClassB
-import com.dickow.chortlin.core.test.shared.ParallelClassC
+import com.dickow.chortlin.core.test.shared.*
 import org.junit.jupiter.api.Test
 import kotlin.test.assertFailsWith
 
@@ -30,6 +27,7 @@ class ASTValidationTests {
     }
 
     @Test
+    @Suppress("CAST_NEVER_SUCCEEDS")
     fun `check that validator fails for paths without end`() {
         val choreography = Choreography.builder()
                 .foundMessage(participant(A::class.java, "receive"), "valid")
@@ -66,5 +64,14 @@ class ASTValidationTests {
                         "C:1 -> C:2")
                 .end()
         choreography.runVisitor(ASTValidator())
+    }
+
+    @Test
+    fun `check that error is thrown for choices with similar start events`() {
+        val choreography = Choreography.builder()
+                .choice({ c -> c.foundMessage(participant(ChoiceClassA::class.java, "method1"), "receive on A").end() },
+                        { c -> c.foundMessage(participant(ChoiceClassA::class.java, "method1"), "receive on A").end() })
+
+        assertFailsWith(InvalidASTException::class) { choreography.runVisitor(ASTValidator()) }
     }
 }

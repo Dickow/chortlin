@@ -3,8 +3,8 @@ package com.dickow.chortlin.core.ast.validation
 import com.dickow.chortlin.core.shared.Scope
 import java.util.function.Predicate
 
-class ValidationScope<ASTNode> : Scope<ASTNode>() {
-    fun hasOpen(predicate: Predicate<ASTNode>): Boolean {
+class ValidationScope<T> : Scope<T>() {
+    fun hasOpen(predicate: Predicate<T>): Boolean {
         return scopes.any { any -> predicate.test(any) }
     }
 }

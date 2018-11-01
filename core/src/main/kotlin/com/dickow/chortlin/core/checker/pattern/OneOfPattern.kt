@@ -17,7 +17,9 @@ class OneOfPattern(
     override fun match(trace: Trace): Boolean {
         val chosenPattern = possiblePatterns.firstOrNull { pattern ->
             pattern.getExpectedTraces().any { t ->
-                matcher.matchOne(trace.getNotConsumed(), t, pattern::causalityRespected).matched
+                matcher.matchOne(trace.getNotConsumed(), t) { tr ->
+                    previous?.causalityRespected(tr) ?: true
+                }.matched
             }
         }
         return chosenPattern?.match(trace) ?: false

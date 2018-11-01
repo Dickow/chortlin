@@ -86,8 +86,8 @@ class ASTValidator : ASTVisitor {
 
     private fun ambiguousTraceElement(patterns: List<Pattern>): Boolean {
         val patternTraces = patterns.map { p -> p.getExpectedTraces() }
-        return patternTraces.all { ptList ->
-            !patternTraces.any { innerPT -> innerPT !== ptList && innerPT.any { t -> ptList.contains(t) } }
-        }
+        val traceList = patternTraces.flatten()
+        val traceSet = traceList.toSet()
+        return traceList.size != traceSet.size
     }
 }

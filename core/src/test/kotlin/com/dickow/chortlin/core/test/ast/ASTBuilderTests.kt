@@ -122,12 +122,12 @@ class ASTBuilderTests {
                 .foundMessage(participant(A::class.java, "receive"), "A receives")
                 .parallel { c ->
                     c.choice(
-                            { c ->
-                                c.foundMessage(participant(ChoiceClassA::class.java, "method1"), "A finds message")
+                            { b ->
+                                b.foundMessage(participant(ChoiceClassA::class.java, "method1"), "A finds message")
                                         .end()
                             },
-                            { c ->
-                                c.foundMessage(participant(ChoiceClassB::class.java, "method1"), "B finds message")
+                            { b ->
+                                b.foundMessage(participant(ChoiceClassB::class.java, "method1"), "B finds message")
                                         .end()
                             })
                 }
@@ -146,7 +146,6 @@ class ASTBuilderTests {
         val end = End(interaction)
         val choice = Choice(listOf(Choreography(foundChoiceA), Choreography(foundChoiceB)), null)
         val parallelNode = Parallel(Choreography(choice), foundA, null)
-
 
         foundChoiceA.next = choiceAEnd
         foundChoiceB.next = choiceBEnd

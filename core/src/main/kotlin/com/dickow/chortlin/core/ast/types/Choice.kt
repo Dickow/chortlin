@@ -22,4 +22,8 @@ class Choice(val possiblePaths: List<Choreography>, previous: ASTNode?) : ASTNod
         result = 31 * result + possiblePaths.hashCode()
         return result
     }
+
+    override fun toString(): String {
+        return "Choice(${possiblePaths.joinToString(", ") { c -> c.start.toString() }})"
+    }
 }
