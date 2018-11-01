@@ -10,7 +10,7 @@ abstract class ASTNode(val previous: ASTNode?, var next: ASTNode?) : Choreograph
 
     abstract fun accept(visitor: ASTVisitor)
 
-    override fun choice(possiblePaths: List<(ChoreographyBuilder) -> Choreography>): Choreography {
+    override fun choice(vararg possiblePaths: (ChoreographyBuilder) -> Choreography): Choreography {
         val paths = possiblePaths.map { p -> p(Choreography.builder()) }
         val next = Choice(paths, this)
         this.next = next
@@ -47,14 +47,10 @@ abstract class ASTNode(val previous: ASTNode?, var next: ASTNode?) : Choreograph
         return next
     }
 
-    override fun end(): ChoreographyBuilder {
+    override fun end(): Choreography {
         val next = End(this, null)
         this.next = next
-        return next
-    }
-
-    override fun build(): Choreography {
-        return Choreography(root())
+        return build()
     }
 
     override fun toString(): String {
@@ -79,6 +75,10 @@ abstract class ASTNode(val previous: ASTNode?, var next: ASTNode?) : Choreograph
         var result = previous?.hashCode() ?: 0
         result = 31 * result + (next?.hashCode() ?: 0)
         return result
+    }
+
+    private fun build(): Choreography {
+        return Choreography(root())
     }
 
     private fun root(): ASTNode {

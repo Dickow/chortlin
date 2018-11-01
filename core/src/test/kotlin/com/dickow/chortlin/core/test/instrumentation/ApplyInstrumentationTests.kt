@@ -34,7 +34,6 @@ class ApplyInstrumentationTests {
                 .interaction(participant(Initial::class.java, "delegate"),
                         participant(Second::class.java, "process"), "interaction")
                 .end()
-                .build()
                 .runVisitor(instrumentationVisitor)
                 .createChecker()
         Initial().begin()
@@ -52,7 +51,6 @@ class ApplyInstrumentationTests {
                 .interaction(participant(Initial::class.java, "begin"),
                         participant(Second::class.java, "process"), "interaction")
                 .end()
-                .build()
                 .runVisitor(instrumentationVisitor)
                 .createChecker()
         Initial().begin()
@@ -72,7 +70,6 @@ class ApplyInstrumentationTests {
                 .interactionReturn(participant(FirstClass::class.java, "first"),
                         participant(SecondClass::class.java, "second"), "return from initial call")
                 .end()
-                .build()
                 .runVisitor(instrumentationVisitor)
                 .createChecker()
 
@@ -93,7 +90,6 @@ class ApplyInstrumentationTests {
                 .interactionReturn(participant(FirstClass::class.java, "first"),
                         participant(SecondClass::class.java, "second"), "return from initial call")
                 .end()
-                .build()
                 .runVisitor(instrumentationVisitor)
                 .createChecker()
 

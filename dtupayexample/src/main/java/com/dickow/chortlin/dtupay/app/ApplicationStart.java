@@ -33,7 +33,6 @@ public class ApplicationStart {
                 .interaction(participant(DTUBankIntegration.class, "transferMoney"),
                         participant(BankController.class, "transfer"), "bank transfer")
                 .end()
-                .build()
                 .runVisitor(new ASTInstrumentation(ByteBuddyInstrumentation.INSTANCE))
                 .createChecker();
         InstrumentationStrategy.setStrategy(trace -> Console.println("Storage of trace %s", trace.toString()));

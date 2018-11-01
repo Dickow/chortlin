@@ -22,7 +22,6 @@ class ChoreographyCheckerTests {
                         participant(B::class.java, "b"),
                         "delegate processing")
                 .end()
-                .build()
 
         DoublePattern(Invocation(participant(A::class.java, "b")),
                 Invocation(participant(B::class.java, "b")),
@@ -42,7 +41,6 @@ class ChoreographyCheckerTests {
         val choreography = Choreography.builder()
                 .foundMessage(participant(A::class.java, "receive"), "receive")
                 .end()
-                .build()
         val checker = choreography.createChecker()
         val expected = SinglePattern(Invocation(participant(A::class.java, "receive")), null, null)
         assertEquals(expected, checker.pattern)
@@ -53,7 +51,6 @@ class ChoreographyCheckerTests {
         val choreography = Choreography.builder()
                 .foundMessage(participant(A::class.java, "receive"), "receive")
                 .end()
-                .build()
         val trace = Trace(arrayOf(Invocation(participant(A::class.java, "receive"))))
         val checker = choreography.createChecker()
         assertTrue(checker.check(trace))
@@ -62,9 +59,7 @@ class ChoreographyCheckerTests {
 
     @Test
     fun `ensure that single end is invalid as everything matches a single end`() {
-        val choreography = Choreography.builder().end().build()
-        val trace = Trace(emptyArray())
-        assertFailsWith(InvalidASTException::class) { choreography.createChecker().check(trace) }
+        assertFailsWith(InvalidASTException::class) { Choreography.builder().end() }
     }
 
     @Test
@@ -75,7 +70,6 @@ class ChoreographyCheckerTests {
                         participant(B::class.java, "b"),
                         "delegate processing")
                 .end()
-                .build()
         val trace = Trace(arrayOf(
                 Invocation(participant(A::class.java, "receive")),
                 Invocation(participant(A::class.java, "b")),
@@ -94,7 +88,6 @@ class ChoreographyCheckerTests {
                         participant(B::class.java, "b"),
                         "delegate processing")
                 .end()
-                .build()
         val trace = Trace(arrayOf(
                 Invocation(participant(A::class.java, "b")),
                 Invocation(participant(A::class.java, "receive")),
@@ -116,7 +109,6 @@ class ChoreographyCheckerTests {
                         participant(B::class.java, "b"),
                         "delegate processing return")
                 .end()
-                .build()
         val checker = choreography.createChecker()
         val trace = Trace(arrayOf(
                 Invocation(participant(A::class.java, "receive")),
@@ -132,7 +124,6 @@ class ChoreographyCheckerTests {
                 .foundMessage(participant(A::class.java, "receive"), "receive")
                 .foundMessageReturn(participant(A::class.java, "receive"), "return")
                 .end()
-                .build()
         val checker = choreography.createChecker()
         val trace = Trace(arrayOf(
                 Invocation(participant(A::class.java, "receive")),
@@ -146,7 +137,6 @@ class ChoreographyCheckerTests {
                 .foundMessage(participant(A::class.java, "receive"), "receive")
                 .foundMessageReturn(participant(A::class.java, "receive"), "return")
                 .end()
-                .build()
         val checker = choreography.createChecker()
         val trace = Trace(arrayOf(Invocation(participant(A::class.java, "receive"))))
         assertFalse(checker.check(trace))
@@ -158,7 +148,6 @@ class ChoreographyCheckerTests {
                 .foundMessage(participant(A::class.java, "receive"), "receive")
                 .foundMessageReturn(participant(A::class.java, "receive"), "return")
                 .end()
-                .build()
         val checker = choreography.createChecker()
         val trace = Trace(arrayOf(
                 Invocation(participant(A::class.java, "receive")),

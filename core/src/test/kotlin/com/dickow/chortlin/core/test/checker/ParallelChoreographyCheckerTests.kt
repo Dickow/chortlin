@@ -25,14 +25,12 @@ class ParallelChoreographyCheckerTests {
                                     participant(ParallelClassB::class.java, "method2"),
                                     "B:1->2")
                             .end()
-                            .build()
                 }
                 .interaction(
                         participant(ParallelClassC::class.java, "method1"),
                         participant(ParallelClassC::class.java, "method2"),
                         "C:1->2")
                 .end()
-                .build()
                 .createChecker()
 
         val traceElements = arrayOf(
@@ -57,14 +55,12 @@ class ParallelChoreographyCheckerTests {
                                     participant(ParallelClassB::class.java, "method2"),
                                     "B:1->2")
                             .end()
-                            .build()
                 }
                 .interaction(
                         participant(ParallelClassC::class.java, "method1"),
                         participant(ParallelClassC::class.java, "method2"),
                         "C:1->2")
                 .end()
-                .build()
                 .createChecker()
 
         val traceElements = arrayOf(

@@ -14,10 +14,6 @@ class Marker : ASTNode(null, null) {
                 "You probably asked for a builder and forgot to configure the choreography.")
     }
 
-    override fun build(): Choreography {
-        throw InvalidASTException("You must configure a valid choreography before calling build")
-    }
-
     override fun parallel(path: (ChoreographyBuilder) -> Choreography): ChoreographyBuilder {
         return Parallel(path(Choreography.builder()), null, null)
     }
@@ -38,7 +34,7 @@ class Marker : ASTNode(null, null) {
         return Interaction(sender, receiver, Label(label), null, null)
     }
 
-    override fun end(): ChoreographyBuilder {
-        return End(null, null)
+    override fun end(): Choreography {
+        throw InvalidASTException("You must configure a valid choreography before ending. Empty choreographies do nothing!")
     }
 }

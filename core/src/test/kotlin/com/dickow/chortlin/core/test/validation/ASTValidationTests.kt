@@ -18,7 +18,6 @@ class ASTValidationTests {
         val choreography = Choreography.builder()
                 .foundMessageReturn(participant(A::class.java, "receive"), "error")
                 .end()
-                .build()
         assertFailsWith(InvalidASTException::class) { choreography.runVisitor(ASTValidator()) }
     }
 
@@ -27,7 +26,6 @@ class ASTValidationTests {
         val choreography = Choreography.builder()
                 .foundMessage(participant(A::class.java, "receive"), "valid")
                 .end()
-                .build()
         choreography.runVisitor(ASTValidator())
     }
 
@@ -35,8 +33,7 @@ class ASTValidationTests {
     fun `check that validator fails for paths without end`() {
         val choreography = Choreography.builder()
                 .foundMessage(participant(A::class.java, "receive"), "valid")
-                .build()
-        assertFailsWith(InvalidASTException::class) { choreography.runVisitor(ASTValidator()) }
+        assertFailsWith(ClassCastException::class) { choreography as Choreography }
     }
 
     @Test
@@ -45,12 +42,10 @@ class ASTValidationTests {
                 .foundMessage(participant(ParallelClassA::class.java, "method1"), "A:1")
                 .parallel { c ->
                     c
-                            .foundMessage(participant(ParallelClassB::class.java, "method1"), "B:1")
-                            .build()
+                            .foundMessage(participant(ParallelClassB::class.java, "method1"), "B:1").end()
                 }
                 .end()
-                .build()
-        assertFailsWith(InvalidASTException::class) { choreography.runVisitor(ASTValidator()) }
+        choreography.runVisitor(ASTValidator())
     }
 
     @Test
@@ -64,14 +59,12 @@ class ASTValidationTests {
                                     participant(ParallelClassB::class.java, "method2"),
                                     "B:1 -> B:2")
                             .end()
-                            .build()
                 }
                 .interaction(
                         participant(ParallelClassC::class.java, "method1"),
                         participant(ParallelClassC::class.java, "method2"),
                         "C:1 -> C:2")
                 .end()
-                .build()
         choreography.runVisitor(ASTValidator())
     }
 }
