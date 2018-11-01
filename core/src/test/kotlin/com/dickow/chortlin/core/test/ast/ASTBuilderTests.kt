@@ -27,7 +27,7 @@ class ASTBuilderTests {
                 participant(B::class.java, "b"),
                 Label("delegate processing"),
                 found, null)
-        val end = End(interaction, null)
+        val end = End(interaction)
         found.next = interaction
         interaction.next = end
 
@@ -42,7 +42,7 @@ class ASTBuilderTests {
         val found = FoundMessage(
                 participant(A::class.java, "receive"),
                 Label("receive"), null, null)
-        val end = End(found, null)
+        val end = End(found)
         found.next = end
         val expected = Choreography(found)
         assertEquals(expected, choreography)
@@ -61,11 +61,11 @@ class ASTBuilderTests {
                 .end()
         val found = FoundMessage(participant(A::class.java, "receive"), Label("receive"), null, null)
         val parallelFound = FoundMessage(participant(A::class.java, "b"), Label("receive in parallel"), found, null)
-        parallelFound.next = End(parallelFound, null)
+        parallelFound.next = End(parallelFound)
 
         val parallel = Parallel(Choreography(parallelFound), found, null)
         val finalFound = FoundMessage(participant(B::class.java, "b"), Label("b receiver"), parallel, null)
-        val end = End(finalFound, null)
+        val end = End(finalFound)
         found.next = parallel
         parallel.next = finalFound
         finalFound.next = end
@@ -82,11 +82,11 @@ class ASTBuilderTests {
                 .end()
 
         val parallelFound = FoundMessage(participant(ParallelClassA::class.java, "method1"), Label("a receive"), null, null)
-        val parallelEnd = End(parallelFound, null)
+        val parallelEnd = End(parallelFound)
         parallelFound.next = parallelEnd
         val parallel = Parallel(Choreography(parallelFound), null, null)
         val found = FoundMessage(participant(ParallelClassB::class.java, "method1"), Label("b receive"), parallel, null)
-        val end = End(found, null)
+        val end = End(found)
         found.next = end
         parallel.next = found
 
@@ -103,9 +103,9 @@ class ASTBuilderTests {
 
         val foundForA = FoundMessage(participant(ChoiceClassA::class.java, "method1"), Label("receive on A"), null, null)
         val foundForB = FoundMessage(participant(ChoiceClassB::class.java, "method1"), Label("call B"), null, null)
-        val endForFoundB = End(foundForB, null)
+        val endForFoundB = End(foundForB)
         val foundForC = FoundMessage(participant(ChoiceClassC::class.java, "method1"), Label("call C"), null, null)
-        val endForFoundC = End(foundForC, null)
+        val endForFoundC = End(foundForC)
         val choice = Choice(listOf(Choreography(foundForB), Choreography(foundForC)), foundForA)
 
         foundForA.next = choice
@@ -113,6 +113,48 @@ class ASTBuilderTests {
         foundForC.next = endForFoundC
         val expected = Choreography(foundForA)
 
+        assertEquals(expected, choreography)
+    }
+
+    @Test
+    fun `create parallel and choice choreography`() {
+        val choreography = Choreography.builder()
+                .foundMessage(participant(A::class.java, "receive"), "A receives")
+                .parallel { c ->
+                    c.choice(
+                            { c ->
+                                c.foundMessage(participant(ChoiceClassA::class.java, "method1"), "A finds message")
+                                        .end()
+                            },
+                            { c ->
+                                c.foundMessage(participant(ChoiceClassB::class.java, "method1"), "B finds message")
+                                        .end()
+                            })
+                }
+                .interaction(
+                        participant(ParallelClassC::class.java, "method1"),
+                        participant(ParallelClassC::class.java, "method2"), "C:1 -> C:2")
+                .end()
+
+        val foundA = FoundMessage(participant(A::class.java, "receive"), Label("A receives"), null, null)
+        val foundChoiceA = FoundMessage(participant(ChoiceClassA::class.java, "method1"), Label("A finds message"), null, null)
+        val choiceAEnd = End(foundChoiceA)
+        val foundChoiceB = FoundMessage(participant(ChoiceClassB::class.java, "method1"), Label("B finds message"), null, null)
+        val choiceBEnd = End(foundChoiceB)
+        val interaction = Interaction(participant(ParallelClassC::class.java, "method1"),
+                participant(ParallelClassC::class.java, "method2"), Label("C:1 -> C:2"), null, null)
+        val end = End(interaction)
+        val choice = Choice(listOf(Choreography(foundChoiceA), Choreography(foundChoiceB)), null)
+        val parallelNode = Parallel(Choreography(choice), foundA, null)
+
+
+        foundChoiceA.next = choiceAEnd
+        foundChoiceB.next = choiceBEnd
+        interaction.next = end
+        parallelNode.next = interaction
+        foundA.next = parallelNode
+
+        val expected = Choreography(foundA)
         assertEquals(expected, choreography)
     }
 }

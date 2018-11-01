@@ -14,6 +14,10 @@ class Marker : ASTNode(null, null) {
                 "You probably asked for a builder and forgot to configure the choreography.")
     }
 
+    override fun choice(vararg possiblePaths: (ChoreographyBuilder) -> Choreography): Choreography {
+        return Choreography(Choice(possiblePaths.map { it(Choreography.builder()) }, null))
+    }
+
     override fun parallel(path: (ChoreographyBuilder) -> Choreography): ChoreographyBuilder {
         return Parallel(path(Choreography.builder()), null, null)
     }

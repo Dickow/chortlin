@@ -48,7 +48,7 @@ abstract class ASTNode(val previous: ASTNode?, var next: ASTNode?) : Choreograph
     }
 
     override fun end(): Choreography {
-        val next = End(this, null)
+        val next = End(this)
         this.next = next
         return build()
     }
