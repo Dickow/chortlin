@@ -1,8 +1,8 @@
 package com.dickow.chortlin.core.checker.pattern
 
+import com.dickow.chortlin.core.checker.match.Matcher
 import com.dickow.chortlin.core.trace.Trace
 import com.dickow.chortlin.core.trace.TraceElement
-import com.dickow.chortlin.core.trace.TraceElementIndexed
 
 class SinglePattern(
         private val element: TraceElement,
@@ -10,19 +10,22 @@ class SinglePattern(
         child: Pattern?) :
         Pattern(previous, child) {
 
+    private val matcher = Matcher()
+
+    override fun getExpectedTraces(): List<TraceElement> {
+        return listOf(element)
+    }
+
     override fun match(trace: Trace): Boolean {
-        val traceList = trace.getNotConsumed()
-        return if (traceList.isEmpty()) {
-            false
-        } else {
-            val element = getMatchingElement(traceList)
-            if (element != null) {
-                trace.consume(element)
-                super.setMatched(element)
+        val matchResult =
+                matcher.matchOne(trace.getNotConsumed(), element) { t -> previous?.causalityRespected(t) ?: true }
+        return when (matchResult.matched) {
+            true -> {
+                trace.consume(matchResult.matchedElements[0])
+                super.setMatched(matchResult.matchedElements[0])
                 return child?.match(trace) ?: true
-            } else {
-                false
             }
+            false -> false
         }
     }
 
@@ -37,11 +40,5 @@ class SinglePattern(
 
     override fun hashCode(): Int {
         return element.hashCode()
-    }
-
-    private fun getMatchingElement(traceList: MutableList<TraceElementIndexed>): TraceElementIndexed? {
-        return traceList.firstOrNull { t ->
-            t.traceElement == this.element && (if (previous == null) true else previous?.causalityRespected(t) ?: false)
-        }
     }
 }

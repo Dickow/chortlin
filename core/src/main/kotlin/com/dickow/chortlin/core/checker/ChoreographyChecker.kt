@@ -2,10 +2,7 @@ package com.dickow.chortlin.core.checker
 
 import com.dickow.chortlin.core.ast.ASTVisitor
 import com.dickow.chortlin.core.ast.types.*
-import com.dickow.chortlin.core.checker.pattern.DoublePattern
-import com.dickow.chortlin.core.checker.pattern.MultiPattern
-import com.dickow.chortlin.core.checker.pattern.Pattern
-import com.dickow.chortlin.core.checker.pattern.SinglePattern
+import com.dickow.chortlin.core.checker.pattern.*
 import com.dickow.chortlin.core.choreography.Choreography
 import com.dickow.chortlin.core.exceptions.InvalidASTException
 import com.dickow.chortlin.core.shared.Scope
@@ -30,6 +27,13 @@ class ChoreographyChecker : ASTVisitor {
     private val choreography: Choreography
     private val scope: Scope<Pattern>
     private var latestScope: Pattern? = null
+
+    override fun visitChoice(astNode: Choice) {
+        val previous = scope.getCurrentScope()
+        val patterns = astNode.possiblePaths.map { ChoreographyChecker(it, scope).pattern }
+        val choicePattern = OneOfPattern(patterns, previous, null)
+        handleCurrentNode(astNode, choicePattern)
+    }
 
     override fun visitParallel(astNode: Parallel) {
         val previous = scope.getCurrentScope()

@@ -2,11 +2,22 @@ package com.dickow.chortlin.core.ast.validation
 
 import com.dickow.chortlin.core.ast.ASTVisitor
 import com.dickow.chortlin.core.ast.types.*
+import com.dickow.chortlin.core.checker.ChoreographyChecker
+import com.dickow.chortlin.core.checker.pattern.Pattern
 import com.dickow.chortlin.core.exceptions.InvalidASTException
 import java.util.function.Predicate
 
 class ASTValidator : ASTVisitor {
     private val scope: ValidationScope<ASTNode> = ValidationScope()
+
+    override fun visitChoice(astNode: Choice) {
+        astNode.possiblePaths.forEach { node -> node.runVisitor(this) }
+        val patterns = astNode.possiblePaths.map { node -> ChoreographyChecker(node).pattern }
+        if (ambiguousTraceElement(patterns)) {
+            throw InvalidASTException("Encountered an ambiguous configuration in you AST. " +
+                    "Unable to determine which path to take at choice node: $astNode")
+        }
+    }
 
     override fun visitParallel(astNode: Parallel) {
         astNode.parallelChoreography.runVisitor(this)
@@ -72,4 +83,11 @@ class ASTValidator : ASTVisitor {
 
     private fun <C> hasMatchingInvocation(astNode: FoundMessageReturn<C>) =
             scope.hasOpen(Predicate { node -> node is FoundMessage<*> && node.receiver == astNode.receiver })
+
+    private fun ambiguousTraceElement(patterns: List<Pattern>): Boolean {
+        val patternTraces = patterns.map { p -> p.getExpectedTraces() }
+        return patternTraces.all { ptList ->
+            !patternTraces.any { innerPT -> innerPT !== ptList && innerPT.any { t -> ptList.contains(t) } }
+        }
+    }
 }

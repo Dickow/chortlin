@@ -18,8 +18,8 @@ class Marker : ASTNode(null, null) {
         throw InvalidASTException("You must configure a valid choreography before calling build")
     }
 
-    override fun parallel(choreography: (ChoreographyBuilder) -> Choreography): ChoreographyBuilder {
-        return Parallel(choreography(Choreography.builder()), null, null)
+    override fun parallel(path: (ChoreographyBuilder) -> Choreography): ChoreographyBuilder {
+        return Parallel(path(Choreography.builder()), null, null)
     }
 
     override fun <C> foundMessageReturn(receiver: Participant<C>, label: String): ChoreographyBuilder {

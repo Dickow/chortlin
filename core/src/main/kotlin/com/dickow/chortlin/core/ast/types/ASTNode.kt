@@ -10,8 +10,15 @@ abstract class ASTNode(val previous: ASTNode?, var next: ASTNode?) : Choreograph
 
     abstract fun accept(visitor: ASTVisitor)
 
-    override fun parallel(choreography: (ChoreographyBuilder) -> Choreography): ChoreographyBuilder {
-        val next = Parallel(choreography(Choreography.builder()), this, null)
+    override fun choice(possiblePaths: List<(ChoreographyBuilder) -> Choreography>): Choreography {
+        val paths = possiblePaths.map { p -> p(Choreography.builder()) }
+        val next = Choice(paths, this)
+        this.next = next
+        return build()
+    }
+
+    override fun parallel(path: (ChoreographyBuilder) -> Choreography): ChoreographyBuilder {
+        val next = Parallel(path(Choreography.builder()), this, null)
         this.next = next
         return next
     }
@@ -58,7 +65,11 @@ abstract class ASTNode(val previous: ASTNode?, var next: ASTNode?) : Choreograph
 
     override fun equals(other: Any?): Boolean {
         return if (other is ASTNode) {
-            if (this.next == null) other.next == null else this.next?.equals(other.next) ?: false
+            if (this.next == null) {
+                other.next == null
+            } else {
+                this.next?.equals(other.next) ?: false
+            }
         } else {
             false
         }

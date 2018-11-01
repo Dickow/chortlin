@@ -1,8 +1,8 @@
 package com.dickow.chortlin.core.checker.pattern
 
+import com.dickow.chortlin.core.checker.match.Matcher
 import com.dickow.chortlin.core.trace.Trace
 import com.dickow.chortlin.core.trace.TraceElement
-import com.dickow.chortlin.core.trace.TraceElementIndexed
 
 class DoublePattern(
         private val element1: TraceElement,
@@ -10,24 +10,22 @@ class DoublePattern(
         previous: Pattern?,
         child: Pattern?) : Pattern(previous, child)
 {
+    private val matcher = Matcher()
+
+    override fun getExpectedTraces(): List<TraceElement> {
+        return listOf(element1, element2)
+    }
+
     override fun match(trace: Trace): Boolean {
-        val traceList = trace.getNotConsumed()
-        return if (traceList.isEmpty() || traceList.size < 2) {
-            false
-        } else {
-            val firstElement = getFirstMatchingElement(traceList)
-            if (firstElement != null) {
-                val secondElement = getSecondMatchingElement(traceList, firstElement)
-                if (secondElement != null) {
-                    trace.consume(firstElement, secondElement)
-                    super.setMatched(secondElement)
-                    return child?.match(trace) ?: true
-                } else {
-                    false
-                }
-            } else {
-                false
+        val matchResult = matcher.matchTwo(trace.getNotConsumed(), element1, element2)
+        { t -> previous?.causalityRespected(t) ?: true }
+        return when (matchResult.matched) {
+            true -> {
+                trace.consume(matchResult.matchedElements[0], matchResult.matchedElements[1])
+                super.setMatched(matchResult.matchedElements[1])
+                return child?.match(trace) ?: true
             }
+            false -> false
         }
     }
 
@@ -45,18 +43,5 @@ class DoublePattern(
         var result = element1.hashCode()
         result = 31 * result + element2.hashCode()
         return result
-    }
-
-    private fun getSecondMatchingElement(
-            traceList: MutableList<TraceElementIndexed>, firstElement: TraceElementIndexed): TraceElementIndexed? {
-        return traceList.firstOrNull { t ->
-            t.traceElement == element2 && t.index > firstElement.index
-        }
-    }
-
-    private fun getFirstMatchingElement(traceList: MutableList<TraceElementIndexed>): TraceElementIndexed? {
-        return traceList.firstOrNull { t ->
-            t.traceElement == element1 && (if (previous == null) true else previous?.causalityRespected(t) ?: false)
-        }
     }
 }

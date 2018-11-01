@@ -4,6 +4,9 @@ import com.dickow.chortlin.core.ast.ASTVisitor
 import com.dickow.chortlin.core.ast.types.*
 
 class ASTInstrumentation(private val instrumentation: Instrumentation) : ASTVisitor {
+    override fun visitChoice(astNode: Choice) {
+        astNode.possiblePaths.forEach { choreography -> choreography.runVisitor(this) }
+    }
 
     override fun visitParallel(astNode: Parallel) {
         astNode.parallelChoreography.runVisitor(this)

@@ -1,13 +1,22 @@
 package com.dickow.chortlin.core.checker.pattern
 
 import com.dickow.chortlin.core.trace.Trace
+import com.dickow.chortlin.core.trace.TraceElement
 import com.dickow.chortlin.core.trace.TraceElementIndexed
 
 class MultiPattern(
-        private val pattern: Pattern,
+        val pattern: Pattern,
         previous: Pattern?,
         child: Pattern?)
     : Pattern(previous, child) {
+
+    override fun getExpectedTraces(): List<TraceElement> {
+        return if (child != null) {
+            return pattern.getExpectedTraces() + child!!.getExpectedTraces()
+        } else {
+            pattern.getExpectedTraces()
+        }
+    }
 
     override fun match(trace: Trace): Boolean {
         return pattern.match(trace) && (child?.match(trace) ?: true)
