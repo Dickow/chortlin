@@ -27,7 +27,7 @@ public class ApplicationStart {
     }
 
     private static void configureChoreography() {
-        var checker = Choreography.Instance.builder()
+        Choreography.Instance.builder()
                 .foundMessage(participant(Merchant.class, "pay"), "iniate payment")
                 .foundMessage(participant(DTUPayController.class, "pay"), "pay")
                 .interaction(participant(DTUBankIntegration.class, "transferMoney"),

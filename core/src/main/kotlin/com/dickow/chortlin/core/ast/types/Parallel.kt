@@ -2,11 +2,16 @@ package com.dickow.chortlin.core.ast.types
 
 import com.dickow.chortlin.core.ast.ASTVisitor
 import com.dickow.chortlin.core.choreography.Choreography
+import com.dickow.chortlin.core.trace.Trace
 
 class Parallel(
         val parallelChoreography: Choreography,
         previous: ASTNode?,
         next: ASTNode?) : ASTNode(previous, next) {
+
+    override fun satisfy(trace: Trace): Boolean {
+        return false
+    }
 
     override fun accept(visitor: ASTVisitor) {
         visitor.visitParallel(this)

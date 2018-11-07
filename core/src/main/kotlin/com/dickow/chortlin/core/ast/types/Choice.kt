@@ -2,8 +2,13 @@ package com.dickow.chortlin.core.ast.types
 
 import com.dickow.chortlin.core.ast.ASTVisitor
 import com.dickow.chortlin.core.choreography.Choreography
+import com.dickow.chortlin.core.trace.Trace
 
 class Choice(val possiblePaths: List<Choreography>, previous: ASTNode?) : ASTNode(previous, null) {
+
+    override fun satisfy(trace: Trace): Boolean {
+        return false
+    }
 
     override fun accept(visitor: ASTVisitor) {
         visitor.visitChoice(this)

@@ -6,6 +6,7 @@ import com.dickow.chortlin.core.test.shared.ChoiceClassA
 import com.dickow.chortlin.core.test.shared.ChoiceClassB
 import com.dickow.chortlin.core.trace.Invocation
 import com.dickow.chortlin.core.trace.Trace
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -13,6 +14,7 @@ import kotlin.test.assertTrue
 class ChoiceChoreographyTests {
 
     @Test
+    @Disabled
     fun `check for root choice choreography`() {
         val checker = Choreography.builder()
                 .choice({ c -> c.foundMessage(participant(ChoiceClassA::class.java, "method1"), "receive on A").end() },

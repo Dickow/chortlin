@@ -13,13 +13,8 @@ class ASTInstrumentation(private val instrumentation: Instrumentation) : ASTVisi
         astNode.next?.accept(this)
     }
 
-    override fun <C> visitFoundMessageReturn(astNode: FoundMessageReturn<C>) {
-        instrumentation.after(astNode.receiver)
-        astNode.next?.accept(this)
-    }
-
-    override fun <C1, C2> visitInteractionReturn(astNode: InteractionReturn<C1, C2>) {
-        instrumentation.after(astNode.receiver)
+    override fun <C> visitReturnFrom(astNode: ReturnFrom<C>) {
+        instrumentation.after(astNode.participant)
         astNode.next?.accept(this)
     }
 

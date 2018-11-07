@@ -7,11 +7,13 @@ import com.dickow.chortlin.core.test.shared.ParallelClassB
 import com.dickow.chortlin.core.test.shared.ParallelClassC
 import com.dickow.chortlin.core.trace.Invocation
 import com.dickow.chortlin.core.trace.Trace
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
+@Disabled
 class ParallelChoreographyCheckerTests {
 
     @Test

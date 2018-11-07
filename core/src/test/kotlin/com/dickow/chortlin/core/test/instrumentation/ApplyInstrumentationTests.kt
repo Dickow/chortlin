@@ -66,15 +66,15 @@ class ApplyInstrumentationTests {
                 .interaction(participant(FirstClass::class.java, "first"),
                         participant(SecondClass::class.java, "second"), "initial call")
                 .foundMessage(participant(ThirdClass::class.java, "third"), "last call")
-                .foundMessageReturn(participant(ThirdClass::class.java, "third"), "return from third call")
-                .interactionReturn(participant(FirstClass::class.java, "first"),
-                        participant(SecondClass::class.java, "second"), "return from initial call")
+                .returnFrom(participant(ThirdClass::class.java, "third"), "return from third call")
+                .returnFrom(participant(SecondClass::class.java, "second"), "return from Second::second")
+                .returnFrom(participant(FirstClass::class.java, "first"), "First::first")
                 .end()
                 .runVisitor(instrumentationVisitor)
                 .createChecker()
 
         FirstClass().first()
-        assertEquals(5, traces.size)
+        assertEquals(6, traces.size)
         assertTrue(checker.check(Trace(traces.toTypedArray())))
     }
 
@@ -86,9 +86,9 @@ class ApplyInstrumentationTests {
                 .interaction(participant(FirstClass::class.java, "first"),
                         participant(SecondClass::class.java, "second"), "initial call")
                 .foundMessage(participant(ThirdClass::class.java, "third"), "last call")
-                .foundMessageReturn(participant(ThirdClass::class.java, "third"), "return from third call")
-                .interactionReturn(participant(FirstClass::class.java, "first"),
-                        participant(SecondClass::class.java, "second"), "return from initial call")
+                .returnFrom(participant(ThirdClass::class.java, "third"), "return from third call")
+                .returnFrom(participant(SecondClass::class.java, "second"), "return from Second::second")
+                .returnFrom(participant(FirstClass::class.java, "first"), "First::first")
                 .end()
                 .runVisitor(instrumentationVisitor)
                 .createChecker()

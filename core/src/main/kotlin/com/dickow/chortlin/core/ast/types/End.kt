@@ -1,8 +1,14 @@
 package com.dickow.chortlin.core.ast.types
 
 import com.dickow.chortlin.core.ast.ASTVisitor
+import com.dickow.chortlin.core.trace.Trace
 
 class End(previous: ASTNode?) : ASTNode(previous, null) {
+
+    override fun satisfy(trace: Trace): Boolean {
+        return trace.getNotConsumed().size == 0
+    }
+
     override fun accept(visitor: ASTVisitor) {
         visitor.visitEnd(this)
     }
