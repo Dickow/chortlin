@@ -1,5 +1,6 @@
 package com.dickow.chortlin.core.test.checker
 
+import com.dickow.chortlin.core.checker.result.CheckResult
 import com.dickow.chortlin.core.choreography.Choreography
 import com.dickow.chortlin.core.choreography.participant.ParticipantFactory.participant
 import com.dickow.chortlin.core.test.shared.ChoiceClassA
@@ -8,8 +9,7 @@ import com.dickow.chortlin.core.trace.Invocation
 import com.dickow.chortlin.core.trace.Trace
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
+import kotlin.test.assertEquals
 
 class ChoiceChoreographyTests {
 
@@ -21,7 +21,7 @@ class ChoiceChoreographyTests {
                         { c -> c.foundMessage(participant(ChoiceClassB::class.java, "method1"), "receive on B").end() })
                 .createChecker()
         val trace = Trace(arrayOf(Invocation(participant(ChoiceClassA::class.java, "method1"))))
-        assertTrue(checker.check(trace))
+        assertEquals(CheckResult.Full, checker.check(trace))
     }
 
     @Test
@@ -33,6 +33,6 @@ class ChoiceChoreographyTests {
         val trace = Trace(arrayOf(
                 Invocation(participant(ChoiceClassA::class.java, "method1")),
                 Invocation(participant(ChoiceClassB::class.java, "method1"))))
-        assertFalse(checker.check(trace))
+        assertEquals(CheckResult.None, checker.check(trace))
     }
 }

@@ -1,5 +1,6 @@
 package com.dickow.chortlin.core.test.instrumentation
 
+import com.dickow.chortlin.core.checker.result.CheckResult
 import com.dickow.chortlin.core.choreography.Choreography
 import com.dickow.chortlin.core.choreography.participant.ParticipantFactory.participant
 import com.dickow.chortlin.core.instrumentation.ASTInstrumentation
@@ -12,8 +13,6 @@ import com.dickow.chortlin.core.trace.TraceElement
 import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 
 class ApplyInstrumentationTests {
     private val instrumentationVisitor = ASTInstrumentation(ByteBuddyInstrumentation)
@@ -38,7 +37,7 @@ class ApplyInstrumentationTests {
                 .createChecker()
         Initial().begin()
         assertEquals(3, traces.size)
-        assertTrue(checker.check(Trace(traces.toTypedArray())))
+        assertEquals(CheckResult.Full, checker.check(Trace(traces.toTypedArray())))
     }
 
 
@@ -55,7 +54,7 @@ class ApplyInstrumentationTests {
                 .createChecker()
         Initial().begin()
         assertEquals(3, traces.size)
-        assertFalse(checker.check(Trace(traces.toTypedArray())))
+        assertEquals(CheckResult.None, checker.check(Trace(traces.toTypedArray())))
     }
 
     @Test
@@ -75,7 +74,7 @@ class ApplyInstrumentationTests {
 
         FirstClass().first()
         assertEquals(6, traces.size)
-        assertTrue(checker.check(Trace(traces.toTypedArray())))
+        assertEquals(CheckResult.Full, checker.check(Trace(traces.toTypedArray())))
     }
 
     @Test
@@ -95,6 +94,6 @@ class ApplyInstrumentationTests {
 
         SecondClass().second()
         assertEquals(4, traces.size)
-        assertFalse(checker.check(Trace(traces.toTypedArray())))
+        assertEquals(CheckResult.None, checker.check(Trace(traces.toTypedArray())))
     }
 }

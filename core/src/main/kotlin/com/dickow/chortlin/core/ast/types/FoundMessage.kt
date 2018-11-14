@@ -2,8 +2,8 @@ package com.dickow.chortlin.core.ast.types
 
 import com.dickow.chortlin.core.ast.ASTVisitor
 import com.dickow.chortlin.core.ast.Label
-import com.dickow.chortlin.core.checker.CheckResult
 import com.dickow.chortlin.core.checker.match.*
+import com.dickow.chortlin.core.checker.result.CheckResult
 import com.dickow.chortlin.core.choreography.participant.Participant
 import com.dickow.chortlin.core.trace.Invocation
 import com.dickow.chortlin.core.trace.Trace
@@ -19,19 +19,18 @@ class FoundMessage<T>(
         val matchResult = matcher.matchOne(trace.getNotConsumed(), Invocation(receiver))
         return when(matchResult){
             is SuccessfulMatch -> {
-                trace.consume(matchResult.matchedElements[0])
+                trace.consume(matchResult.matchedElements)
                 next!!.satisfy(trace)
             }
-            is PartialMatch -> {}
-            is NoMoreTraceMatch -> {}
-            is InvalidTraceMatch -> CheckResult(false, false)
+            is PartialMatch -> {
+                CheckResult.None
+            }
+            is NoMoreTraceMatch -> {
+                CheckResult.Partial
+            }
+            is InvalidTraceMatch -> CheckResult.None
+            else -> CheckResult.None
         }
-//        return when(matchResult.matched){
-//            true -> {
-//
-//            }
-//            else -> false
-//        }
     }
 
     override fun accept(visitor: ASTVisitor) {

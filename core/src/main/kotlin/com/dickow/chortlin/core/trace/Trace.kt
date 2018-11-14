@@ -11,7 +11,7 @@ class Trace(private val traces: Array<out TraceElement>) {
         return workingTraces
     }
 
-    fun consume(vararg elements: TraceElementIndexed) {
+    fun consume(elements: List<TraceElementIndexed>) {
         workingTraces.removeAll(elements)
     }
 

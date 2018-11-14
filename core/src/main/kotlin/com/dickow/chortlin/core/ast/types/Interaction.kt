@@ -2,8 +2,8 @@ package com.dickow.chortlin.core.ast.types
 
 import com.dickow.chortlin.core.ast.ASTVisitor
 import com.dickow.chortlin.core.ast.Label
-import com.dickow.chortlin.core.checker.CheckResult
-import com.dickow.chortlin.core.checker.match.Matcher
+import com.dickow.chortlin.core.checker.match.*
+import com.dickow.chortlin.core.checker.result.CheckResult
 import com.dickow.chortlin.core.choreography.participant.Participant
 import com.dickow.chortlin.core.trace.Invocation
 import com.dickow.chortlin.core.trace.Trace
@@ -18,12 +18,18 @@ class Interaction<C1, C2>(
 
     override fun satisfy(trace: Trace): CheckResult {
         val matchResult = matcher.matchTwo(trace.getNotConsumed(), Invocation(sender), Invocation(receiver))
-        return when(matchResult.matched){
-            true -> {
-                trace.consume(matchResult.matchedElements[0], matchResult.matchedElements[1])
+        return when (matchResult) {
+            is SuccessfulMatch -> {
+                trace.consume(matchResult.matchedElements)
                 next!!.satisfy(trace)
             }
-            else -> false
+            is PartialMatch -> {
+                trace.consume(matchResult.matchedElements)
+                CheckResult.Partial
+            }
+            is InvalidTraceMatch -> CheckResult.None
+            is NoMoreTraceMatch -> CheckResult.Partial
+            else -> CheckResult.None
         }
     }
 

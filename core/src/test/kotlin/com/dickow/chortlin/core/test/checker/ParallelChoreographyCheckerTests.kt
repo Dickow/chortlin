@@ -1,5 +1,6 @@
 package com.dickow.chortlin.core.test.checker
 
+import com.dickow.chortlin.core.checker.result.CheckResult
 import com.dickow.chortlin.core.choreography.Choreography
 import com.dickow.chortlin.core.choreography.participant.ParticipantFactory.participant
 import com.dickow.chortlin.core.test.shared.ParallelClassA
@@ -10,8 +11,6 @@ import com.dickow.chortlin.core.trace.Trace
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertFalse
-import kotlin.test.assertTrue
 
 @Disabled
 class ParallelChoreographyCheckerTests {
@@ -42,7 +41,7 @@ class ParallelChoreographyCheckerTests {
                 Invocation(participant(ParallelClassC::class.java, "method2")),
                 Invocation(participant(ParallelClassB::class.java, "method2")))
         val trace = Trace(traceElements)
-        assertTrue(checker.check(trace))
+        assertEquals(CheckResult.Full, checker.check(trace))
         assertEquals(0, trace.getNotConsumed().size)
     }
 
@@ -72,6 +71,6 @@ class ParallelChoreographyCheckerTests {
                 Invocation(participant(ParallelClassC::class.java, "method2")),
                 Invocation(participant(ParallelClassB::class.java, "method1"))) // <-- Should be before B::2
         val trace = Trace(traceElements)
-        assertFalse(checker.check(trace))
+        assertEquals(CheckResult.None, checker.check(trace))
     }
 }
