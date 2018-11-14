@@ -2,6 +2,7 @@ package com.dickow.chortlin.core.ast.types
 
 import com.dickow.chortlin.core.ast.ASTVisitor
 import com.dickow.chortlin.core.ast.Label
+import com.dickow.chortlin.core.checker.CheckResult
 import com.dickow.chortlin.core.checker.match.Matcher
 import com.dickow.chortlin.core.choreography.participant.Participant
 import com.dickow.chortlin.core.trace.Invocation
@@ -15,7 +16,7 @@ class Interaction<C1, C2>(
         next: ASTNode?) : ASTNode(previous, next) {
     private val matcher = Matcher()
 
-    override fun satisfy(trace: Trace): Boolean {
+    override fun satisfy(trace: Trace): CheckResult {
         val matchResult = matcher.matchTwo(trace.getNotConsumed(), Invocation(sender), Invocation(receiver))
         return when(matchResult.matched){
             true -> {

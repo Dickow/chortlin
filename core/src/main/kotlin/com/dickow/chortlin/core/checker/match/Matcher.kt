@@ -8,30 +8,30 @@ class Matcher {
     fun matchOne(traces: MutableList<TraceElementIndexed>, expected: TraceElement): MatchResult {
         return when (traces.isNotEmpty()) {
             true -> {
-                val element = traces.firstOrNull()
-                when (element?.traceElement == expected) {
-                    false -> MatchResult(false, emptyList())
-                    true -> MatchResult(true, listOf(element!!))
+                val element = traces.first()
+                when (element.traceElement == expected) {
+                    false -> InvalidTraceMatch()
+                    true -> SuccessfulMatch(listOf(element))
                 }
             }
-            false -> MatchResult(false, emptyList())
+            false -> NoMoreTraceMatch()
         }
     }
 
     fun matchTwo(traces: MutableList<TraceElementIndexed>, expected1: TraceElement, expected2: TraceElement): MatchResult {
-        return if (traces.isEmpty() || traces.size < 2) {
-            MatchResult(false, emptyList())
+        return if (traces.isEmpty()) {
+            NoMoreTraceMatch()
         } else {
-            val firstElement = traces.firstOrNull()
-            if (firstElement != null && firstElement.traceElement == expected1) {
+            val firstElement = traces.first()
+            if (firstElement.traceElement == expected1) {
                 val secondElement = traces.getOrNull(1)
                 return if (secondElement != null && secondElement.traceElement == expected2) {
-                    MatchResult(true, listOf(firstElement, secondElement))
+                    SuccessfulMatch(listOf(firstElement, secondElement))
                 } else {
-                    MatchResult(false, emptyList())
+                    if(secondElement == null) PartialMatch(listOf(firstElement)) else InvalidTraceMatch()
                 }
             } else {
-                MatchResult(false, emptyList())
+                InvalidTraceMatch()
             }
         }
     }

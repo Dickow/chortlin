@@ -10,9 +10,13 @@ class ChoreographyChecker(private val choreography: Choreography) {
         choreography.start.accept(ASTValidator())
     }
 
-    fun check(trace : Trace) : Boolean{
+    fun check(trace : Trace) : CheckResult {
         trace.markAllNonConsumed()
-        val wasMatched = choreography.start.satisfy(trace)
-        return wasMatched && trace.getNotConsumed().isEmpty()
+        val checkResult = choreography.start.satisfy(trace)
+        return when {
+            checkResult.fullMatch -> CheckResult(true, false)
+            checkResult.partialMatch -> CheckResult(false, true)
+            else -> CheckResult(false, false)
+        }
     }
 }
