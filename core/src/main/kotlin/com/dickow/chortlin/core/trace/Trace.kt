@@ -1,6 +1,6 @@
 package com.dickow.chortlin.core.trace
 
-class Trace(private val traces: Array<out TraceElement>) {
+class Trace(private val traces: List<TraceElement>) {
     private var workingTraces = constructWorkingList()
 
     fun markAllNonConsumed() {
@@ -11,7 +11,7 @@ class Trace(private val traces: Array<out TraceElement>) {
         return workingTraces
     }
 
-    fun consume(vararg elements: TraceElementIndexed) {
+    fun consume(elements: List<TraceElementIndexed>) {
         workingTraces.removeAll(elements)
     }
 

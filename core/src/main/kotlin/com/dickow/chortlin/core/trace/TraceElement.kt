@@ -1,3 +1,7 @@
 package com.dickow.chortlin.core.trace
 
-abstract class TraceElement
+import com.dickow.chortlin.core.choreography.participant.Participant
+
+abstract class TraceElement {
+    abstract fun getParticipant(): Participant<*>
+}
