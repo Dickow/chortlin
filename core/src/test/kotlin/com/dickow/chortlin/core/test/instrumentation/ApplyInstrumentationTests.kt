@@ -6,7 +6,7 @@ import com.dickow.chortlin.core.choreography.participant.ParticipantFactory.part
 import com.dickow.chortlin.core.instrumentation.ASTInstrumentation
 import com.dickow.chortlin.core.instrumentation.ByteBuddyInstrumentation
 import com.dickow.chortlin.core.instrumentation.strategy.InstrumentationStrategy
-import com.dickow.chortlin.core.instrumentation.strategy.StorageStrategy
+import com.dickow.chortlin.core.instrumentation.strategy.InterceptStrategy
 import com.dickow.chortlin.core.test.shared.*
 import com.dickow.chortlin.core.trace.Trace
 import com.dickow.chortlin.core.trace.TraceElement
@@ -17,9 +17,9 @@ import kotlin.test.assertEquals
 class ApplyInstrumentationTests {
     private val instrumentationVisitor = ASTInstrumentation(ByteBuddyInstrumentation)
     val traces: MutableList<TraceElement> = LinkedList()
-    private val storageStrategy: StorageStrategy = object : StorageStrategy {
+    private val InterceptStrategy: InterceptStrategy = object : InterceptStrategy {
 
-        override fun store(trace: TraceElement) {
+        override fun intercept(trace: TraceElement) {
             traces.add(trace)
         }
     }
@@ -27,7 +27,7 @@ class ApplyInstrumentationTests {
     @Test
     fun `apply instrumentation to simple in memory communication`() {
         traces.clear()
-        InstrumentationStrategy.strategy = storageStrategy
+        InstrumentationStrategy.strategy = InterceptStrategy
         val checker = Choreography.builder()
                 .foundMessage(participant(Initial::class.java, "begin"), "start")
                 .interaction(participant(Initial::class.java, "delegate"),
@@ -43,7 +43,7 @@ class ApplyInstrumentationTests {
     @Test
     fun `validate that instrumentation catches an error in the invocation`() {
         traces.clear()
-        InstrumentationStrategy.strategy = storageStrategy
+        InstrumentationStrategy.strategy = InterceptStrategy
         val checker = Choreography.builder()
                 .foundMessage(participant(Initial::class.java, "delegate"), "start")
                 .interaction(participant(Initial::class.java, "begin"),
@@ -59,7 +59,7 @@ class ApplyInstrumentationTests {
     @Test
     fun `validate instrumentation when returns are used correctly`() {
         traces.clear()
-        InstrumentationStrategy.strategy = storageStrategy
+        InstrumentationStrategy.strategy = InterceptStrategy
         val checker = Choreography.builder()
                 .interaction(participant(FirstClass::class.java, "first"),
                         participant(SecondClass::class.java, "second"), "initial call")
@@ -79,7 +79,7 @@ class ApplyInstrumentationTests {
     @Test
     fun `check that checker invalidates gathered traces for wrong call sequence`() {
         traces.clear()
-        InstrumentationStrategy.strategy = storageStrategy
+        InstrumentationStrategy.strategy = InterceptStrategy
         val checker = Choreography.builder()
                 .interaction(participant(FirstClass::class.java, "first"),
                         participant(SecondClass::class.java, "second"), "initial call")
@@ -99,7 +99,7 @@ class ApplyInstrumentationTests {
     @Test
     fun `check that traces gathered from instrumentation partially matches when partially executed`() {
         traces.clear()
-        InstrumentationStrategy.strategy = storageStrategy
+        InstrumentationStrategy.strategy = InterceptStrategy
         val checker = Choreography.builder()
                 .foundMessage(participant(PartialFirst::class.java, "first"), "initialize calls")
                 .interaction(participant(PartialFirst::class.java, "second"),

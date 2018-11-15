@@ -1,11 +1,8 @@
 package com.dickow.chortlin.core.instrumentation.strategy
 
+import com.dickow.chortlin.core.instrumentation.strategy.factory.StrategyFactory
+
 object InstrumentationStrategy {
     @JvmStatic
-    var strategy: StorageStrategy = defaultStrategy()
-
-    @JvmStatic
-    fun defaultStrategy(): StorageStrategy {
-        return InMemory()
-    }
+    var strategy: InterceptStrategy = StrategyFactory.createStoreInMemory()
 }

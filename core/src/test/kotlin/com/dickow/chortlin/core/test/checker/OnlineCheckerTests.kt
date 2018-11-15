@@ -91,5 +91,4 @@ class OnlineCheckerTests {
         allExceptLastTrace.forEach { trace -> assertEquals(CheckResult.Partial, onlineChecker.check(trace)) }
         assertEquals(CheckResult.Full, onlineChecker.check(expectedTraceSequence.last()))
     }
-
 }

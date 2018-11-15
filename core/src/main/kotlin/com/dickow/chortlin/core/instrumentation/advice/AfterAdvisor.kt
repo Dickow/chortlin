@@ -12,7 +12,7 @@ class AfterAdvisor {
         @JvmStatic
         @Advice.OnMethodExit
         fun afterMethod(@Advice.AllArguments allArguments: Array<Any>, @Advice.Origin method: Method) {
-            InstrumentationStrategy.strategy.store(Return(Participant(method.declaringClass, method)))
+            InstrumentationStrategy.strategy.intercept(Return(Participant(method.declaringClass, method)))
         }
     }
 }
