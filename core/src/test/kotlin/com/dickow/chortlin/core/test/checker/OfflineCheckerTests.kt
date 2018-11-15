@@ -13,14 +13,14 @@ import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
-class ChoreographyCheckerTests {
+class OfflineCheckerTests {
 
     @Test
     fun `check that trace conforms to configured choreography`() {
         val choreography = Choreography.builder()
                 .foundMessage(participant(A::class.java, "receive"), "receive")
                 .end()
-        val trace = Trace(arrayOf(Invocation(participant(A::class.java, "receive"))))
+        val trace = Trace(listOf(Invocation(participant(A::class.java, "receive"))))
         val checker = choreography.createChecker()
         assertEquals(CheckResult.Full, checker.check(trace))
         assertEquals(CheckResult.Full, checker.check(trace))
@@ -39,7 +39,7 @@ class ChoreographyCheckerTests {
                         participant(B::class.java, "b"),
                         "delegate processing")
                 .end()
-        val trace = Trace(arrayOf(
+        val trace = Trace(listOf(
                 Invocation(participant(A::class.java, "receive")),
                 Invocation(participant(A::class.java, "b")),
                 Invocation(participant(B::class.java, "b"))))
@@ -57,7 +57,7 @@ class ChoreographyCheckerTests {
                         participant(B::class.java, "b"),
                         "delegate processing")
                 .end()
-        val trace = Trace(arrayOf(
+        val trace = Trace(listOf(
                 Invocation(participant(A::class.java, "b")),
                 Invocation(participant(A::class.java, "receive")),
                 Invocation(participant(B::class.java, "b"))))
@@ -78,7 +78,7 @@ class ChoreographyCheckerTests {
                 .returnFrom(participant(A::class.java, "b"), "return from method A::b")
                 .end()
         val checker = choreography.createChecker()
-        val trace = Trace(arrayOf(
+        val trace = Trace(listOf(
                 Invocation(participant(A::class.java, "receive")),
                 Invocation(participant(A::class.java, "b")),
                 Invocation(participant(B::class.java, "b")),
@@ -94,7 +94,7 @@ class ChoreographyCheckerTests {
                 .returnFrom(participant(A::class.java, "receive"), "return")
                 .end()
         val checker = choreography.createChecker()
-        val trace = Trace(arrayOf(
+        val trace = Trace(listOf(
                 Invocation(participant(A::class.java, "receive")),
                 Return(participant(A::class.java, "receive"))))
         assertEquals(CheckResult.Full, checker.check(trace))
@@ -107,7 +107,7 @@ class ChoreographyCheckerTests {
                 .returnFrom(participant(A::class.java, "receive"), "return")
                 .end()
         val checker = choreography.createChecker()
-        val trace = Trace(arrayOf(Invocation(participant(A::class.java, "receive"))))
+        val trace = Trace(listOf(Invocation(participant(A::class.java, "receive"))))
         assertEquals(CheckResult.Partial, checker.check(trace))
     }
 
@@ -118,7 +118,7 @@ class ChoreographyCheckerTests {
                 .returnFrom(participant(A::class.java, "receive"), "return")
                 .end()
         val checker = choreography.createChecker()
-        val trace = Trace(arrayOf(
+        val trace = Trace(listOf(
                 Invocation(participant(A::class.java, "receive")),
                 Return(participant(B::class.java, "b"))))
         assertEquals(CheckResult.None, checker.check(trace))

@@ -1,6 +1,6 @@
 package com.dickow.chortlin.core.trace
 
-class Trace(private val traces: Array<out TraceElement>) {
+class Trace(private val traces: List<TraceElement>) {
     private var workingTraces = constructWorkingList()
 
     fun markAllNonConsumed() {

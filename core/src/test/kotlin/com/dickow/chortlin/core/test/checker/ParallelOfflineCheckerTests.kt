@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 @Disabled
-class ParallelChoreographyCheckerTests {
+class ParallelOfflineCheckerTests {
 
     @Test
     fun `create checker for parallel choreography and test that traces with mixed ordering works`() {
@@ -34,7 +34,7 @@ class ParallelChoreographyCheckerTests {
                 .end()
                 .createChecker()
 
-        val traceElements = arrayOf(
+        val traceElements = listOf(
                 Invocation(participant(ParallelClassA::class.java, "method1")),
                 Invocation(participant(ParallelClassC::class.java, "method1")),
                 Invocation(participant(ParallelClassB::class.java, "method1")),
@@ -64,7 +64,7 @@ class ParallelChoreographyCheckerTests {
                 .end()
                 .createChecker()
 
-        val traceElements = arrayOf(
+        val traceElements = listOf(
                 Invocation(participant(ParallelClassA::class.java, "method1")),
                 Invocation(participant(ParallelClassC::class.java, "method1")),
                 Invocation(participant(ParallelClassB::class.java, "method2")), // <-- Causal order error

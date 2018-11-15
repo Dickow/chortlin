@@ -37,9 +37,8 @@ class ApplyInstrumentationTests {
                 .createChecker()
         Initial().begin()
         assertEquals(3, traces.size)
-        assertEquals(CheckResult.Full, checker.check(Trace(traces.toTypedArray())))
+        assertEquals(CheckResult.Full, checker.check(Trace(traces)))
     }
-
 
     @Test
     fun `validate that instrumentation catches an error in the invocation`() {
@@ -54,7 +53,7 @@ class ApplyInstrumentationTests {
                 .createChecker()
         Initial().begin()
         assertEquals(3, traces.size)
-        assertEquals(CheckResult.None, checker.check(Trace(traces.toTypedArray())))
+        assertEquals(CheckResult.None, checker.check(Trace(traces)))
     }
 
     @Test
@@ -74,7 +73,7 @@ class ApplyInstrumentationTests {
 
         FirstClass().first()
         assertEquals(6, traces.size)
-        assertEquals(CheckResult.Full, checker.check(Trace(traces.toTypedArray())))
+        assertEquals(CheckResult.Full, checker.check(Trace(traces)))
     }
 
     @Test
@@ -94,6 +93,32 @@ class ApplyInstrumentationTests {
 
         SecondClass().second()
         assertEquals(4, traces.size)
-        assertEquals(CheckResult.None, checker.check(Trace(traces.toTypedArray())))
+        assertEquals(CheckResult.None, checker.check(Trace(traces)))
+    }
+
+    @Test
+    fun `check that traces gathered from instrumentation partially matches when partially executed`() {
+        traces.clear()
+        InstrumentationStrategy.strategy = storageStrategy
+        val checker = Choreography.builder()
+                .foundMessage(participant(PartialFirst::class.java, "first"), "initialize calls")
+                .interaction(participant(PartialFirst::class.java, "second"),
+                        participant(PartialSecond::class.java, "second"), "call second class from first class")
+                .interaction(participant(PartialSecond::class.java, "third"),
+                        participant(PartialThird::class.java, "third"), "call third class from second class")
+                .returnFrom(participant(PartialThird::class.java, "third"), "return from the third participant again")
+                .end()
+                .runVisitor(instrumentationVisitor)
+                .createChecker()
+
+        PartialFirst().first()
+        assertEquals(3, traces.size)
+        assertEquals(CheckResult.Partial, checker.check(Trace(traces)))
+
+        // Now simulate the remaining invocations manually
+        PartialSecond().third()
+        PartialThird().third()
+        assertEquals(6, traces.size)
+        assertEquals(CheckResult.Full, checker.check(Trace(traces)))
     }
 }
