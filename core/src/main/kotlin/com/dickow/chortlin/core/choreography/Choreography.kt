@@ -2,7 +2,7 @@ package com.dickow.chortlin.core.choreography
 
 import com.dickow.chortlin.core.ast.ASTVisitor
 import com.dickow.chortlin.core.ast.types.ASTNode
-import com.dickow.chortlin.core.ast.types.Marker
+import com.dickow.chortlin.core.ast.types.placeholder.Marker
 import com.dickow.chortlin.core.ast.validation.ASTValidator
 import com.dickow.chortlin.core.checker.ChoreographyChecker
 

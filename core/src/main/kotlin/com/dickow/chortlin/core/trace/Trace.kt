@@ -1,21 +1,21 @@
 package com.dickow.chortlin.core.trace
 
-class Trace(private val traces: Array<TraceElement<*>>) {
-    private var workingTraces = mutableListOf(*traces)
+class Trace(private val traces: List<TraceElement>) {
+    private var workingTraces = constructWorkingList()
 
     fun markAllNonConsumed() {
-        workingTraces = mutableListOf(*traces)
+        workingTraces = constructWorkingList()
     }
 
-    fun getNotConsumed(): MutableList<TraceElement<*>> {
+    fun getNotConsumed(): MutableList<TraceElementIndexed> {
         return workingTraces
     }
 
-    fun consume(count: Int) {
-        if (workingTraces.size > count) {
-            workingTraces = workingTraces.subList(count, workingTraces.size)
-        } else {
-            workingTraces.clear()
-        }
+    fun consume(elements: List<TraceElementIndexed>) {
+        workingTraces.removeAll(elements)
+    }
+
+    private fun constructWorkingList(): MutableList<TraceElementIndexed> {
+        return traces.mapIndexed { index, element -> TraceElementIndexed(index, element) }.toMutableList()
     }
 }

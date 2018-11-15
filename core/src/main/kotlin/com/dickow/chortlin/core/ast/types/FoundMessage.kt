@@ -2,13 +2,36 @@ package com.dickow.chortlin.core.ast.types
 
 import com.dickow.chortlin.core.ast.ASTVisitor
 import com.dickow.chortlin.core.ast.Label
+import com.dickow.chortlin.core.checker.match.*
+import com.dickow.chortlin.core.checker.result.CheckResult
 import com.dickow.chortlin.core.choreography.participant.Participant
+import com.dickow.chortlin.core.trace.Invocation
+import com.dickow.chortlin.core.trace.Trace
 
 class FoundMessage<T>(
         val receiver: Participant<T>,
         val label: Label,
         previous: ASTNode?,
         next: ASTNode?) : ASTNode(previous, next) {
+    private val matcher = Matcher()
+
+    override fun satisfy(trace: Trace): CheckResult {
+        val matchResult = matcher.matchOne(trace.getNotConsumed(), Invocation(receiver))
+        return when(matchResult){
+            is SuccessfulMatch -> {
+                trace.consume(matchResult.matchedElements)
+                next!!.satisfy(trace)
+            }
+            is PartialMatch -> {
+                CheckResult.None
+            }
+            is NoMoreTraceMatch -> {
+                CheckResult.Partial
+            }
+            is InvalidTraceMatch -> CheckResult.None
+            else -> CheckResult.None
+        }
+    }
 
     override fun accept(visitor: ASTVisitor) {
         visitor.visitFoundMessage(this)

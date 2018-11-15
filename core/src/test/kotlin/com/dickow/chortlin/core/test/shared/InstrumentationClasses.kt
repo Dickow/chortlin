@@ -34,3 +34,24 @@ class ThirdClass {
         return
     }
 }
+
+
+class PartialFirst {
+    fun first() {
+        second()
+    }
+
+    fun second() {
+        PartialSecond().second()
+    }
+}
+
+class PartialSecond {
+    fun second() {}
+
+    fun third() {}
+}
+
+class PartialThird {
+    fun third() {}
+}
