@@ -91,4 +91,30 @@ class OnlineCheckerTests {
         allExceptLastTrace.forEach { trace -> assertEquals(CheckResult.Partial, onlineChecker.check(trace)) }
         assertEquals(CheckResult.Full, onlineChecker.check(expectedTraceSequence.last()))
     }
+
+    @Test
+    fun `check that online checker works for unrelated choreographies with interleaved execution`() {
+        val choreography1 = Choreography.builder()
+                .foundMessage(participant(OnlineFirstClass::class.java, "method1"), "#1")
+                .interaction(participant(OnlineFirstClass::class.java, "method2"),
+                        participant(OnlineSecondClass::class.java, "method1"),
+                        "#2")
+                .returnFrom(participant(OnlineSecondClass::class.java, "method1"), "return #2")
+                .end()
+
+        val choreography2 = Choreography.builder()
+                .foundMessage(participant(OnlineSecondClass::class.java, "method2"), "#1")
+                .interaction(participant(OnlineThirdClass::class.java, "method1"),
+                        participant(OnlineThirdClass::class.java, "method2"),
+                        "#2")
+                .end()
+        val checker = OnlineChecker(InMemorySessionManager(listOf(choreography1, choreography2)))
+        assertEquals(CheckResult.Partial, checker.check(Invocation(participant(OnlineFirstClass::class.java, "method1")))) // Choreography 1
+        assertEquals(CheckResult.Partial, checker.check(Invocation(participant(OnlineSecondClass::class.java, "method2")))) // Choreography 2
+        assertEquals(CheckResult.Partial, checker.check(Invocation(participant(OnlineFirstClass::class.java, "method2")))) // Choreography 1
+        assertEquals(CheckResult.Partial, checker.check(Invocation(participant(OnlineSecondClass::class.java, "method1")))) // Choreography 1
+        assertEquals(CheckResult.Partial, checker.check(Invocation(participant(OnlineThirdClass::class.java, "method1")))) // Choreography 2
+        assertEquals(CheckResult.Full, checker.check(Return(participant(OnlineSecondClass::class.java, "method1")))) // Choreography 1
+        assertEquals(CheckResult.Full, checker.check(Invocation(participant(OnlineThirdClass::class.java, "method2")))) // Choreography 2
+    }
 }
