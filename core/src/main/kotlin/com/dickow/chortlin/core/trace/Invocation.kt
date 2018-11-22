@@ -1,9 +1,9 @@
 package com.dickow.chortlin.core.trace
 
-import com.dickow.chortlin.core.choreography.participant.Participant
+import com.dickow.chortlin.core.choreography.participant.ObservableParticipant
 
-data class Invocation(private val participant: Participant<*>) : TraceElement() {
-    override fun getParticipant(): Participant<*> {
+data class Invocation(private val participant: ObservableParticipant<*>) : TraceElement() {
+    override fun getParticipant(): ObservableParticipant<*> {
         return participant
     }
 }

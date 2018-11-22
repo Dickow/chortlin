@@ -2,14 +2,17 @@ package com.dickow.chortlin.core.ast.types
 
 import com.dickow.chortlin.core.ast.ASTVisitor
 import com.dickow.chortlin.core.ast.Label
-import com.dickow.chortlin.core.checker.match.*
+import com.dickow.chortlin.core.checker.match.InvalidTraceMatch
+import com.dickow.chortlin.core.checker.match.Matcher
+import com.dickow.chortlin.core.checker.match.NoMoreTraceMatch
+import com.dickow.chortlin.core.checker.match.SuccessfulMatch
 import com.dickow.chortlin.core.checker.result.CheckResult
-import com.dickow.chortlin.core.choreography.participant.Participant
+import com.dickow.chortlin.core.choreography.participant.ObservableParticipant
 import com.dickow.chortlin.core.trace.Return
 import com.dickow.chortlin.core.trace.Trace
 
-class ReturnFrom<C>(
-        val participant: Participant<C>,
+class ReturnFrom<T>(
+        val participant: ObservableParticipant<T>,
         val label: Label,
         previous: ASTNode?,
         next: ASTNode?) : ASTNode(previous, next) {
@@ -19,10 +22,9 @@ class ReturnFrom<C>(
         val matchResult = matcher.matchOne(trace.getNotConsumed(), Return(participant))
         return when (matchResult) {
             is SuccessfulMatch -> {
-                trace.consume(matchResult.matchedElements)
+                trace.consume(matchResult.matchedElement)
                 next!!.satisfy(trace)
             }
-            is PartialMatch -> CheckResult.None
             is InvalidTraceMatch -> CheckResult.None
             is NoMoreTraceMatch -> CheckResult.Partial
             else -> CheckResult.None

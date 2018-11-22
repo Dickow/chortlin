@@ -4,6 +4,7 @@ import com.dickow.chortlin.core.checker.OnlineChecker
 import com.dickow.chortlin.core.checker.result.CheckResult
 import com.dickow.chortlin.core.checker.session.InMemorySessionManager
 import com.dickow.chortlin.core.choreography.Choreography
+import com.dickow.chortlin.core.choreography.participant.ParticipantFactory.external
 import com.dickow.chortlin.core.choreography.participant.ParticipantFactory.participant
 import com.dickow.chortlin.core.test.shared.OnlineFirstClass
 import com.dickow.chortlin.core.test.shared.OnlineSecondClass
@@ -14,22 +15,27 @@ import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class OnlineCheckerTests {
+    private val external = external("External client")
+    private val onlineFirstMethod1 = participant(OnlineFirstClass::class.java, "method1")
+    private val onlineFirstMethod2 = participant(OnlineFirstClass::class.java, "method2")
+    private val onlineSecondMethod1 = participant(OnlineSecondClass::class.java, "method1")
+    private val onlineSecondMethod2 = participant(OnlineSecondClass::class.java, "method2")
+    private val onlineThirdMethod1 = participant(OnlineThirdClass::class.java, "method1")
+    private val onlineThirdMethod2 = participant(OnlineThirdClass::class.java, "method2")
 
     private val choreography = Choreography.builder()
-            .foundMessage(participant(OnlineFirstClass::class.java, "method1"), "#1")
-            .interaction(participant(OnlineFirstClass::class.java, "method2"),
-                    participant(OnlineSecondClass::class.java, "method1"),
-                    "#2")
-            .interaction(participant(OnlineSecondClass::class.java, "method2"),
-                    participant(OnlineThirdClass::class.java, "method1"),
-                    "#3")
-            .foundMessage(participant(OnlineThirdClass::class.java, "method2"), "#4")
-            .returnFrom(participant(OnlineThirdClass::class.java, "method2"), "return #4")
-            .returnFrom(participant(OnlineThirdClass::class.java, "method1"), "return #3(2)")
-            .returnFrom(participant(OnlineSecondClass::class.java, "method2"), "return #3(1)")
-            .returnFrom(participant(OnlineSecondClass::class.java, "method1"), "return #2(2)")
-            .returnFrom(participant(OnlineFirstClass::class.java, "method2"), "return #2(1)")
-            .returnFrom(participant(OnlineFirstClass::class.java, "method1"), "return #1")
+            .interaction(external, onlineFirstMethod1, "#1")
+            .interaction(onlineFirstMethod1.nonObservable, onlineFirstMethod2, "#2")
+            .interaction(onlineFirstMethod2.nonObservable, onlineSecondMethod1, "#3")
+            .interaction(onlineSecondMethod1.nonObservable, onlineSecondMethod2, "#4")
+            .interaction(onlineSecondMethod2.nonObservable, onlineThirdMethod1, "#5")
+            .interaction(onlineThirdMethod1.nonObservable, onlineThirdMethod2, "#6")
+            .returnFrom(onlineThirdMethod2, "return #6")
+            .returnFrom(onlineThirdMethod1, "return #5")
+            .returnFrom(onlineSecondMethod2, "return #4")
+            .returnFrom(onlineSecondMethod1, "return #3")
+            .returnFrom(onlineFirstMethod2, "return #2")
+            .returnFrom(onlineFirstMethod1, "return #1")
             .end()
 
     private val expectedTraceSequence = listOf(
@@ -95,18 +101,16 @@ class OnlineCheckerTests {
     @Test
     fun `check that online checker works for unrelated choreographies with interleaved execution`() {
         val choreography1 = Choreography.builder()
-                .foundMessage(participant(OnlineFirstClass::class.java, "method1"), "#1")
-                .interaction(participant(OnlineFirstClass::class.java, "method2"),
-                        participant(OnlineSecondClass::class.java, "method1"),
-                        "#2")
-                .returnFrom(participant(OnlineSecondClass::class.java, "method1"), "return #2")
+                .interaction(external, onlineFirstMethod1, "#1")
+                .interaction(onlineFirstMethod1.nonObservable, onlineFirstMethod2, "#2")
+                .interaction(onlineFirstMethod2.nonObservable, onlineSecondMethod1, "#3")
+                .returnFrom(onlineSecondMethod1, "return #3")
                 .end()
 
         val choreography2 = Choreography.builder()
-                .foundMessage(participant(OnlineSecondClass::class.java, "method2"), "#1")
-                .interaction(participant(OnlineThirdClass::class.java, "method1"),
-                        participant(OnlineThirdClass::class.java, "method2"),
-                        "#2")
+                .interaction(external, onlineSecondMethod2, "#1")
+                .interaction(onlineSecondMethod2.nonObservable, onlineThirdMethod1, "#2")
+                .interaction(onlineThirdMethod1.nonObservable, onlineThirdMethod2, "#3")
                 .end()
         val checker = OnlineChecker(InMemorySessionManager(listOf(choreography1, choreography2)))
         assertEquals(CheckResult.Partial, checker.check(Invocation(participant(OnlineFirstClass::class.java, "method1")))) // Choreography 1

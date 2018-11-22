@@ -11,8 +11,8 @@ class Trace(private val traces: List<TraceElement>) {
         return workingTraces
     }
 
-    fun consume(elements: List<TraceElementIndexed>) {
-        workingTraces.removeAll(elements)
+    fun consume(element: TraceElementIndexed) {
+        workingTraces.remove(element)
     }
 
     private fun constructWorkingList(): MutableList<TraceElementIndexed> {
