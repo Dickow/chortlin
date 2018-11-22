@@ -2,6 +2,7 @@ package com.dickow.chortlin.core.test.instrumentation
 
 import com.dickow.chortlin.core.checker.result.CheckResult
 import com.dickow.chortlin.core.choreography.Choreography
+import com.dickow.chortlin.core.choreography.participant.ParticipantFactory.external
 import com.dickow.chortlin.core.choreography.participant.ParticipantFactory.participant
 import com.dickow.chortlin.core.instrumentation.ASTInstrumentation
 import com.dickow.chortlin.core.instrumentation.ByteBuddyInstrumentation
@@ -17,21 +18,40 @@ import kotlin.test.assertEquals
 class ApplyInstrumentationTests {
     private val instrumentationVisitor = ASTInstrumentation(ByteBuddyInstrumentation)
     val traces: MutableList<TraceElement> = LinkedList()
-    private val InterceptStrategy: InterceptStrategy = object : InterceptStrategy {
+    private val interceptStrategy: InterceptStrategy = object : InterceptStrategy {
 
         override fun intercept(trace: TraceElement) {
             traces.add(trace)
         }
     }
 
+    private val external = external("external client")
+
+    // First set of participants
+    private val initial = participant(Initial::class.java, "begin")
+    private val delegate = participant(Initial::class.java, "delegate")
+    private val processor = participant(Second::class.java, "process")
+
+    // Second set of participants
+    private val firstClass = participant(FirstClass::class.java, "first")
+    private val secondClass = participant(SecondClass::class.java, "second")
+    private val thirdClass = participant(ThirdClass::class.java, "third")
+
+    // Third set of participants
+    private val partialFirst1 = participant(PartialFirst::class.java, "first")
+    private val partialFirst2 = participant(PartialFirst::class.java, "second")
+    private val partialSecond2 = participant(PartialSecond::class.java, "second")
+    private val partialSecond3 = participant(PartialSecond::class.java, "third")
+    private val partialThird3 = participant(PartialThird::class.java, "third")
+
     @Test
     fun `apply instrumentation to simple in memory communication`() {
         traces.clear()
-        InstrumentationStrategy.strategy = InterceptStrategy
+        InstrumentationStrategy.strategy = interceptStrategy
         val checker = Choreography.builder()
-                .foundMessage(participant(Initial::class.java, "begin"), "start")
-                .interaction(participant(Initial::class.java, "delegate"),
-                        participant(Second::class.java, "process"), "interaction")
+                .interaction(external, initial, "start")
+                .interaction(initial.nonObservable, delegate, "delegate")
+                .interaction(delegate.nonObservable, processor, "processing")
                 .end()
                 .runVisitor(instrumentationVisitor)
                 .createChecker()
@@ -43,11 +63,11 @@ class ApplyInstrumentationTests {
     @Test
     fun `validate that instrumentation catches an error in the invocation`() {
         traces.clear()
-        InstrumentationStrategy.strategy = InterceptStrategy
+        InstrumentationStrategy.strategy = interceptStrategy
         val checker = Choreography.builder()
-                .foundMessage(participant(Initial::class.java, "delegate"), "start")
-                .interaction(participant(Initial::class.java, "begin"),
-                        participant(Second::class.java, "process"), "interaction")
+                .interaction(external, delegate, "start")
+                .interaction(delegate.nonObservable, initial, "then initial")
+                .interaction(initial.nonObservable, processor, "process it")
                 .end()
                 .runVisitor(instrumentationVisitor)
                 .createChecker()
@@ -59,14 +79,14 @@ class ApplyInstrumentationTests {
     @Test
     fun `validate instrumentation when returns are used correctly`() {
         traces.clear()
-        InstrumentationStrategy.strategy = InterceptStrategy
+        InstrumentationStrategy.strategy = interceptStrategy
         val checker = Choreography.builder()
-                .interaction(participant(FirstClass::class.java, "first"),
-                        participant(SecondClass::class.java, "second"), "initial call")
-                .foundMessage(participant(ThirdClass::class.java, "third"), "last call")
-                .returnFrom(participant(ThirdClass::class.java, "third"), "return from third call")
-                .returnFrom(participant(SecondClass::class.java, "second"), "return from Second::second")
-                .returnFrom(participant(FirstClass::class.java, "first"), "First::first")
+                .interaction(external, firstClass, "initial receive")
+                .interaction(firstClass.nonObservable, secondClass, "second call")
+                .interaction(secondClass.nonObservable, thirdClass, "third call")
+                .returnFrom(thirdClass, "return from third call")
+                .returnFrom(secondClass, "return from Second::second")
+                .returnFrom(firstClass, "return from First::first")
                 .end()
                 .runVisitor(instrumentationVisitor)
                 .createChecker()
@@ -79,14 +99,14 @@ class ApplyInstrumentationTests {
     @Test
     fun `check that checker invalidates gathered traces for wrong call sequence`() {
         traces.clear()
-        InstrumentationStrategy.strategy = InterceptStrategy
+        InstrumentationStrategy.strategy = interceptStrategy
         val checker = Choreography.builder()
-                .interaction(participant(FirstClass::class.java, "first"),
-                        participant(SecondClass::class.java, "second"), "initial call")
-                .foundMessage(participant(ThirdClass::class.java, "third"), "last call")
-                .returnFrom(participant(ThirdClass::class.java, "third"), "return from third call")
-                .returnFrom(participant(SecondClass::class.java, "second"), "return from Second::second")
-                .returnFrom(participant(FirstClass::class.java, "first"), "First::first")
+                .interaction(external, firstClass, "initial receive")
+                .interaction(firstClass.nonObservable, secondClass, "second call")
+                .interaction(secondClass.nonObservable, thirdClass, "third call")
+                .returnFrom(thirdClass, "return from third call")
+                .returnFrom(secondClass, "return from Second::second")
+                .returnFrom(firstClass, "return from First::first")
                 .end()
                 .runVisitor(instrumentationVisitor)
                 .createChecker()
@@ -99,14 +119,14 @@ class ApplyInstrumentationTests {
     @Test
     fun `check that traces gathered from instrumentation partially matches when partially executed`() {
         traces.clear()
-        InstrumentationStrategy.strategy = InterceptStrategy
+        InstrumentationStrategy.strategy = interceptStrategy
         val checker = Choreography.builder()
-                .foundMessage(participant(PartialFirst::class.java, "first"), "initialize calls")
-                .interaction(participant(PartialFirst::class.java, "second"),
-                        participant(PartialSecond::class.java, "second"), "call second class from first class")
-                .interaction(participant(PartialSecond::class.java, "third"),
-                        participant(PartialThird::class.java, "third"), "call third class from second class")
-                .returnFrom(participant(PartialThird::class.java, "third"), "return from the third participant again")
+                .interaction(external, partialFirst1, "initialize calls")
+                .interaction(partialFirst1.nonObservable, partialFirst2, "call second method of first class")
+                .interaction(partialFirst2.nonObservable, partialSecond2, "call second method of second class")
+                .interaction(partialSecond2.nonObservable, partialSecond3, "call third method of second class")
+                .interaction(partialSecond3.nonObservable, partialThird3, "call third method of third class")
+                .returnFrom(partialThird3, "return from the third participant again")
                 .end()
                 .runVisitor(instrumentationVisitor)
                 .createChecker()

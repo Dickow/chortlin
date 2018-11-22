@@ -4,7 +4,7 @@ import com.dickow.chortlin.core.checker.ChoreographyChecker
 import com.dickow.chortlin.core.checker.ParticipantRetriever
 import com.dickow.chortlin.core.checker.result.CheckResult
 import com.dickow.chortlin.core.choreography.Choreography
-import com.dickow.chortlin.core.choreography.participant.Participant
+import com.dickow.chortlin.core.choreography.participant.ObservableParticipant
 import com.dickow.chortlin.core.trace.Trace
 import com.dickow.chortlin.core.trace.TraceElement
 import java.util.*
@@ -12,7 +12,7 @@ import java.util.*
 class Session(val sessionId: UUID, val choreography: Choreography) {
     private val checker: ChoreographyChecker = choreography.createChecker()
     private val traces: MutableList<TraceElement> = LinkedList()
-    val participantSet: Set<Participant<*>>
+    val participantSet: Set<ObservableParticipant<*>>
 
     init {
         val participantVisitor = ParticipantRetriever()

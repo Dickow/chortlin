@@ -2,14 +2,14 @@ package com.dickow.chortlin.core.checker.session
 
 import com.dickow.chortlin.core.checker.ParticipantRetriever
 import com.dickow.chortlin.core.choreography.Choreography
-import com.dickow.chortlin.core.choreography.participant.Participant
+import com.dickow.chortlin.core.choreography.participant.ObservableParticipant
 import com.dickow.chortlin.core.exceptions.ChortlinRuntimeException
 import com.dickow.chortlin.core.trace.TraceElement
 import java.util.*
 
 class InMemorySessionManager(choreographies: List<Choreography>) : SessionManager {
     private val ongoingSessions: MutableMap<UUID, Session> = Hashtable()
-    private val participantToChoreographyMap = Hashtable<Participant<*>, Choreography>()
+    private val participantToChoreographyMap = Hashtable<ObservableParticipant<*>, Choreography>()
 
     init {
         choreographies.forEach { choreography ->

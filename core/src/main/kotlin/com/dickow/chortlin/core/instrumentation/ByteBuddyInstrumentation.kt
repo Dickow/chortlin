@@ -1,6 +1,6 @@
 package com.dickow.chortlin.core.instrumentation
 
-import com.dickow.chortlin.core.choreography.participant.Participant
+import com.dickow.chortlin.core.choreography.participant.ObservableParticipant
 import com.dickow.chortlin.core.instrumentation.advice.AfterAdvisor
 import com.dickow.chortlin.core.instrumentation.advice.BeforeAdvisor
 import net.bytebuddy.agent.ByteBuddyAgent
@@ -13,28 +13,28 @@ import net.bytebuddy.matcher.ElementMatchers
  * it is important that this class is static to maintain knowledge of the instrumented classes.
  */
 object ByteBuddyInstrumentation : Instrumentation {
-    private val appliedBeforeAdvices: MutableSet<Participant<*>> = HashSet()
-    private val appliedAfterAdvices: MutableSet<Participant<*>> = HashSet()
+    private val appliedBeforeAdvices: MutableSet<ObservableParticipant<*>> = HashSet()
+    private val appliedAfterAdvices: MutableSet<ObservableParticipant<*>> = HashSet()
 
     init {
         ByteBuddyAgent.install()
     }
 
-    override fun <C> before(participant: Participant<C>) {
+    override fun <T> before(participant: ObservableParticipant<T>) {
         if (!appliedBeforeAdvices.contains(participant)) {
             applyAdvice(participant, BeforeAdvisor::class.java)
             appliedBeforeAdvices.add(participant)
         }
     }
 
-    override fun <C> after(participant: Participant<C>) {
+    override fun <T> after(participant: ObservableParticipant<T>) {
         if (!appliedAfterAdvices.contains(participant)) {
             applyAdvice(participant, AfterAdvisor::class.java)
             appliedAfterAdvices.add(participant)
         }
     }
 
-    private fun <C> applyAdvice(participant: Participant<C>, adviceClass: Class<*>) {
+    private fun <T> applyAdvice(participant: ObservableParticipant<T>, adviceClass: Class<*>) {
         AgentBuilder.Default()
                 .disableClassFormatChanges()
                 .with(AgentBuilder.RedefinitionStrategy.RETRANSFORMATION)
