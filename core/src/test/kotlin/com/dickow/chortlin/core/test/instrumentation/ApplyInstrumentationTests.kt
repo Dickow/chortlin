@@ -44,6 +44,10 @@ class ApplyInstrumentationTests {
     private val partialSecond3 = participant(PartialSecond::class.java, "third")
     private val partialThird3 = participant(PartialThird::class.java, "third")
 
+    // Fourth set of participants
+    private val argumentFirst = participant(ArgumentClassFirst::class.java, "invoke")
+    private val argumentSecond = participant(ArgumentClassSecond::class.java, "update")
+
     @Test
     fun `apply instrumentation to simple in memory communication`() {
         traces.clear()
@@ -140,5 +144,19 @@ class ApplyInstrumentationTests {
         PartialThird().third()
         assertEquals(6, traces.size)
         assertEquals(CheckResult.Full, checker.check(Trace(traces)))
+    }
+
+    @Test
+    fun `check that correlation sets work when simple correlation function is used`() {
+        traces.clear()
+        InstrumentationStrategy.strategy = interceptStrategy
+        val checker = Choreography.builder()
+                .interaction(external, argumentFirst, "invoke service")
+                .interaction(argumentFirst.nonObservable, argumentSecond, "invoke second")
+                .returnFrom(argumentSecond, "return from invoke")
+                .end()
+                .runVisitor(instrumentationVisitor)
+                .createChecker()
+        ArgumentClassFirst().invoke(100, "Testing Middle User")
     }
 }
