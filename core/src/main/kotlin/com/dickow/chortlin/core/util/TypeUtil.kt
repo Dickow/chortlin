@@ -1,5 +1,7 @@
 package com.dickow.chortlin.core.util
 
+import java.lang.reflect.Method
+
 object TypeUtil {
     fun typesMatch(types1: Array<Class<*>>, types2: Array<out Class<*>>): Boolean {
         if (types1.size != types2.size) {
@@ -14,4 +16,10 @@ object TypeUtil {
 
         return true
     }
+
+    fun getMethodMatch(expectedTypes: Array<Class<*>>, methods: Array<Method>) : Method?{
+        return methods.firstOrNull { m -> TypeUtil.typesMatch(expectedTypes, m.parameterTypes) }
+    }
+
+
 }
