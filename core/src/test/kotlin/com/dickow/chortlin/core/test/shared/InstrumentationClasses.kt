@@ -55,16 +55,3 @@ class PartialSecond {
 class PartialThird {
     fun third() {}
 }
-
-class ArgumentClassFirst {
-    private val class2 = ArgumentClassSecond()
-    fun invoke(id: Int, name: String) {
-        class2.update(id, name)
-    }
-}
-
-class ArgumentClassSecond {
-    fun update(id: Int, name: String) {
-
-    }
-}

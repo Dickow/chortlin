@@ -21,7 +21,8 @@ class Correlation(
                 applicableFunctions.map { func -> func.apply(trace.getArguments()) }.toMutableSet()
             }
             is Return -> {
-                applicableFunctions.map { func -> func.apply(arrayOf(trace.returnValue)) }.toMutableSet()
+                val input = if (trace.returnValue == null) arrayOf(); else arrayOf(trace.returnValue)
+                applicableFunctions.map { func -> func.apply(input) }.toMutableSet()
             }
             else -> return mutableSetOf()
         }

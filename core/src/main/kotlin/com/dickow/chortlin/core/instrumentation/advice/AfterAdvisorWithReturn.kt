@@ -7,11 +7,11 @@ import net.bytebuddy.asm.Advice
 import java.lang.reflect.Method
 
 @Suppress("UNUSED_PARAMETER")
-class AfterAdvisor {
+class AfterAdvisorWithReturn {
     companion object {
         @JvmStatic
         @Advice.OnMethodExit
-        fun afterMethod(@Advice.AllArguments allArguments: Array<Any>, @Advice.Origin method: Method, @Advice.Return returnValue: Any) {
+        fun afterMethodWithReturnType(@Advice.AllArguments allArguments: Array<Any>, @Advice.Origin method: Method, @Advice.Return returnValue: Any) {
             InstrumentationStrategy.strategy.intercept(Return(ObservableParticipant(method.declaringClass, method), allArguments, returnValue))
         }
     }

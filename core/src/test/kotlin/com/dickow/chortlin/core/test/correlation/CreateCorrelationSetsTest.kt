@@ -1,6 +1,7 @@
 package com.dickow.chortlin.core.test.correlation
 
 import com.dickow.chortlin.core.checker.OnlineChecker
+import com.dickow.chortlin.core.checker.factory.CheckerFactory
 import com.dickow.chortlin.core.checker.session.InMemorySessionManager
 import com.dickow.chortlin.core.choreography.Choreography
 import com.dickow.chortlin.core.choreography.participant.ParticipantFactory.external
@@ -50,7 +51,7 @@ class CreateCorrelationSetsTest {
                 .interaction(client, buyService, "Buy the item")
                 .returnFrom(buyService, "Successful buy")
                 .end()
-                .correlationSet(cset)
+                .setCorrelationSet(cset)
 
         // Try to apply the correlation function to an invocation
         val key = cset.get(auth)?.retrieveKey(arrayOf("jeppedickow", "1234!"))
@@ -86,11 +87,11 @@ class CreateCorrelationSetsTest {
                 .interaction(client, buyService, "Buy the item")
                 .returnFrom(buyService, "Successful buy")
                 .end()
-                .correlationSet(CorrelationSet(
+                .setCorrelationSet(CorrelationSet(
                         correlation(auth, authCorrelation, fromInput(authCorrelation), fromReturn(authExtendCorrelation))))
 
         assertFailsWith(InvalidChoreographyException::class) {
-            choreography.createChecker()
+            CheckerFactory.createChecker(choreography)
         }
     }
 
@@ -102,7 +103,7 @@ class CreateCorrelationSetsTest {
                 .interaction(client, buyService, "Buy the item")
                 .returnFrom(buyService, "Successful buy")
                 .end()
-                .correlationSet(cset)
+                .setCorrelationSet(cset)
                 .runVisitor(instrumentation)
         val onlineChecker = OnlineChecker(InMemorySessionManager(listOf(choreography)))
         InstrumentationStrategy.strategy = CheckInMemory(onlineChecker, true)
@@ -123,7 +124,7 @@ class CreateCorrelationSetsTest {
                 .interaction(client, buyService, "Buy the item")
                 .returnFrom(buyService, "Successful buy")
                 .end()
-                .correlationSet(cset)
+                .setCorrelationSet(cset)
                 .runVisitor(instrumentation)
         val onlineChecker = OnlineChecker(InMemorySessionManager(listOf(choreography)))
         InstrumentationStrategy.strategy = CheckInMemory(onlineChecker, true)

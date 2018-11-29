@@ -1,9 +1,13 @@
 package com.dickow.chortlin.core.test.instrumentation
 
+import com.dickow.chortlin.core.checker.factory.CheckerFactory
 import com.dickow.chortlin.core.checker.result.CheckResult
 import com.dickow.chortlin.core.choreography.Choreography
 import com.dickow.chortlin.core.choreography.participant.ParticipantFactory.external
 import com.dickow.chortlin.core.choreography.participant.ParticipantFactory.participant
+import com.dickow.chortlin.core.correlation.CorrelationSet
+import com.dickow.chortlin.core.correlation.factory.CorrelationFactory.correlation
+import com.dickow.chortlin.core.correlation.factory.CorrelationFactory.fromInput
 import com.dickow.chortlin.core.instrumentation.ASTInstrumentation
 import com.dickow.chortlin.core.instrumentation.ByteBuddyInstrumentation
 import com.dickow.chortlin.core.instrumentation.strategy.InstrumentationStrategy
@@ -44,21 +48,24 @@ class ApplyInstrumentationTests {
     private val partialSecond3 = participant(PartialSecond::class.java, "third")
     private val partialThird3 = participant(PartialThird::class.java, "third")
 
-    // Fourth set of participants
-    private val argumentFirst = participant(ArgumentClassFirst::class.java, "invoke")
-    private val argumentSecond = participant(ArgumentClassSecond::class.java, "update")
-
     @Test
     fun `apply instrumentation to simple in memory communication`() {
         traces.clear()
         InstrumentationStrategy.strategy = interceptStrategy
-        val checker = Choreography.builder()
-                .interaction(external, initial, "start")
-                .interaction(initial.nonObservable, delegate, "delegate")
-                .interaction(delegate.nonObservable, processor, "processing")
-                .end()
-                .runVisitor(instrumentationVisitor)
-                .createChecker()
+        val sessionId = UUID.randomUUID()
+        val cset = CorrelationSet(
+                correlation(initial, { sessionId }, fromInput { sessionId }),
+                correlation(delegate, { sessionId }),
+                correlation(processor, { sessionId })
+        )
+
+        val checker = CheckerFactory.createChecker(
+                Choreography.builder()
+                        .interaction(external, initial, "start")
+                        .interaction(initial.nonObservable, delegate, "delegate")
+                        .interaction(delegate.nonObservable, processor, "processing")
+                        .end().setCorrelationSet(cset)
+                        .runVisitor(instrumentationVisitor))
         Initial().begin()
         assertEquals(3, traces.size)
         assertEquals(CheckResult.Full, checker.check(Trace(traces)))
@@ -68,13 +75,21 @@ class ApplyInstrumentationTests {
     fun `validate that instrumentation catches an error in the invocation`() {
         traces.clear()
         InstrumentationStrategy.strategy = interceptStrategy
-        val checker = Choreography.builder()
-                .interaction(external, delegate, "start")
-                .interaction(delegate.nonObservable, initial, "then initial")
-                .interaction(initial.nonObservable, processor, "process it")
-                .end()
-                .runVisitor(instrumentationVisitor)
-                .createChecker()
+        val sessionId = UUID.randomUUID()
+        val cset = CorrelationSet(
+                correlation(delegate, { sessionId }, fromInput { sessionId }),
+                correlation(initial, { sessionId }),
+                correlation(processor, { sessionId })
+        )
+
+        val checker = CheckerFactory.createChecker(
+                Choreography.builder()
+                        .interaction(external, delegate, "start")
+                        .interaction(delegate.nonObservable, initial, "then initial")
+                        .interaction(initial.nonObservable, processor, "process it")
+                        .end().setCorrelationSet(cset)
+                        .runVisitor(instrumentationVisitor)
+        )
         Initial().begin()
         assertEquals(3, traces.size)
         assertEquals(CheckResult.None, checker.check(Trace(traces)))
@@ -84,16 +99,24 @@ class ApplyInstrumentationTests {
     fun `validate instrumentation when returns are used correctly`() {
         traces.clear()
         InstrumentationStrategy.strategy = interceptStrategy
-        val checker = Choreography.builder()
-                .interaction(external, firstClass, "initial receive")
-                .interaction(firstClass.nonObservable, secondClass, "second call")
-                .interaction(secondClass.nonObservable, thirdClass, "third call")
-                .returnFrom(thirdClass, "return from third call")
-                .returnFrom(secondClass, "return from Second::second")
-                .returnFrom(firstClass, "return from First::first")
-                .end()
-                .runVisitor(instrumentationVisitor)
-                .createChecker()
+        val sessionId = UUID.randomUUID()
+        val cset = CorrelationSet(
+                correlation(firstClass, { sessionId }, fromInput { sessionId }),
+                correlation(secondClass, { sessionId }),
+                correlation(thirdClass, { sessionId })
+        )
+
+        val checker = CheckerFactory.createChecker(
+                Choreography.builder()
+                        .interaction(external, firstClass, "initial receive")
+                        .interaction(firstClass.nonObservable, secondClass, "second call")
+                        .interaction(secondClass.nonObservable, thirdClass, "third call")
+                        .returnFrom(thirdClass, "return from third call")
+                        .returnFrom(secondClass, "return from Second::second")
+                        .returnFrom(firstClass, "return from First::first")
+                        .end().setCorrelationSet(cset)
+                        .runVisitor(instrumentationVisitor)
+        )
 
         FirstClass().first()
         assertEquals(6, traces.size)
@@ -104,16 +127,24 @@ class ApplyInstrumentationTests {
     fun `check that checker invalidates gathered traces for wrong call sequence`() {
         traces.clear()
         InstrumentationStrategy.strategy = interceptStrategy
-        val checker = Choreography.builder()
-                .interaction(external, firstClass, "initial receive")
-                .interaction(firstClass.nonObservable, secondClass, "second call")
-                .interaction(secondClass.nonObservable, thirdClass, "third call")
-                .returnFrom(thirdClass, "return from third call")
-                .returnFrom(secondClass, "return from Second::second")
-                .returnFrom(firstClass, "return from First::first")
-                .end()
-                .runVisitor(instrumentationVisitor)
-                .createChecker()
+        val sessionId = UUID.randomUUID()
+        val cset = CorrelationSet(
+                correlation(firstClass, { sessionId }, fromInput { sessionId }),
+                correlation(secondClass, { sessionId }),
+                correlation(thirdClass, { sessionId })
+        )
+
+        val checker = CheckerFactory.createChecker(
+                Choreography.builder()
+                        .interaction(external, firstClass, "initial receive")
+                        .interaction(firstClass.nonObservable, secondClass, "second call")
+                        .interaction(secondClass.nonObservable, thirdClass, "third call")
+                        .returnFrom(thirdClass, "return from third call")
+                        .returnFrom(secondClass, "return from Second::second")
+                        .returnFrom(firstClass, "return from First::first")
+                        .end().setCorrelationSet(cset)
+                        .runVisitor(instrumentationVisitor)
+        )
 
         SecondClass().second()
         assertEquals(4, traces.size)
@@ -124,16 +155,26 @@ class ApplyInstrumentationTests {
     fun `check that traces gathered from instrumentation partially matches when partially executed`() {
         traces.clear()
         InstrumentationStrategy.strategy = interceptStrategy
-        val checker = Choreography.builder()
-                .interaction(external, partialFirst1, "initialize calls")
-                .interaction(partialFirst1.nonObservable, partialFirst2, "call second method of first class")
-                .interaction(partialFirst2.nonObservable, partialSecond2, "call second method of second class")
-                .interaction(partialSecond2.nonObservable, partialSecond3, "call third method of second class")
-                .interaction(partialSecond3.nonObservable, partialThird3, "call third method of third class")
-                .returnFrom(partialThird3, "return from the third participant again")
-                .end()
-                .runVisitor(instrumentationVisitor)
-                .createChecker()
+        val sessionId = UUID.randomUUID()
+        val cset = CorrelationSet(
+                correlation(partialFirst1, { sessionId }, fromInput { sessionId }),
+                correlation(partialFirst2, { sessionId }),
+                correlation(partialSecond2, { sessionId }),
+                correlation(partialSecond3, { sessionId }),
+                correlation(partialThird3, { sessionId })
+        )
+
+        val checker = CheckerFactory.createChecker(
+                Choreography.builder()
+                        .interaction(external, partialFirst1, "initialize calls")
+                        .interaction(partialFirst1.nonObservable, partialFirst2, "call second method of first class")
+                        .interaction(partialFirst2.nonObservable, partialSecond2, "call second method of second class")
+                        .interaction(partialSecond2.nonObservable, partialSecond3, "call third method of second class")
+                        .interaction(partialSecond3.nonObservable, partialThird3, "call third method of third class")
+                        .returnFrom(partialThird3, "return from the third participant again")
+                        .end().setCorrelationSet(cset)
+                        .runVisitor(instrumentationVisitor)
+        )
 
         PartialFirst().first()
         assertEquals(3, traces.size)
@@ -144,19 +185,5 @@ class ApplyInstrumentationTests {
         PartialThird().third()
         assertEquals(6, traces.size)
         assertEquals(CheckResult.Full, checker.check(Trace(traces)))
-    }
-
-    @Test
-    fun `check that correlation sets work when simple correlation function is used`() {
-        traces.clear()
-        InstrumentationStrategy.strategy = interceptStrategy
-        val checker = Choreography.builder()
-                .interaction(external, argumentFirst, "invoke service")
-                .interaction(argumentFirst.nonObservable, argumentSecond, "invoke second")
-                .returnFrom(argumentSecond, "return from invoke")
-                .end()
-                .runVisitor(instrumentationVisitor)
-                .createChecker()
-        ArgumentClassFirst().invoke(100, "Testing Middle User")
     }
 }

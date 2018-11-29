@@ -1,5 +1,6 @@
 package com.dickow.chortlin.core.test.checker
 
+import com.dickow.chortlin.core.checker.ChoreographyChecker
 import com.dickow.chortlin.core.checker.result.CheckResult
 import com.dickow.chortlin.core.choreography.Choreography
 import com.dickow.chortlin.core.choreography.participant.ParticipantFactory.external
@@ -20,8 +21,8 @@ class OfflineCheckerTests {
     private val aReceive = participant(A::class.java, "receive")
     private val aB = participant(A::class.java, "b")
     private val bB = participant(B::class.java, "b")
-    val allArguments = arrayOf<Any>()
-    val returnValue = Any()
+    private val allArguments = arrayOf<Any>()
+    private val returnValue = Any()
 
     @Test
     fun `check that trace conforms to configured choreography`() {
@@ -29,7 +30,7 @@ class OfflineCheckerTests {
                 .interaction(external, aReceive, "receive")
                 .end()
         val trace = Trace(listOf(Invocation(participant(A::class.java, "receive"), allArguments)))
-        val checker = choreography.createChecker()
+        val checker = ChoreographyChecker(choreography)
         assertEquals(CheckResult.Full, checker.check(trace))
         assertEquals(CheckResult.Full, checker.check(trace))
     }
@@ -51,7 +52,7 @@ class OfflineCheckerTests {
                 Invocation(participant(A::class.java, "b"), allArguments),
                 Invocation(participant(B::class.java, "b"), allArguments)))
 
-        val checker = choreography.createChecker()
+        val checker = ChoreographyChecker(choreography)
         assertEquals(CheckResult.Full, checker.check(trace))
         assertEquals(CheckResult.Full, checker.check(trace))
     }
@@ -68,7 +69,7 @@ class OfflineCheckerTests {
                 Invocation(participant(A::class.java, "receive"), allArguments),
                 Invocation(participant(B::class.java, "b"), allArguments)))
 
-        val checker = choreography.createChecker()
+        val checker = ChoreographyChecker(choreography)
         assertEquals(CheckResult.None, checker.check(trace))
         assertEquals(CheckResult.None, checker.check(trace))
     }
@@ -82,7 +83,7 @@ class OfflineCheckerTests {
                 .returnFrom(bB, "return from method B::b")
                 .returnFrom(aB, "return from method A::b")
                 .end()
-        val checker = choreography.createChecker()
+        val checker = ChoreographyChecker(choreography)
         val trace = Trace(listOf(
                 Invocation(participant(A::class.java, "receive"), allArguments),
                 Invocation(participant(A::class.java, "b"), allArguments),
@@ -98,7 +99,7 @@ class OfflineCheckerTests {
                 .interaction(external, aReceive, "receive")
                 .returnFrom(aReceive, "return")
                 .end()
-        val checker = choreography.createChecker()
+        val checker = ChoreographyChecker(choreography)
         val trace = Trace(listOf(
                 Invocation(participant(A::class.java, "receive"), allArguments),
                 Return(participant(A::class.java, "receive"), allArguments, returnValue)))
@@ -111,7 +112,7 @@ class OfflineCheckerTests {
                 .interaction(external, aReceive, "receive")
                 .returnFrom(aReceive, "return")
                 .end()
-        val checker = choreography.createChecker()
+        val checker = ChoreographyChecker(choreography)
         val trace = Trace(listOf(Invocation(participant(A::class.java, "receive"), allArguments)))
         assertEquals(CheckResult.Partial, checker.check(trace))
     }
@@ -122,10 +123,10 @@ class OfflineCheckerTests {
                 .interaction(external, aReceive, "receive")
                 .returnFrom(aReceive, "return")
                 .end()
-        val checker = choreography.createChecker()
+        val checker = ChoreographyChecker(choreography)
         val trace = Trace(listOf(
-                Invocation(participant(A::class.java, "receive"), allArguments),
-                Return(participant(B::class.java, "b"), allArguments, returnValue)))
+                Invocation(aReceive, allArguments),
+                Return(bB, allArguments, returnValue)))
         assertEquals(CheckResult.None, checker.check(trace))
     }
 

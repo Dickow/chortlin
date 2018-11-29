@@ -2,6 +2,7 @@ package com.dickow.chortlin.core.checker.session
 
 import com.dickow.chortlin.core.checker.ChoreographyChecker
 import com.dickow.chortlin.core.checker.ParticipantRetriever
+import com.dickow.chortlin.core.checker.factory.CheckerFactory
 import com.dickow.chortlin.core.checker.result.CheckResult
 import com.dickow.chortlin.core.choreography.Choreography
 import com.dickow.chortlin.core.choreography.participant.ObservableParticipant
@@ -10,7 +11,7 @@ import com.dickow.chortlin.core.trace.TraceElement
 import java.util.*
 
 class Session(val sessionId: UUID, val choreography: Choreography, trace: TraceElement) {
-    private val checker: ChoreographyChecker = choreography.createChecker()
+    private val checker: ChoreographyChecker = CheckerFactory.createChecker(choreography)
     private val traces: MutableList<TraceElement> = LinkedList()
     private val participantSet: Set<ObservableParticipant<*>>
     private val correlationKeys: MutableSet<Any>
@@ -40,8 +41,12 @@ class Session(val sessionId: UUID, val choreography: Choreography, trace: TraceE
     }
 
     fun correlatesTo(trace: TraceElement): Boolean {
-        val key = choreography.getCorrelation(trace.getParticipant())!!.retrieveKey(trace.getArguments())
-        return correlationKeys.contains(key)
+        val key = choreography.getCorrelation(trace.getParticipant())?.retrieveKey(trace.getArguments())
+        return if (key == null) {
+            false
+        } else {
+            correlationKeys.contains(key)
+        }
     }
 
     fun hasParticipant(participant: ObservableParticipant<*>): Boolean {

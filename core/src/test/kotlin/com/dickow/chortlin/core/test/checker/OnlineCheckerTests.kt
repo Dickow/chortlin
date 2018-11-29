@@ -6,12 +6,16 @@ import com.dickow.chortlin.core.checker.session.InMemorySessionManager
 import com.dickow.chortlin.core.choreography.Choreography
 import com.dickow.chortlin.core.choreography.participant.ParticipantFactory.external
 import com.dickow.chortlin.core.choreography.participant.ParticipantFactory.participant
+import com.dickow.chortlin.core.correlation.CorrelationSet
+import com.dickow.chortlin.core.correlation.factory.CorrelationFactory.correlation
+import com.dickow.chortlin.core.correlation.factory.CorrelationFactory.fromInput
 import com.dickow.chortlin.core.test.shared.OnlineFirstClass
 import com.dickow.chortlin.core.test.shared.OnlineSecondClass
 import com.dickow.chortlin.core.test.shared.OnlineThirdClass
 import com.dickow.chortlin.core.trace.Invocation
 import com.dickow.chortlin.core.trace.Return
 import org.junit.jupiter.api.Test
+import java.util.*
 import kotlin.test.assertEquals
 
 class OnlineCheckerTests {
@@ -22,6 +26,16 @@ class OnlineCheckerTests {
     private val onlineSecondMethod2 = participant(OnlineSecondClass::class.java, "method2")
     private val onlineThirdMethod1 = participant(OnlineThirdClass::class.java, "method1")
     private val onlineThirdMethod2 = participant(OnlineThirdClass::class.java, "method2")
+
+    private val sessionId = UUID.randomUUID()
+    private val cset = CorrelationSet(
+            correlation(onlineFirstMethod1, { sessionId }, fromInput { sessionId }),
+            correlation(onlineFirstMethod2, { sessionId }),
+            correlation(onlineSecondMethod1, { sessionId }),
+            correlation(onlineSecondMethod2, { sessionId }),
+            correlation(onlineThirdMethod1, { sessionId }),
+            correlation(onlineThirdMethod2, { sessionId })
+    )
 
     val allArguments = arrayOf<Any>()
     val returnValue = Any()
@@ -40,6 +54,7 @@ class OnlineCheckerTests {
             .returnFrom(onlineFirstMethod2, "return #2")
             .returnFrom(onlineFirstMethod1, "return #1")
             .end()
+            .setCorrelationSet(cset)
 
     private val expectedTraceSequence = listOf(
             Invocation(participant(OnlineFirstClass::class.java, "method1"), allArguments),
@@ -103,18 +118,31 @@ class OnlineCheckerTests {
 
     @Test
     fun `check that online checker works for unrelated choreographies with interleaved execution`() {
+        val sessionId1 = UUID.randomUUID()
+        val sessionId2 = UUID.randomUUID()
+        val cset1 = CorrelationSet(
+                correlation(onlineFirstMethod1, { sessionId1 }, fromInput { sessionId1 }),
+                correlation(onlineFirstMethod2, { sessionId1 }),
+                correlation(onlineSecondMethod1, { sessionId1 })
+        )
+        val cset2 = CorrelationSet(
+                correlation(onlineSecondMethod2, { sessionId2 }, fromInput { sessionId2 }),
+                correlation(onlineThirdMethod1, { sessionId2 }),
+                correlation(onlineThirdMethod2, { sessionId2 })
+        )
+
         val choreography1 = Choreography.builder()
                 .interaction(external, onlineFirstMethod1, "#1")
                 .interaction(onlineFirstMethod1.nonObservable, onlineFirstMethod2, "#2")
                 .interaction(onlineFirstMethod2.nonObservable, onlineSecondMethod1, "#3")
                 .returnFrom(onlineSecondMethod1, "return #3")
-                .end()
+                .end().setCorrelationSet(cset1)
 
         val choreography2 = Choreography.builder()
                 .interaction(external, onlineSecondMethod2, "#1")
                 .interaction(onlineSecondMethod2.nonObservable, onlineThirdMethod1, "#2")
                 .interaction(onlineThirdMethod1.nonObservable, onlineThirdMethod2, "#3")
-                .end()
+                .end().setCorrelationSet(cset2)
         val checker = OnlineChecker(InMemorySessionManager(listOf(choreography1, choreography2)))
         assertEquals(CheckResult.Partial, checker.check(Invocation(participant(OnlineFirstClass::class.java, "method1"), allArguments))) // Choreography 1
         assertEquals(CheckResult.Partial, checker.check(Invocation(participant(OnlineSecondClass::class.java, "method2"), allArguments))) // Choreography 2

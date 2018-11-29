@@ -1,7 +1,8 @@
 package com.dickow.chortlin.core.instrumentation
 
 import com.dickow.chortlin.core.choreography.participant.ObservableParticipant
-import com.dickow.chortlin.core.instrumentation.advice.AfterAdvisor
+import com.dickow.chortlin.core.instrumentation.advice.AfterAdvisorNoReturn
+import com.dickow.chortlin.core.instrumentation.advice.AfterAdvisorWithReturn
 import com.dickow.chortlin.core.instrumentation.advice.BeforeAdvisor
 import net.bytebuddy.agent.ByteBuddyAgent
 import net.bytebuddy.agent.builder.AgentBuilder
@@ -29,7 +30,12 @@ object ByteBuddyInstrumentation : Instrumentation {
 
     override fun <T> after(participant: ObservableParticipant<T>) {
         if (!appliedAfterAdvices.contains(participant)) {
-            applyAdvice(participant, AfterAdvisor::class.java)
+            if (participant.method.returnType == Void.TYPE) {
+                applyAdvice(participant, AfterAdvisorNoReturn::class.java)
+            } else {
+                applyAdvice(participant, AfterAdvisorWithReturn::class.java)
+            }
+
             appliedAfterAdvices.add(participant)
         }
     }

@@ -7,16 +7,20 @@ import com.dickow.chortlin.core.correlation.Correlation
 import com.dickow.chortlin.core.correlation.CorrelationFunction
 import com.dickow.chortlin.core.correlation.InputTypesFunction
 import com.dickow.chortlin.core.correlation.ReturnTypesFunction
+import com.dickow.chortlin.core.correlation.functiondefinitions.CFunc0
 import com.dickow.chortlin.core.correlation.functiondefinitions.CFunc1
 import com.dickow.chortlin.core.correlation.functiondefinitions.CFunc2
 import com.dickow.chortlin.core.correlation.functiondefinitions.CFunc3
 import com.dickow.chortlin.core.exceptions.InvalidChoreographyException
 
 object CorrelationFactory {
-    fun <T> correlation(
-            participant: ObservableParticipant<*>,
-            correlationFunction: CFunc1<T>,
-            vararg addFunctions: CorrelationFunction): Correlation {
+
+    fun correlation(participant: ObservableParticipant<*>, correlationFunction: CFunc0, vararg addFunctions: CorrelationFunction): Correlation {
+        val func = { _: Array<Any> -> correlationFunction() }
+        return create(participant, InputTypesFunction(func, correlationFunction.javaClass.declaredMethods), addFunctions)
+    }
+
+    fun <T> correlation(participant: ObservableParticipant<*>, correlationFunction: CFunc1<T>, vararg addFunctions: CorrelationFunction): Correlation {
         val func = { args: Array<Any> ->
             correlationFunction(args[0] as T)
         }
@@ -35,6 +39,11 @@ object CorrelationFactory {
             correlationFunction(args[0] as T1, args[1] as T2, args[2] as T3)
         }
         return create(participant, InputTypesFunction(func, correlationFunction.javaClass.declaredMethods), addFunctions)
+    }
+
+    fun fromInput(addFunction: CFunc0): CorrelationFunction {
+        val func = { _: Array<Any> -> addFunction() }
+        return InputTypesFunction(func, addFunction.javaClass.declaredMethods)
     }
 
     fun <T> fromInput(addFunction: CFunc1<T>): CorrelationFunction {
@@ -56,6 +65,11 @@ object CorrelationFactory {
             addFunction(args[0] as T1, args[1] as T2, args[2] as T3)
         }
         return InputTypesFunction(func, addFunction.javaClass.declaredMethods)
+    }
+
+    fun fromReturn(addFunction: CFunc0): CorrelationFunction {
+        val func = { _: Any -> addFunction() }
+        return ReturnTypesFunction(func, addFunction.javaClass.declaredMethods)
     }
 
     fun <T> fromReturn(addFunction: CFunc1<T>): CorrelationFunction {
