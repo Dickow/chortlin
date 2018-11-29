@@ -9,7 +9,6 @@ import com.dickow.chortlin.core.checker.match.SuccessfulMatch
 import com.dickow.chortlin.core.checker.result.CheckResult
 import com.dickow.chortlin.core.choreography.participant.NonObservableParticipant
 import com.dickow.chortlin.core.choreography.participant.ObservableParticipant
-import com.dickow.chortlin.core.trace.Invocation
 import com.dickow.chortlin.core.trace.Trace
 
 class Interaction<T>(
@@ -21,7 +20,7 @@ class Interaction<T>(
     private val matcher = Matcher()
 
     override fun satisfy(trace: Trace): CheckResult {
-        val matchResult = matcher.matchOne(trace.getNotConsumed(), Invocation(receiver))
+        val matchResult = matcher.matchInvocation(trace.getNotConsumed(), receiver)
         return when (matchResult) {
             is SuccessfulMatch -> {
                 trace.consume(matchResult.matchedElement)

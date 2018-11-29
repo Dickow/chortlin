@@ -8,7 +8,6 @@ import com.dickow.chortlin.core.checker.match.NoMoreTraceMatch
 import com.dickow.chortlin.core.checker.match.SuccessfulMatch
 import com.dickow.chortlin.core.checker.result.CheckResult
 import com.dickow.chortlin.core.choreography.participant.ObservableParticipant
-import com.dickow.chortlin.core.trace.Return
 import com.dickow.chortlin.core.trace.Trace
 
 class ReturnFrom<T>(
@@ -19,7 +18,7 @@ class ReturnFrom<T>(
     private val matcher = Matcher()
 
     override fun satisfy(trace: Trace): CheckResult {
-        val matchResult = matcher.matchOne(trace.getNotConsumed(), Return(participant))
+        val matchResult = matcher.matchReturn(trace.getNotConsumed(), participant)
         return when (matchResult) {
             is SuccessfulMatch -> {
                 trace.consume(matchResult.matchedElement)

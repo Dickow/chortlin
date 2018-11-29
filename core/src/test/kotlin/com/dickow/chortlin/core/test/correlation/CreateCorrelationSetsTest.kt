@@ -1,13 +1,20 @@
 package com.dickow.chortlin.core.test.correlation
 
+import com.dickow.chortlin.core.checker.OnlineChecker
+import com.dickow.chortlin.core.checker.session.InMemorySessionManager
 import com.dickow.chortlin.core.choreography.Choreography
 import com.dickow.chortlin.core.choreography.participant.ParticipantFactory.external
 import com.dickow.chortlin.core.choreography.participant.ParticipantFactory.participant
-import com.dickow.chortlin.core.correlation.CorrelationFactory.correlation
-import com.dickow.chortlin.core.correlation.CorrelationFactory.fromInput
-import com.dickow.chortlin.core.correlation.CorrelationFactory.fromReturn
 import com.dickow.chortlin.core.correlation.CorrelationSet
+import com.dickow.chortlin.core.correlation.factory.CorrelationFactory.correlation
+import com.dickow.chortlin.core.correlation.factory.CorrelationFactory.fromInput
+import com.dickow.chortlin.core.correlation.factory.CorrelationFactory.fromReturn
+import com.dickow.chortlin.core.exceptions.ChortlinRuntimeException
 import com.dickow.chortlin.core.exceptions.InvalidChoreographyException
+import com.dickow.chortlin.core.instrumentation.ASTInstrumentation
+import com.dickow.chortlin.core.instrumentation.ByteBuddyInstrumentation
+import com.dickow.chortlin.core.instrumentation.strategy.CheckInMemory
+import com.dickow.chortlin.core.instrumentation.strategy.InstrumentationStrategy
 import com.dickow.chortlin.core.test.shared.AuthResult
 import com.dickow.chortlin.core.test.shared.AuthenticatedService
 import com.dickow.chortlin.core.test.shared.Authentication
@@ -16,11 +23,15 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
 class CreateCorrelationSetsTest {
+    private val instrumentation = ASTInstrumentation(ByteBuddyInstrumentation)
 
     private val client = external("Client")
     private val auth = participant(Authentication::class.java, "authenticate")
     private val buyService = participant(AuthenticatedService::class.java, "buyItem")
-    private val sellService = participant(AuthenticatedService::class.java, "sellItem")
+    //private val sellService = participant(AuthenticatedService::class.java, "sellItem")
+
+    private val authService = Authentication()
+    private val itemService = AuthenticatedService()
 
     private val authCorrelation = { username: String, _: String -> username }
     private val authExtendCorrelation = { authResult: AuthResult -> authResult.userId }
@@ -33,7 +44,7 @@ class CreateCorrelationSetsTest {
 
     @Test
     fun `create correlation set for small choreography`() {
-        val choreography = Choreography.builder()
+        Choreography.builder()
                 .interaction(client, auth, "Authenticate client")
                 .returnFrom(auth, "Client is authenticated")
                 .interaction(client, buyService, "Buy the item")
@@ -49,7 +60,78 @@ class CreateCorrelationSetsTest {
     @Test
     fun `expect error when supplying correlation function with wrong type parameters`(){
         assertFailsWith(InvalidChoreographyException::class) {
-            correlation(auth, { username: String, password: Int -> username})
+            correlation(auth, { username: String, _: Int -> username })
         }
+    }
+
+    @Test
+    fun `expect error when supplying addition function for wrong input type params`() {
+        assertFailsWith(InvalidChoreographyException::class) {
+            correlation(auth, authCorrelation, fromInput { username: String, _: Int -> username })
+        }
+    }
+
+    @Test
+    fun `expect error when supplying addition function for wrong return type`() {
+        assertFailsWith(InvalidChoreographyException::class) {
+            correlation(auth, authCorrelation, fromReturn { username: String -> username })
+        }
+    }
+
+    @Test
+    fun `expect error when creating checker for choreography with lacking correlation set`() {
+        val choreography = Choreography.builder()
+                .interaction(client, auth, "Authenticate client")
+                .returnFrom(auth, "Client is authenticated")
+                .interaction(client, buyService, "Buy the item")
+                .returnFrom(buyService, "Successful buy")
+                .end()
+                .correlationSet(CorrelationSet(
+                        correlation(auth, authCorrelation, fromInput(authCorrelation), fromReturn(authExtendCorrelation))))
+
+        assertFailsWith(InvalidChoreographyException::class) {
+            choreography.createChecker()
+        }
+    }
+
+    @Test
+    fun `expect success when running multiple instances of the services with correlation sets`() {
+        val choreography = Choreography.builder()
+                .interaction(client, auth, "Authenticate client")
+                .returnFrom(auth, "Client is authenticated")
+                .interaction(client, buyService, "Buy the item")
+                .returnFrom(buyService, "Successful buy")
+                .end()
+                .correlationSet(cset)
+                .runVisitor(instrumentation)
+        val onlineChecker = OnlineChecker(InMemorySessionManager(listOf(choreography)))
+        InstrumentationStrategy.strategy = CheckInMemory(onlineChecker, true)
+
+        val authResult1 = authService.authenticate("jeppedickow", "1234!")
+        val authResult2 = authService.authenticate("lars", "4321!")
+        val authResult3 = authService.authenticate("klaus", "2314!")
+        itemService.buyItem("test", authResult1)
+        itemService.buyItem("bucket", authResult3)
+        itemService.buyItem("horse", authResult2)
+    }
+
+    @Test
+    fun `expect error when executing a session in the wrong order`() {
+        val choreography = Choreography.builder()
+                .interaction(client, auth, "Authenticate client")
+                .returnFrom(auth, "Client is authenticated")
+                .interaction(client, buyService, "Buy the item")
+                .returnFrom(buyService, "Successful buy")
+                .end()
+                .correlationSet(cset)
+                .runVisitor(instrumentation)
+        val onlineChecker = OnlineChecker(InMemorySessionManager(listOf(choreography)))
+        InstrumentationStrategy.strategy = CheckInMemory(onlineChecker, true)
+
+        val authResult1 = authService.authenticate("jeppedickow", "1234!")
+        val authResult2 = authService.authenticate("lars", "4321!")
+        itemService.buyItem("test", authResult1)
+        itemService.buyItem("horse", authResult2)
+        assertFailsWith(ChortlinRuntimeException::class) { itemService.buyItem("bucket", AuthResult("lars")) }
     }
 }

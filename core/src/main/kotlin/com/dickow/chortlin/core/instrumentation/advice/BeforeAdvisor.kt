@@ -12,7 +12,7 @@ class BeforeAdvisor {
         @JvmStatic
         @Advice.OnMethodEnter
         fun beforeMethod(@Advice.AllArguments allArguments: Array<Any>, @Advice.Origin method: Method) {
-            InstrumentationStrategy.strategy.intercept(Invocation(ObservableParticipant(method.declaringClass, method)))
+            InstrumentationStrategy.strategy.intercept(Invocation(ObservableParticipant(method.declaringClass, method), allArguments))
         }
     }
 

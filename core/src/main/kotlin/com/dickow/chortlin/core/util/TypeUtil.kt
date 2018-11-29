@@ -17,9 +17,12 @@ object TypeUtil {
         return true
     }
 
-    fun getMethodMatch(expectedTypes: Array<Class<*>>, methods: Array<Method>) : Method?{
+    fun getMethodMatchForInputTypes(expectedTypes: Array<Class<*>>, methods: Array<Method>): Method? {
         return methods.firstOrNull { m -> TypeUtil.typesMatch(expectedTypes, m.parameterTypes) }
     }
 
+    fun getMethodMatchForReturnType(expectedReturnType: Class<*>, methods: Array<Method>): Method? {
+        return methods.firstOrNull { m -> m.parameterTypes.size == 1 && expectedReturnType == m.parameterTypes[0] }
+    }
 
 }

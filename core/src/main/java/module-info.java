@@ -15,4 +15,6 @@ module chortlin.core {
     exports com.dickow.chortlin.core.instrumentation.strategy;
     exports com.dickow.chortlin.core.instrumentation.strategy.factory;
     exports com.dickow.chortlin.core.trace;
+    exports com.dickow.chortlin.core.correlation.factory;
+    exports com.dickow.chortlin.core.correlation.functiondefinitions;
 }

@@ -25,17 +25,22 @@ class InMemorySessionManager(choreographies: List<Choreography>) : SessionManage
         ongoingSessions.remove(session.sessionId)
     }
 
-    override fun beginSession(trace: TraceElement) {
+    override fun beginSession(trace: TraceElement): Session {
         val choreography = participantToChoreographyMap[trace.getParticipant()]
         if (choreography != null) {
             val sessionId = UUID.randomUUID()
-            ongoingSessions[sessionId] = Session(sessionId, choreography)
+            val session = Session(sessionId, choreography, trace)
+            ongoingSessions[sessionId] = session
+            return session
+
         } else {
             throw ChortlinRuntimeException("Unable to find a possible choreography instance for trace: $trace")
         }
     }
 
     override fun getSession(trace: TraceElement): Session? {
-        return ongoingSessions.values.find { session -> session.participantSet.contains(trace.getParticipant()) }
+        return ongoingSessions.values.find { session ->
+            session.correlatesTo(trace) && session.hasParticipant(trace.getParticipant())
+        }
     }
 }

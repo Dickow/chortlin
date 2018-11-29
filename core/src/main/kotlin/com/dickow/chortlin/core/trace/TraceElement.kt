@@ -4,4 +4,5 @@ import com.dickow.chortlin.core.choreography.participant.ObservableParticipant
 
 abstract class TraceElement {
     abstract fun getParticipant(): ObservableParticipant<*>
+    abstract fun getArguments(): Array<Any>
 }
