@@ -6,8 +6,9 @@ import com.dickow.chortlin.core.checker.session.InMemorySessionManager
 import com.dickow.chortlin.core.choreography.Choreography
 import com.dickow.chortlin.core.choreography.participant.ParticipantFactory.external
 import com.dickow.chortlin.core.choreography.participant.ParticipantFactory.participant
-import com.dickow.chortlin.core.correlation.CorrelationSet
+import com.dickow.chortlin.core.correlation.factory.CorrelationFactory.addFunctions
 import com.dickow.chortlin.core.correlation.factory.CorrelationFactory.correlation
+import com.dickow.chortlin.core.correlation.factory.CorrelationFactory.defineCorrelationSet
 import com.dickow.chortlin.core.correlation.factory.CorrelationFactory.fromInput
 import com.dickow.chortlin.core.correlation.factory.CorrelationFactory.fromReturn
 import com.dickow.chortlin.core.exceptions.ChortlinRuntimeException
@@ -38,10 +39,10 @@ class CreateCorrelationSetsTest {
     private val authExtendCorrelation = { authResult: AuthResult -> authResult.userId }
     private val buyerCorrelation = { _: String, authResult: AuthResult -> authResult.userId }
 
-    private val cset = CorrelationSet(
-            correlation(auth, authCorrelation, fromInput(authCorrelation), fromReturn(authExtendCorrelation)),
-            correlation(buyService, buyerCorrelation)
-    )
+    private val cset = defineCorrelationSet()
+            .add(correlation(auth, authCorrelation, addFunctions(fromInput(authCorrelation), fromReturn(authExtendCorrelation))))
+            .add(correlation(buyService, buyerCorrelation))
+            .finish()
 
     @Test
     fun `create correlation set for small choreography`() {
@@ -68,14 +69,14 @@ class CreateCorrelationSetsTest {
     @Test
     fun `expect error when supplying addition function for wrong input type params`() {
         assertFailsWith(InvalidChoreographyException::class) {
-            correlation(auth, authCorrelation, fromInput { username: String, _: Int -> username })
+            correlation(auth, authCorrelation, addFunctions(fromInput { username: String, _: Int -> username }))
         }
     }
 
     @Test
     fun `expect error when supplying addition function for wrong return type`() {
         assertFailsWith(InvalidChoreographyException::class) {
-            correlation(auth, authCorrelation, fromReturn { username: String -> username })
+            correlation(auth, authCorrelation, addFunctions(fromReturn { username: String -> username }))
         }
     }
 
@@ -87,8 +88,10 @@ class CreateCorrelationSetsTest {
                 .interaction(client, buyService, "Buy the item")
                 .returnFrom(buyService, "Successful buy")
                 .end()
-                .setCorrelationSet(CorrelationSet(
-                        correlation(auth, authCorrelation, fromInput(authCorrelation), fromReturn(authExtendCorrelation))))
+                .setCorrelationSet(defineCorrelationSet()
+                        .add(correlation(auth, authCorrelation,
+                                addFunctions(fromInput(authCorrelation), fromReturn(authExtendCorrelation))))
+                        .finish())
 
         assertFailsWith(InvalidChoreographyException::class) {
             CheckerFactory.createChecker(choreography)

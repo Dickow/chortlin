@@ -9,6 +9,8 @@ import com.dickow.chortlin.dtupay.bank.BankController;
 import com.dickow.chortlin.dtupay.dtu.DTUBankIntegration;
 import com.dickow.chortlin.dtupay.dtu.DTUPayController;
 import com.dickow.chortlin.dtupay.merchant.Merchant;
+import com.dickow.chortlin.dtupay.shared.dto.PaymentDTO;
+import com.dickow.chortlin.dtupay.shared.dto.TransactionDTO;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
@@ -18,6 +20,7 @@ import java.util.List;
 
 import static com.dickow.chortlin.core.choreography.participant.ParticipantFactory.external;
 import static com.dickow.chortlin.core.choreography.participant.ParticipantFactory.participant;
+import static com.dickow.chortlin.core.correlation.factory.CorrelationFactory.*;
 
 @EnableAutoConfiguration
 @Configuration
@@ -36,6 +39,21 @@ public class ApplicationStart {
         var dtuBank = participant(DTUBankIntegration.class, "transferMoney");
         var bank = participant(BankController.class, "transfer");
 
+        var cset = defineCorrelationSet()
+                .add(correlation(merchant,
+                        (String merchantId, PaymentDTO payment) -> merchantId,
+                        addFunctions(fromInput((String merchantId, PaymentDTO payment) -> merchantId))))
+                .add(correlation(dtuPay,
+                        (String merchantId, Integer amount, String token) -> merchantId,
+                        addFunctions(fromInput((String merchantId, Integer amount, String token) -> token))))
+                .add(correlation(dtuBank,
+                        (String merchantId, String customer, Integer amount) -> customer,
+                        emptyAddFunctions()))
+                .add(correlation(bank,
+                        TransactionDTO::getCustomer,
+                        emptyAddFunctions()))
+                .finish();
+
         var choreography = Choreography.Instance.builder()
                 .interaction(client, merchant, "initiate payment")
                 .interaction(merchant.getNonObservable(), dtuPay, "pay")
@@ -46,6 +64,7 @@ public class ApplicationStart {
                 .returnFrom(dtuPay, "return from dtu pay")
                 .returnFrom(merchant, "finished payment")
                 .end()
+                .setCorrelationSet(cset)
                 .runVisitor(new ASTInstrumentation(ByteBuddyInstrumentation.INSTANCE));
 
         InstrumentationStrategy.setStrategy(

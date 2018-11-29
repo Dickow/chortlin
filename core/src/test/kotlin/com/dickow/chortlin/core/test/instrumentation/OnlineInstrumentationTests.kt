@@ -5,8 +5,9 @@ import com.dickow.chortlin.core.checker.session.InMemorySessionManager
 import com.dickow.chortlin.core.choreography.Choreography
 import com.dickow.chortlin.core.choreography.participant.ParticipantFactory.external
 import com.dickow.chortlin.core.choreography.participant.ParticipantFactory.participant
-import com.dickow.chortlin.core.correlation.CorrelationSet
+import com.dickow.chortlin.core.correlation.factory.CorrelationFactory.addFunctions
 import com.dickow.chortlin.core.correlation.factory.CorrelationFactory.correlation
+import com.dickow.chortlin.core.correlation.factory.CorrelationFactory.defineCorrelationSet
 import com.dickow.chortlin.core.correlation.factory.CorrelationFactory.fromInput
 import com.dickow.chortlin.core.exceptions.ChortlinRuntimeException
 import com.dickow.chortlin.core.instrumentation.ASTInstrumentation
@@ -40,11 +41,11 @@ class OnlineInstrumentationTests {
     @Test
     fun `check online checker on simple choreography with manual execution`() {
         val sessionId = UUID.randomUUID()
-        val cset = CorrelationSet(
-                correlation(onlineFirstM1, { sessionId }, fromInput { sessionId }),
-                correlation(onlineFirstM2, { sessionId }),
-                correlation(onlineSecondM1, { sessionId })
-        )
+        val cset = defineCorrelationSet()
+                .add(correlation(onlineFirstM1, { sessionId }, addFunctions(fromInput { sessionId })))
+                .add(correlation(onlineFirstM2, { sessionId }))
+                .add(correlation(onlineSecondM1, { sessionId }))
+                .finish()
         val choreography = Choreography.builder()
                 .interaction(external, onlineFirstM1, "#1")
                 .interaction(onlineFirstM1.nonObservable, onlineFirstM2, "#2")
@@ -63,11 +64,11 @@ class OnlineInstrumentationTests {
     @Test
     fun `check that online checker fails fast if traces do not conform`() {
         val sessionId = UUID.randomUUID()
-        val cset = CorrelationSet(
-                correlation(onlineFirstM1, { sessionId }, fromInput { sessionId }),
-                correlation(onlineFirstM2, { sessionId }),
-                correlation(onlineSecondM1, { sessionId })
-        )
+        val cset = defineCorrelationSet()
+                .add(correlation(onlineFirstM1, { sessionId }, addFunctions(fromInput { sessionId })))
+                .add(correlation(onlineFirstM2, { sessionId }))
+                .add(correlation(onlineSecondM1, { sessionId }))
+                .finish()
         val choreography = Choreography.builder()
                 .interaction(external, onlineFirstM1, "#1")
                 .interaction(onlineFirstM1.nonObservable, onlineFirstM2, "#2")
@@ -87,16 +88,16 @@ class OnlineInstrumentationTests {
     fun `check that concurrently running choreographies work`() {
         val sessionId1 = UUID.randomUUID()
         val sessionId2 = UUID.randomUUID()
-        val cset1 = CorrelationSet(
-                correlation(onlineFirstM1, { sessionId1 }, fromInput { sessionId1 }),
-                correlation(onlineFirstM2, { sessionId1 }),
-                correlation(onlineSecondM1, { sessionId1 })
-        )
-        val cset2 = CorrelationSet(
-                correlation(onlineSecondM2, { sessionId2 }, fromInput { sessionId2 }),
-                correlation(onlineThirdM1, { sessionId2 }),
-                correlation(onlineThirdM2, { sessionId2 })
-        )
+        val cset1 = defineCorrelationSet()
+                .add(correlation(onlineFirstM1, { sessionId1 }, addFunctions(fromInput { sessionId1 })))
+                .add(correlation(onlineFirstM2, { sessionId1 }))
+                .add(correlation(onlineSecondM1, { sessionId1 }))
+                .finish()
+        val cset2 = defineCorrelationSet()
+                .add(correlation(onlineSecondM2, { sessionId2 }, addFunctions(fromInput { sessionId2 })))
+                .add(correlation(onlineThirdM1, { sessionId2 }))
+                .add(correlation(onlineThirdM2, { sessionId2 }))
+                .finish()
         val choreography1 = Choreography.builder()
                 .interaction(external, onlineFirstM1, "#1")
                 .interaction(onlineFirstM1.nonObservable, onlineFirstM2, "#2")
@@ -134,16 +135,16 @@ class OnlineInstrumentationTests {
     fun `check that concurrently running choreographies work and throw exception with wrong execution`() {
         val sessionId1 = UUID.randomUUID()
         val sessionId2 = UUID.randomUUID()
-        val cset1 = CorrelationSet(
-                correlation(onlineFirstM1, { sessionId1 }, fromInput { sessionId1 }),
-                correlation(onlineFirstM2, { sessionId1 }),
-                correlation(onlineSecondM1, { sessionId1 })
-        )
-        val cset2 = CorrelationSet(
-                correlation(onlineSecondM2, { sessionId2 }, fromInput { sessionId2 }),
-                correlation(onlineThirdM1, { sessionId2 }),
-                correlation(onlineThirdM2, { sessionId2 })
-        )
+        val cset1 = defineCorrelationSet()
+                .add(correlation(onlineFirstM1, { sessionId1 }, addFunctions(fromInput { sessionId1 })))
+                .add(correlation(onlineFirstM2, { sessionId1 }))
+                .add(correlation(onlineSecondM1, { sessionId1 }))
+                .finish()
+        val cset2 = defineCorrelationSet()
+                .add(correlation(onlineSecondM2, { sessionId2 }, addFunctions(fromInput { sessionId2 })))
+                .add(correlation(onlineThirdM1, { sessionId2 }))
+                .add(correlation(onlineThirdM2, { sessionId2 }))
+                .finish()
 
         val choreography1 = Choreography.builder()
                 .interaction(external, onlineFirstM1, "#1")

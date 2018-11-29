@@ -5,8 +5,9 @@ import com.dickow.chortlin.core.checker.result.CheckResult
 import com.dickow.chortlin.core.choreography.Choreography
 import com.dickow.chortlin.core.choreography.participant.ParticipantFactory.external
 import com.dickow.chortlin.core.choreography.participant.ParticipantFactory.participant
-import com.dickow.chortlin.core.correlation.CorrelationSet
+import com.dickow.chortlin.core.correlation.factory.CorrelationFactory.addFunctions
 import com.dickow.chortlin.core.correlation.factory.CorrelationFactory.correlation
+import com.dickow.chortlin.core.correlation.factory.CorrelationFactory.defineCorrelationSet
 import com.dickow.chortlin.core.correlation.factory.CorrelationFactory.fromInput
 import com.dickow.chortlin.core.instrumentation.ASTInstrumentation
 import com.dickow.chortlin.core.instrumentation.ByteBuddyInstrumentation
@@ -53,11 +54,11 @@ class ApplyInstrumentationTests {
         traces.clear()
         InstrumentationStrategy.strategy = interceptStrategy
         val sessionId = UUID.randomUUID()
-        val cset = CorrelationSet(
-                correlation(initial, { sessionId }, fromInput { sessionId }),
-                correlation(delegate, { sessionId }),
-                correlation(processor, { sessionId })
-        )
+        val cset = defineCorrelationSet()
+                .add(correlation(initial, { sessionId }, addFunctions(fromInput { sessionId })))
+                .add(correlation(delegate, { sessionId }))
+                .add(correlation(processor, { sessionId }))
+                .finish()
 
         val checker = CheckerFactory.createChecker(
                 Choreography.builder()
@@ -76,11 +77,11 @@ class ApplyInstrumentationTests {
         traces.clear()
         InstrumentationStrategy.strategy = interceptStrategy
         val sessionId = UUID.randomUUID()
-        val cset = CorrelationSet(
-                correlation(delegate, { sessionId }, fromInput { sessionId }),
-                correlation(initial, { sessionId }),
-                correlation(processor, { sessionId })
-        )
+        val cset = defineCorrelationSet()
+                .add(correlation(delegate, { sessionId }, addFunctions(fromInput { sessionId })))
+                .add(correlation(initial, { sessionId }))
+                .add(correlation(processor, { sessionId }))
+                .finish()
 
         val checker = CheckerFactory.createChecker(
                 Choreography.builder()
@@ -100,11 +101,11 @@ class ApplyInstrumentationTests {
         traces.clear()
         InstrumentationStrategy.strategy = interceptStrategy
         val sessionId = UUID.randomUUID()
-        val cset = CorrelationSet(
-                correlation(firstClass, { sessionId }, fromInput { sessionId }),
-                correlation(secondClass, { sessionId }),
-                correlation(thirdClass, { sessionId })
-        )
+        val cset = defineCorrelationSet()
+                .add(correlation(firstClass, { sessionId }, addFunctions(fromInput { sessionId })))
+                .add(correlation(secondClass, { sessionId }))
+                .add(correlation(thirdClass, { sessionId }))
+                .finish()
 
         val checker = CheckerFactory.createChecker(
                 Choreography.builder()
@@ -128,11 +129,11 @@ class ApplyInstrumentationTests {
         traces.clear()
         InstrumentationStrategy.strategy = interceptStrategy
         val sessionId = UUID.randomUUID()
-        val cset = CorrelationSet(
-                correlation(firstClass, { sessionId }, fromInput { sessionId }),
-                correlation(secondClass, { sessionId }),
-                correlation(thirdClass, { sessionId })
-        )
+        val cset = defineCorrelationSet()
+                .add(correlation(firstClass, { sessionId }, addFunctions(fromInput { sessionId })))
+                .add(correlation(secondClass, { sessionId }))
+                .add(correlation(thirdClass, { sessionId }))
+                .finish()
 
         val checker = CheckerFactory.createChecker(
                 Choreography.builder()
@@ -156,13 +157,13 @@ class ApplyInstrumentationTests {
         traces.clear()
         InstrumentationStrategy.strategy = interceptStrategy
         val sessionId = UUID.randomUUID()
-        val cset = CorrelationSet(
-                correlation(partialFirst1, { sessionId }, fromInput { sessionId }),
-                correlation(partialFirst2, { sessionId }),
-                correlation(partialSecond2, { sessionId }),
-                correlation(partialSecond3, { sessionId }),
-                correlation(partialThird3, { sessionId })
-        )
+        val cset = defineCorrelationSet()
+                .add(correlation(partialFirst1, { sessionId }, addFunctions(fromInput { sessionId })))
+                .add(correlation(partialFirst2, { sessionId }))
+                .add(correlation(partialSecond2, { sessionId }))
+                .add(correlation(partialSecond3, { sessionId }))
+                .add(correlation(partialThird3, { sessionId }))
+                .finish()
 
         val checker = CheckerFactory.createChecker(
                 Choreography.builder()

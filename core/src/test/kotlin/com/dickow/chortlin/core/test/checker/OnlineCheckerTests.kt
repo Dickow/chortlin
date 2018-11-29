@@ -6,8 +6,9 @@ import com.dickow.chortlin.core.checker.session.InMemorySessionManager
 import com.dickow.chortlin.core.choreography.Choreography
 import com.dickow.chortlin.core.choreography.participant.ParticipantFactory.external
 import com.dickow.chortlin.core.choreography.participant.ParticipantFactory.participant
-import com.dickow.chortlin.core.correlation.CorrelationSet
+import com.dickow.chortlin.core.correlation.factory.CorrelationFactory.addFunctions
 import com.dickow.chortlin.core.correlation.factory.CorrelationFactory.correlation
+import com.dickow.chortlin.core.correlation.factory.CorrelationFactory.defineCorrelationSet
 import com.dickow.chortlin.core.correlation.factory.CorrelationFactory.fromInput
 import com.dickow.chortlin.core.test.shared.OnlineFirstClass
 import com.dickow.chortlin.core.test.shared.OnlineSecondClass
@@ -28,17 +29,17 @@ class OnlineCheckerTests {
     private val onlineThirdMethod2 = participant(OnlineThirdClass::class.java, "method2")
 
     private val sessionId = UUID.randomUUID()
-    private val cset = CorrelationSet(
-            correlation(onlineFirstMethod1, { sessionId }, fromInput { sessionId }),
-            correlation(onlineFirstMethod2, { sessionId }),
-            correlation(onlineSecondMethod1, { sessionId }),
-            correlation(onlineSecondMethod2, { sessionId }),
-            correlation(onlineThirdMethod1, { sessionId }),
-            correlation(onlineThirdMethod2, { sessionId })
-    )
+    private val cset = defineCorrelationSet()
+            .add(correlation(onlineFirstMethod1, { sessionId }, addFunctions(fromInput { sessionId })))
+            .add(correlation(onlineFirstMethod2, { sessionId }))
+            .add(correlation(onlineSecondMethod1, { sessionId }))
+            .add(correlation(onlineSecondMethod2, { sessionId }))
+            .add(correlation(onlineThirdMethod1, { sessionId }))
+            .add(correlation(onlineThirdMethod2, { sessionId }))
+            .finish()
 
-    val allArguments = arrayOf<Any>()
-    val returnValue = Any()
+    private val allArguments = arrayOf<Any>()
+    private val returnValue = Any()
 
     private val choreography = Choreography.builder()
             .interaction(external, onlineFirstMethod1, "#1")
@@ -120,16 +121,16 @@ class OnlineCheckerTests {
     fun `check that online checker works for unrelated choreographies with interleaved execution`() {
         val sessionId1 = UUID.randomUUID()
         val sessionId2 = UUID.randomUUID()
-        val cset1 = CorrelationSet(
-                correlation(onlineFirstMethod1, { sessionId1 }, fromInput { sessionId1 }),
-                correlation(onlineFirstMethod2, { sessionId1 }),
-                correlation(onlineSecondMethod1, { sessionId1 })
-        )
-        val cset2 = CorrelationSet(
-                correlation(onlineSecondMethod2, { sessionId2 }, fromInput { sessionId2 }),
-                correlation(onlineThirdMethod1, { sessionId2 }),
-                correlation(onlineThirdMethod2, { sessionId2 })
-        )
+        val cset1 = defineCorrelationSet()
+                .add(correlation(onlineFirstMethod1, { sessionId1 }, addFunctions(fromInput { sessionId1 })))
+                .add(correlation(onlineFirstMethod2, { sessionId1 }))
+                .add(correlation(onlineSecondMethod1, { sessionId1 }))
+                .finish()
+        val cset2 = defineCorrelationSet()
+                .add(correlation(onlineSecondMethod2, { sessionId2 }, addFunctions(fromInput { sessionId2 })))
+                .add(correlation(onlineThirdMethod1, { sessionId2 }))
+                .add(correlation(onlineThirdMethod2, { sessionId2 }))
+                .finish()
 
         val choreography1 = Choreography.builder()
                 .interaction(external, onlineFirstMethod1, "#1")

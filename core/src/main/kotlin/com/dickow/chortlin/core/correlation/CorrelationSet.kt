@@ -3,7 +3,7 @@ package com.dickow.chortlin.core.correlation
 import com.dickow.chortlin.core.choreography.participant.ObservableParticipant
 import java.util.*
 
-class CorrelationSet(vararg correlations: Correlation) {
+class CorrelationSet(correlations: List<Correlation>) {
     private val correlationSetMappings = Hashtable<ObservableParticipant<*>, Correlation>()
 
     init {
