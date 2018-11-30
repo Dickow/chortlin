@@ -5,6 +5,8 @@ import com.dickow.chortlin.core.checker.session.InMemorySessionManager
 import com.dickow.chortlin.core.choreography.Choreography
 import com.dickow.chortlin.core.choreography.participant.ParticipantFactory.external
 import com.dickow.chortlin.core.choreography.participant.ParticipantFactory.participant
+import com.dickow.chortlin.core.correlation.factory.CorrelationFactory.correlation
+import com.dickow.chortlin.core.correlation.factory.CorrelationFactory.defineCorrelationSet
 import com.dickow.chortlin.core.exceptions.ChortlinRuntimeException
 import com.dickow.chortlin.core.instrumentation.ASTInstrumentation
 import com.dickow.chortlin.core.instrumentation.ByteBuddyInstrumentation
@@ -18,6 +20,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Test
+import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
@@ -26,21 +29,27 @@ class OnlineInstrumentationTests {
     private val instrumentationVisitor = ASTInstrumentation(ByteBuddyInstrumentation)
 
     private val external = external("External client")
-    private val onlineFirstM1 = participant(OnlineFirstClass::class.java, "method1")
-    private val onlineFirstM2 = participant(OnlineFirstClass::class.java, "method2")
-    private val onlineSecondM1 = participant(OnlineSecondClass::class.java, "method1")
-    private val onlineSecondM2 = participant(OnlineSecondClass::class.java, "method2")
-    private val onlineThirdM1 = participant(OnlineThirdClass::class.java, "method1")
-    private val onlineThirdM2 = participant(OnlineThirdClass::class.java, "method2")
+    private val onlineFirstM1 = participant(OnlineFirstClass::class.java, "method1", OnlineFirstClass::method1)
+    private val onlineFirstM2 = participant(OnlineFirstClass::class.java, "method2", OnlineFirstClass::method2)
+    private val onlineSecondM1 = participant(OnlineSecondClass::class.java, "method1", OnlineSecondClass::method1)
+    private val onlineSecondM2 = participant(OnlineSecondClass::class.java, "method2", OnlineSecondClass::method2)
+    private val onlineThirdM1 = participant(OnlineThirdClass::class.java, "method1", OnlineThirdClass::method1)
+    private val onlineThirdM2 = participant(OnlineThirdClass::class.java, "method2", OnlineThirdClass::method2)
 
     @Test
     fun `check online checker on simple choreography with manual execution`() {
+        val sessionId = UUID.randomUUID()
+        val cset = defineCorrelationSet()
+                .add(correlation(onlineFirstM1, { sessionId }).extendFromInput { sessionId }.done())
+                .add(correlation(onlineFirstM2, { sessionId }).noExtensions())
+                .add(correlation(onlineSecondM1, { sessionId }).noExtensions())
+                .finish()
         val choreography = Choreography.builder()
                 .interaction(external, onlineFirstM1, "#1")
-                .interaction(onlineFirstM1.nonObservable, onlineFirstM2, "#2")
-                .interaction(onlineFirstM2.nonObservable, onlineSecondM1, "#3")
+                .interaction(onlineFirstM1.nonObservable(), onlineFirstM2, "#2")
+                .interaction(onlineFirstM2.nonObservable(), onlineSecondM1, "#3")
                 .returnFrom(onlineSecondM1, "return #3")
-                .end()
+                .end().setCorrelationSet(cset)
                 .runVisitor(instrumentationVisitor)
         val onlineChecker = OnlineChecker(InMemorySessionManager(listOf(choreography)))
         InstrumentationStrategy.strategy = CheckInMemory(onlineChecker, true)
@@ -52,12 +61,18 @@ class OnlineInstrumentationTests {
 
     @Test
     fun `check that online checker fails fast if traces do not conform`() {
+        val sessionId = UUID.randomUUID()
+        val cset = defineCorrelationSet()
+                .add(correlation(onlineFirstM1, { sessionId }).extendFromInput { sessionId }.done())
+                .add(correlation(onlineFirstM2, { sessionId }).noExtensions())
+                .add(correlation(onlineSecondM1, { sessionId }).noExtensions())
+                .finish()
         val choreography = Choreography.builder()
                 .interaction(external, onlineFirstM1, "#1")
-                .interaction(onlineFirstM1.nonObservable, onlineFirstM2, "#2")
-                .interaction(onlineFirstM2.nonObservable, onlineSecondM1, "#3")
+                .interaction(onlineFirstM1.nonObservable(), onlineFirstM2, "#2")
+                .interaction(onlineFirstM2.nonObservable(), onlineSecondM1, "#3")
                 .returnFrom(onlineSecondM1, "return #3")
-                .end()
+                .end().setCorrelationSet(cset)
                 .runVisitor(instrumentationVisitor)
         val onlineChecker = OnlineChecker(InMemorySessionManager(listOf(choreography)))
         InstrumentationStrategy.strategy = CheckInMemory(onlineChecker, true)
@@ -69,19 +84,31 @@ class OnlineInstrumentationTests {
 
     @Test
     fun `check that concurrently running choreographies work`() {
+        val sessionId1 = UUID.randomUUID()
+        val sessionId2 = UUID.randomUUID()
+        val cset1 = defineCorrelationSet()
+                .add(correlation(onlineFirstM1, { sessionId1 }).extendFromInput { sessionId1 }.done())
+                .add(correlation(onlineFirstM2, { sessionId1 }).noExtensions())
+                .add(correlation(onlineSecondM1, { sessionId1 }).noExtensions())
+                .finish()
+        val cset2 = defineCorrelationSet()
+                .add(correlation(onlineSecondM2, { sessionId2 }).extendFromInput { sessionId2 }.done())
+                .add(correlation(onlineThirdM1, { sessionId2 }).noExtensions())
+                .add(correlation(onlineThirdM2, { sessionId2 }).noExtensions())
+                .finish()
         val choreography1 = Choreography.builder()
                 .interaction(external, onlineFirstM1, "#1")
-                .interaction(onlineFirstM1.nonObservable, onlineFirstM2, "#2")
-                .interaction(onlineFirstM2.nonObservable, onlineSecondM1, "#3")
+                .interaction(onlineFirstM1.nonObservable(), onlineFirstM2, "#2")
+                .interaction(onlineFirstM2.nonObservable(), onlineSecondM1, "#3")
                 .returnFrom(onlineSecondM1, "return #3")
-                .end()
+                .end().setCorrelationSet(cset1)
                 .runVisitor(instrumentationVisitor)
 
         val choreography2 = Choreography.builder()
                 .interaction(external, onlineSecondM2, "#1")
-                .interaction(onlineSecondM2.nonObservable, onlineThirdM1, "#2")
-                .interaction(onlineThirdM1.nonObservable, onlineThirdM2, "#3")
-                .end()
+                .interaction(onlineSecondM2.nonObservable(), onlineThirdM1, "#2")
+                .interaction(onlineThirdM1.nonObservable(), onlineThirdM2, "#3")
+                .end().setCorrelationSet(cset2)
                 .runVisitor(instrumentationVisitor)
 
         val onlineChecker = OnlineChecker(InMemorySessionManager(listOf(choreography1, choreography2)))
@@ -104,19 +131,32 @@ class OnlineInstrumentationTests {
 
     @Test
     fun `check that concurrently running choreographies work and throw exception with wrong execution`() {
+        val sessionId1 = UUID.randomUUID()
+        val sessionId2 = UUID.randomUUID()
+        val cset1 = defineCorrelationSet()
+                .add(correlation(onlineFirstM1, { sessionId1 }).extendFromInput { sessionId1 }.done())
+                .add(correlation(onlineFirstM2, { sessionId1 }).noExtensions())
+                .add(correlation(onlineSecondM1, { sessionId1 }).noExtensions())
+                .finish()
+        val cset2 = defineCorrelationSet()
+                .add(correlation(onlineSecondM2, { sessionId2 }).extendFromInput { sessionId2 }.done())
+                .add(correlation(onlineThirdM1, { sessionId2 }).noExtensions())
+                .add(correlation(onlineThirdM2, { sessionId2 }).noExtensions())
+                .finish()
+
         val choreography1 = Choreography.builder()
                 .interaction(external, onlineFirstM1, "#1")
-                .interaction(onlineFirstM1.nonObservable, onlineFirstM2, "#2")
-                .interaction(onlineFirstM2.nonObservable, onlineSecondM1, "#3")
+                .interaction(onlineFirstM1.nonObservable(), onlineFirstM2, "#2")
+                .interaction(onlineFirstM2.nonObservable(), onlineSecondM1, "#3")
                 .returnFrom(onlineSecondM1, "return #3")
-                .end()
+                .end().setCorrelationSet(cset1)
                 .runVisitor(instrumentationVisitor)
 
         val choreography2 = Choreography.builder()
                 .interaction(external, onlineSecondM2, "#1")
-                .interaction(onlineSecondM2.nonObservable, onlineThirdM1, "#2")
-                .interaction(onlineThirdM1.nonObservable, onlineThirdM2, "#3")
-                .end()
+                .interaction(onlineSecondM2.nonObservable(), onlineThirdM1, "#2")
+                .interaction(onlineThirdM1.nonObservable(), onlineThirdM2, "#3")
+                .end().setCorrelationSet(cset2)
                 .runVisitor(instrumentationVisitor)
 
         val onlineChecker = OnlineChecker(InMemorySessionManager(listOf(choreography1, choreography2)))

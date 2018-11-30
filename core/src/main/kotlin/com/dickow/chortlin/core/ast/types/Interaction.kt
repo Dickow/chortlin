@@ -8,20 +8,19 @@ import com.dickow.chortlin.core.checker.match.NoMoreTraceMatch
 import com.dickow.chortlin.core.checker.match.SuccessfulMatch
 import com.dickow.chortlin.core.checker.result.CheckResult
 import com.dickow.chortlin.core.choreography.participant.NonObservableParticipant
-import com.dickow.chortlin.core.choreography.participant.ObservableParticipant
-import com.dickow.chortlin.core.trace.Invocation
+import com.dickow.chortlin.core.choreography.participant.Participant
 import com.dickow.chortlin.core.trace.Trace
 
-class Interaction<T>(
+class Interaction(
         val sender: NonObservableParticipant,
-        val receiver: ObservableParticipant<T>,
+        val receiver: Participant,
         val label: Label,
         previous: ASTNode?,
         next: ASTNode?) : ASTNode(previous, next) {
     private val matcher = Matcher()
 
     override fun satisfy(trace: Trace): CheckResult {
-        val matchResult = matcher.matchOne(trace.getNotConsumed(), Invocation(receiver))
+        val matchResult = matcher.matchInvocation(trace.getNotConsumed(), receiver)
         return when (matchResult) {
             is SuccessfulMatch -> {
                 trace.consume(matchResult.matchedElement)
@@ -38,7 +37,7 @@ class Interaction<T>(
     }
 
     override fun equals(other: Any?): Boolean {
-        return if (other is Interaction<*>) {
+        return if (other is Interaction) {
             sender == other.sender && receiver == other.receiver && label == other.label && super.equals(other)
         } else {
             false

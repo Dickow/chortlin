@@ -17,7 +17,7 @@ public class DTUPayController {
 
     @PostMapping("{merchant}/{token}")
     public ResponseEntity<Boolean> pay(
-            @PathVariable String merchant, @RequestBody int amount, @PathVariable String token) {
+            @PathVariable String merchant, @RequestBody Integer amount, @PathVariable String token) {
         Console.invocation(this.getClass());
         var result = bankIntegration.transferMoney(merchant, token, amount);
         return ResponseEntity.ok(result);

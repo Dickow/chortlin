@@ -1,6 +1,7 @@
 package com.dickow.chortlin.core.checker
 
 import com.dickow.chortlin.core.checker.result.CheckResult
+import com.dickow.chortlin.core.checker.session.Session
 import com.dickow.chortlin.core.checker.session.SessionManager
 import com.dickow.chortlin.core.trace.TraceElement
 
@@ -10,19 +11,25 @@ class OnlineChecker(private val sessionManager: SessionManager) {
     fun check(trace: TraceElement): CheckResult {
         synchronized(checkLock) {
             val session = sessionManager.getSession(trace)
-            return if (session != null) {
-                val result = session.checkNewTrace(trace)
-                when (result) {
-                    CheckResult.None -> sessionManager.clearSession(session)
-                    CheckResult.Full -> sessionManager.clearSession(session)
-                    CheckResult.Partial -> {
-                    }
+            return when (session) {
+                null -> {
+                    val newSession = sessionManager.beginSession(trace)
+                    checkTraceAgainstSession(newSession, trace)
                 }
-                result
-            } else {
-                sessionManager.beginSession(trace)
-                this.check(trace)
+                else -> checkTraceAgainstSession(session, trace)
             }
         }
+    }
+
+    private fun checkTraceAgainstSession(session: Session, trace: TraceElement): CheckResult {
+        val result = session.checkNewTrace(trace)
+        when (result) {
+            CheckResult.None -> sessionManager.clearSession(session)
+            CheckResult.Full -> sessionManager.clearSession(session)
+            CheckResult.Partial -> {
+                session.extendKeySet(trace)
+            }
+        }
+        return result
     }
 }

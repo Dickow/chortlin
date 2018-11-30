@@ -7,7 +7,7 @@ import com.dickow.chortlin.core.checker.result.CheckResult
 import com.dickow.chortlin.core.choreography.Choreography
 import com.dickow.chortlin.core.choreography.ChoreographyBuilder
 import com.dickow.chortlin.core.choreography.participant.NonObservableParticipant
-import com.dickow.chortlin.core.choreography.participant.ObservableParticipant
+import com.dickow.chortlin.core.choreography.participant.Participant
 import com.dickow.chortlin.core.exceptions.InvalidASTException
 import com.dickow.chortlin.core.trace.Trace
 
@@ -29,11 +29,11 @@ class Marker : ASTNode(null, null), Placeholder {
         return Parallel(path(Choreography.builder()), null, null)
     }
 
-    override fun <T> returnFrom(receiver: ObservableParticipant<T>, label: String): ChoreographyBuilder {
+    override fun returnFrom(receiver: Participant, label: String): ChoreographyBuilder {
         return ReturnFrom(receiver, Label(label), null, null)
     }
 
-    override fun <T> interaction(sender: NonObservableParticipant, receiver: ObservableParticipant<T>, label: String): ChoreographyBuilder {
+    override fun interaction(sender: NonObservableParticipant, receiver: Participant, label: String): ChoreographyBuilder {
         return Interaction(sender, receiver, Label(label), null, null)
     }
 

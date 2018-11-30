@@ -1,6 +1,6 @@
 package com.dickow.chortlin.core.instrumentation.advice
 
-import com.dickow.chortlin.core.choreography.participant.ObservableParticipant
+import com.dickow.chortlin.core.choreography.participant.observation.ObservedParticipant
 import com.dickow.chortlin.core.instrumentation.strategy.InstrumentationStrategy
 import com.dickow.chortlin.core.trace.Invocation
 import net.bytebuddy.asm.Advice
@@ -12,7 +12,7 @@ class BeforeAdvisor {
         @JvmStatic
         @Advice.OnMethodEnter
         fun beforeMethod(@Advice.AllArguments allArguments: Array<Any>, @Advice.Origin method: Method) {
-            InstrumentationStrategy.strategy.intercept(Invocation(ObservableParticipant(method.declaringClass, method)))
+            InstrumentationStrategy.strategy.intercept(Invocation(ObservedParticipant(method.declaringClass, method), allArguments))
         }
     }
 

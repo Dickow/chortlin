@@ -13,7 +13,7 @@ class ASTInstrumentation(private val instrumentation: Instrumentation) : ASTVisi
         astNode.next?.accept(this)
     }
 
-    override fun <C> visitReturnFrom(astNode: ReturnFrom<C>) {
+    override fun visitReturnFrom(astNode: ReturnFrom) {
         instrumentation.after(astNode.participant)
         astNode.next?.accept(this)
     }
@@ -22,7 +22,7 @@ class ASTInstrumentation(private val instrumentation: Instrumentation) : ASTVisi
         astNode.next?.accept(this)
     }
 
-    override fun <T> visitInteraction(astNode: Interaction<T>) {
+    override fun visitInteraction(astNode: Interaction) {
         instrumentation.before(astNode.receiver)
         astNode.next?.accept(this)
     }

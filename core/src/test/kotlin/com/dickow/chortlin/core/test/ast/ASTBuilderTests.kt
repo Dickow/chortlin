@@ -17,21 +17,21 @@ import kotlin.test.assertEquals
 class ASTBuilderTests {
 
     private val external = ParticipantFactory.external("external")
-    private val aReceive = participant(A::class.java, "receive")
-    private val aB = participant(A::class.java, "b")
-    private val bB = participant(B::class.java, "b")
+    private val aReceive = participant(A::class.java, "receive", A::receive)
+    private val aB = participant(A::class.java, "b", A::b)
+    private val bB = participant(B::class.java, "b", B::b)
 
     @Test
     fun `build simple receive then interaction choreography`() {
         val choreography = Choreography.builder()
                 .interaction(external, aReceive, "receive")
-                .interaction(aReceive.nonObservable, aB, "call A#b")
-                .interaction(aB.nonObservable, bB, "Invoke B#b")
+                .interaction(aReceive.nonObservable(), aB, "call A#b")
+                .interaction(aB.nonObservable(), bB, "Invoke B#b")
                 .end()
 
         val interaction1 = Interaction(
                 NonObservableParticipant(ExternalEntity("external")),
-                participant(A::class.java, "receive"),
+                participant(A::class.java, "receive", A::receive),
                 Label("receive"),
                 null,
                 null
@@ -39,7 +39,7 @@ class ASTBuilderTests {
 
         val interaction2 = Interaction(
                 NonObservableParticipant(InternalEntity(A::class.java)),
-                participant(A::class.java, "b"),
+                participant(A::class.java, "b", A::b),
                 Label("call A#b"),
                 interaction1,
                 null
@@ -47,7 +47,7 @@ class ASTBuilderTests {
 
         val interaction3 = Interaction(
                 NonObservableParticipant(InternalEntity(A::class.java)),
-                participant(B::class.java, "b"),
+                participant(B::class.java, "b", B::b),
                 Label("Invoke B#b"),
                 interaction2,
                 null
@@ -70,7 +70,7 @@ class ASTBuilderTests {
 
         val interaction = Interaction(
                 NonObservableParticipant(ExternalEntity("external")),
-                participant(A::class.java, "receive"),
+                participant(A::class.java, "receive", A::receive),
                 Label("receive"),
                 null,
                 null

@@ -24,7 +24,7 @@ class ASTValidator : ASTVisitor {
         }
     }
 
-    override fun <C> visitReturnFrom(astNode: ReturnFrom<C>) {
+    override fun visitReturnFrom(astNode: ReturnFrom) {
         if (!hasMatchingInvocation(astNode)) {
             throw InvalidASTException("Found a foundMessage return node with no matching invocation node. " +
                     "The node causing the error was $astNode")
@@ -35,7 +35,7 @@ class ASTValidator : ASTVisitor {
         }
     }
 
-    override fun <T> visitInteraction(astNode: Interaction<T>) {
+    override fun visitInteraction(astNode: Interaction) {
         scope.beginNewScope(astNode)
         nextNode(astNode)
         scope.exitScope()
@@ -49,10 +49,10 @@ class ASTValidator : ASTVisitor {
         }
     }
 
-    private fun <C> hasMatchingInvocation(astNode: ReturnFrom<C>) : Boolean{
+    private fun hasMatchingInvocation(astNode: ReturnFrom): Boolean {
         return scope.hasOpen(Predicate { node ->
             when (node) {
-                is Interaction<*> -> node.receiver == astNode.participant
+                is Interaction -> node.receiver == astNode.participant
                 else -> false
             } })
     }
