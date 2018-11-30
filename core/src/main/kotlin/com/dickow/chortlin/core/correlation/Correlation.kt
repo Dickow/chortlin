@@ -1,12 +1,12 @@
 package com.dickow.chortlin.core.correlation
 
-import com.dickow.chortlin.core.choreography.participant.ObservableParticipant
+import com.dickow.chortlin.core.choreography.participant.Participant
 import com.dickow.chortlin.core.trace.Invocation
 import com.dickow.chortlin.core.trace.Return
 import com.dickow.chortlin.core.trace.TraceElement
 
 class Correlation(
-        val participant: ObservableParticipant<*>,
+        val participant: Participant,
         val correlationFunction: InputTypesFunction,
         val addFunctions: List<CorrelationFunction>) {
 

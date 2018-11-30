@@ -7,11 +7,11 @@ import com.dickow.chortlin.core.checker.match.Matcher
 import com.dickow.chortlin.core.checker.match.NoMoreTraceMatch
 import com.dickow.chortlin.core.checker.match.SuccessfulMatch
 import com.dickow.chortlin.core.checker.result.CheckResult
-import com.dickow.chortlin.core.choreography.participant.ObservableParticipant
+import com.dickow.chortlin.core.choreography.participant.Participant
 import com.dickow.chortlin.core.trace.Trace
 
-class ReturnFrom<T>(
-        val participant: ObservableParticipant<T>,
+class ReturnFrom(
+        val participant: Participant,
         val label: Label,
         previous: ASTNode?,
         next: ASTNode?) : ASTNode(previous, next) {
@@ -35,7 +35,7 @@ class ReturnFrom<T>(
     }
 
     override fun equals(other: Any?): Boolean {
-        return if (other is ReturnFrom<*>) {
+        return if (other is ReturnFrom) {
             this.participant == other.participant && this.label == other.label && super.equals(other)
         } else {
             false

@@ -7,7 +7,7 @@ import com.dickow.chortlin.core.checker.SatisfactionRelationship
 import com.dickow.chortlin.core.choreography.Choreography
 import com.dickow.chortlin.core.choreography.ChoreographyBuilder
 import com.dickow.chortlin.core.choreography.participant.NonObservableParticipant
-import com.dickow.chortlin.core.choreography.participant.ObservableParticipant
+import com.dickow.chortlin.core.choreography.participant.Participant
 
 abstract class ASTNode(var previous: ASTNode?, var next: ASTNode?) : ChoreographyBuilder, SatisfactionRelationship {
 
@@ -29,13 +29,13 @@ abstract class ASTNode(var previous: ASTNode?, var next: ASTNode?) : Choreograph
         return next
     }
 
-    override fun <T> returnFrom(receiver: ObservableParticipant<T>, label: String): ChoreographyBuilder {
+    override fun returnFrom(receiver: Participant, label: String): ChoreographyBuilder {
         val next = ReturnFrom(receiver, Label(label), this, null)
         this.next = next
         return next
     }
 
-    override fun <T> interaction(sender: NonObservableParticipant, receiver: ObservableParticipant<T>, label: String): ChoreographyBuilder {
+    override fun interaction(sender: NonObservableParticipant, receiver: Participant, label: String): ChoreographyBuilder {
         val next = Interaction(sender, receiver, Label(label), this, null)
         this.next = next
         return next

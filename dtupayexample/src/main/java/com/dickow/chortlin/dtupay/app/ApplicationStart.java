@@ -20,7 +20,8 @@ import java.util.List;
 
 import static com.dickow.chortlin.core.choreography.participant.ParticipantFactory.external;
 import static com.dickow.chortlin.core.choreography.participant.ParticipantFactory.participant;
-import static com.dickow.chortlin.core.correlation.factory.CorrelationFactory.*;
+import static com.dickow.chortlin.core.correlation.factory.CorrelationFactory.correlation;
+import static com.dickow.chortlin.core.correlation.factory.CorrelationFactory.defineCorrelationSet;
 
 @EnableAutoConfiguration
 @Configuration
@@ -34,31 +35,29 @@ public class ApplicationStart {
 
     private static void configureChoreography() {
         var client = external("Client");
-        var merchant = participant(Merchant.class, "pay");
-        var dtuPay = participant(DTUPayController.class, "pay");
-        var dtuBank = participant(DTUBankIntegration.class, "transferMoney");
-        var bank = participant(BankController.class, "transfer");
+        var merchant = participant(Merchant.class, "pay", Merchant::pay);
+        var dtuPay = participant(DTUPayController.class, "pay", DTUPayController::pay);
+        var dtuBank = participant(DTUBankIntegration.class, "transferMoney", DTUBankIntegration::transferMoney);
+        var bank = participant(BankController.class, "transfer", BankController::transfer);
 
         var cset = defineCorrelationSet()
-                .add(correlation(merchant,
-                        (String merchantId, PaymentDTO payment) -> merchantId,
-                        addFunctions(fromInput((String merchantId, PaymentDTO payment) -> merchantId))))
-                .add(correlation(dtuPay,
-                        (String merchantId, Integer amount, String token) -> merchantId,
-                        addFunctions(fromInput((String merchantId, Integer amount, String token) -> token))))
-                .add(correlation(dtuBank,
-                        (String merchantId, String customer, Integer amount) -> customer,
-                        emptyAddFunctions()))
-                .add(correlation(bank,
-                        TransactionDTO::getCustomer,
-                        emptyAddFunctions()))
+                .add(correlation(merchant, (String merchantId, PaymentDTO payment) -> merchantId)
+                        .extendFromInput((String merchantId, PaymentDTO payment) -> merchantId)
+                        .done())
+                .add(correlation(dtuPay, (String merchantId, Integer amount, String token) -> merchantId)
+                        .extendFromInput((String merchantId, Integer amount, String token) -> token)
+                        .done())
+                .add(correlation(dtuBank, (String merchantId, String customer, Integer amount) -> customer)
+                        .noExtensions())
+                .add(correlation(bank, TransactionDTO::getCustomer)
+                        .noExtensions())
                 .finish();
 
         var choreography = Choreography.Instance.builder()
                 .interaction(client, merchant, "initiate payment")
-                .interaction(merchant.getNonObservable(), dtuPay, "pay")
-                .interaction(dtuPay.getNonObservable(), dtuBank, "integrate with bank")
-                .interaction(dtuBank.getNonObservable(), bank, "perform transfer at bank")
+                .interaction(merchant.nonObservable(), dtuPay, "pay")
+                .interaction(dtuPay.nonObservable(), dtuBank, "integrate with bank")
+                .interaction(dtuBank.nonObservable(), bank, "perform transfer at bank")
                 .returnFrom(bank, "return once transferred")
                 .returnFrom(dtuBank, "return from the DTU bank integration")
                 .returnFrom(dtuPay, "return from dtu pay")

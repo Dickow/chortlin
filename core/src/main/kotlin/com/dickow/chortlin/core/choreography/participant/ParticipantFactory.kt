@@ -2,12 +2,43 @@ package com.dickow.chortlin.core.choreography.participant
 
 import com.dickow.chortlin.core.choreography.participant.entity.ExternalEntity
 import com.dickow.chortlin.core.exceptions.factory.TypeApiExceptionFactory
-import com.dickow.chortlin.core.util.TypeUtil
+import java.lang.reflect.Method
 
 
+@Suppress("UNUSED_PARAMETER")
 object ParticipantFactory {
+
     @JvmStatic
-    fun <T> participant(clazz: Class<T>, method: String): ObservableParticipant<T> {
+    fun <C, R> participant(clazz: Class<C>, method: String, signature: (C) -> R): Participant0<R> {
+        val concreteMethods = getMethodFromName(clazz, method)
+        return Participant0(clazz, concreteMethods[0])
+    }
+
+    @JvmStatic
+    fun <C, T1, R> participant(clazz: Class<C>, method: String, signature: (C, T1) -> R): Participant1<T1, R> {
+        val concreteMethods = getMethodFromName(clazz, method)
+        return Participant1(clazz, concreteMethods[0])
+    }
+
+    @JvmStatic
+    fun <C, T1, T2, R> participant(clazz: Class<C>, method: String, signature: (C, T1, T2) -> R): Participant2<T1, T2, R> {
+        val concreteMethods = getMethodFromName(clazz, method)
+        return Participant2(clazz, concreteMethods[0])
+    }
+
+    @JvmStatic
+    fun <C, T1, T2, T3, R> participant(clazz: Class<C>, method: String, signature: (C, T1, T2, T3) -> R): Participant3<T1, T2, T3, R> {
+        val concreteMethods = getMethodFromName(clazz, method)
+        return Participant3(clazz, concreteMethods[0])
+    }
+
+    @JvmStatic
+    fun <C, T1, T2, T3, T4, R> participant(clazz: Class<C>, method: String, signature: (C, T1, T2, T3, T4) -> R): Participant4<T1, T2, T3, T4, R> {
+        val concreteMethods = getMethodFromName(clazz, method)
+        return Participant4(clazz, concreteMethods[0])
+    }
+
+    private fun <C> getMethodFromName(clazz: Class<C>, method: String): List<Method> {
         val concreteMethods = clazz.methods.filter { m -> m.name == method }
         if (concreteMethods.size > 1) {
             throw TypeApiExceptionFactory.tooManyMethods(clazz, method)
@@ -15,32 +46,7 @@ object ParticipantFactory {
         if (concreteMethods.isEmpty()) {
             throw TypeApiExceptionFactory.noMethodFound(clazz, method)
         }
-
-        return ObservableParticipant(clazz, concreteMethods[0])
-    }
-
-    @JvmStatic
-    fun <T> participant(clazz: Class<T>, returnType: Class<*>, vararg paramTypes: Class<*>): ObservableParticipant<T> {
-        val concreteMethods = clazz.methods
-                .filter { m -> m.returnType == returnType && TypeUtil.typesMatch(m.parameterTypes, paramTypes) }
-        if (concreteMethods.size > 1) {
-            throw TypeApiExceptionFactory.tooManyMethods(clazz, returnType, concreteMethods, paramTypes)
-        }
-        if (concreteMethods.isEmpty()) {
-            throw TypeApiExceptionFactory.noMethodFound(clazz, returnType, paramTypes)
-        }
-
-        return ObservableParticipant(clazz, concreteMethods[0])
-    }
-
-    @JvmStatic
-    fun <T> participant(clazz: Class<T>, methodName: String, vararg paramTypes: Class<*>): ObservableParticipant<T> {
-        try {
-            val concreteMethod = clazz.getDeclaredMethod(methodName, *paramTypes)
-            return ObservableParticipant(clazz, concreteMethod)
-        } catch (e: Exception) {
-            throw TypeApiExceptionFactory.noMethodFound(clazz, methodName)
-        }
+        return concreteMethods
     }
 
     @JvmStatic

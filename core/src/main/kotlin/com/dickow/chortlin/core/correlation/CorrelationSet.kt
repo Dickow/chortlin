@@ -1,10 +1,10 @@
 package com.dickow.chortlin.core.correlation
 
-import com.dickow.chortlin.core.choreography.participant.ObservableParticipant
+import com.dickow.chortlin.core.choreography.participant.Participant
 import java.util.*
 
 class CorrelationSet(correlations: List<Correlation>) {
-    private val correlationSetMappings = Hashtable<ObservableParticipant<*>, Correlation>()
+    private val correlationSetMappings = Hashtable<Participant, Correlation>()
 
     init {
         for (corr in correlations) {
@@ -12,7 +12,7 @@ class CorrelationSet(correlations: List<Correlation>) {
         }
     }
 
-    fun get(participant: ObservableParticipant<*>): Correlation? {
+    fun get(participant: Participant): Correlation? {
         return correlationSetMappings[participant]
     }
 }

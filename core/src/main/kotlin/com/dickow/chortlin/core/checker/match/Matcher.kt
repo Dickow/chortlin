@@ -1,6 +1,6 @@
 package com.dickow.chortlin.core.checker.match
 
-import com.dickow.chortlin.core.choreography.participant.ObservableParticipant
+import com.dickow.chortlin.core.choreography.participant.Participant
 import com.dickow.chortlin.core.trace.Invocation
 import com.dickow.chortlin.core.trace.Return
 import com.dickow.chortlin.core.trace.TraceElement
@@ -21,7 +21,7 @@ class Matcher {
         }
     }
 
-    fun <T> matchReturn(traces: MutableList<TraceElementIndexed>, expected: ObservableParticipant<T>): MatchResult {
+    fun matchReturn(traces: MutableList<TraceElementIndexed>, expected: Participant): MatchResult {
         return when (traces.isNotEmpty()) {
             true -> {
                 val element = traces.first()
@@ -35,7 +35,7 @@ class Matcher {
         }
     }
 
-    fun <T> matchInvocation(traces: MutableList<TraceElementIndexed>, expected: ObservableParticipant<T>): MatchResult {
+    fun matchInvocation(traces: MutableList<TraceElementIndexed>, expected: Participant): MatchResult {
         return when (traces.isNotEmpty()) {
             true -> {
                 val element = traces.first()

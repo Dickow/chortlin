@@ -2,14 +2,12 @@
 
 package com.dickow.chortlin.core.correlation.factory
 
-import com.dickow.chortlin.core.choreography.participant.ObservableParticipant
-import com.dickow.chortlin.core.correlation.*
-import com.dickow.chortlin.core.correlation.builder.CorrelationSetBuilder
-import com.dickow.chortlin.core.correlation.functiondefinitions.CFunc0
-import com.dickow.chortlin.core.correlation.functiondefinitions.CFunc1
-import com.dickow.chortlin.core.correlation.functiondefinitions.CFunc2
-import com.dickow.chortlin.core.correlation.functiondefinitions.CFunc3
-import com.dickow.chortlin.core.exceptions.InvalidChoreographyException
+import com.dickow.chortlin.core.choreography.participant.*
+import com.dickow.chortlin.core.correlation.CorrelationFunction
+import com.dickow.chortlin.core.correlation.InputTypesFunction
+import com.dickow.chortlin.core.correlation.ReturnTypesFunction
+import com.dickow.chortlin.core.correlation.builder.*
+import com.dickow.chortlin.core.correlation.functiondefinitions.*
 
 object CorrelationFactory {
 
@@ -19,39 +17,47 @@ object CorrelationFactory {
     }
 
     @JvmStatic
-    fun correlation(participant: ObservableParticipant<*>, correlationFunction: CFunc0, addFunctions: AdditionFunctions = AdditionFunctions(emptyList())): Correlation {
+    fun <R> correlation(participant: Participant0<R>, correlationFunction: CFunc0): CorrelationBuilder0<R> {
         val func = { _: Array<Any> -> correlationFunction() }
-        return create(participant, InputTypesFunction(func, correlationFunction.javaClass.declaredMethods), addFunctions)
+        return CorrelationBuilder0(participant, InputTypesFunction(func))
     }
 
     @JvmStatic
-    fun <T> correlation(participant: ObservableParticipant<*>, correlationFunction: CFunc1<T>, addFunctions: AdditionFunctions = AdditionFunctions(emptyList())): Correlation {
+    fun <T1, R> correlation(participant: Participant1<T1, R>, correlationFunction: CFunc1<T1>): CorrelationBuilder1<T1, R> {
         val func = { args: Array<Any> ->
-            correlationFunction(args[0] as T)
+            correlationFunction(args[0] as T1)
         }
-        return create(participant, InputTypesFunction(func, correlationFunction.javaClass.declaredMethods), addFunctions)
+        return CorrelationBuilder1(participant, InputTypesFunction(func))
     }
 
     @JvmStatic
-    fun <T1, T2> correlation(participant: ObservableParticipant<*>, correlationFunction: CFunc2<T1, T2>, addFunctions: AdditionFunctions = AdditionFunctions(emptyList())): Correlation {
+    fun <T1, T2, R> correlation(participant: Participant2<T1, T2, R>, correlationFunction: CFunc2<T1, T2>): CorrelationBuilder2<T1, T2, R> {
         val func = { args: Array<Any> ->
             correlationFunction(args[0] as T1, args[1] as T2)
         }
-        return create(participant, InputTypesFunction(func, correlationFunction.javaClass.declaredMethods), addFunctions)
+        return CorrelationBuilder2(participant, InputTypesFunction(func))
     }
 
     @JvmStatic
-    fun <T1, T2, T3> correlation(participant: ObservableParticipant<*>, correlationFunction: CFunc3<T1, T2, T3>, addFunctions: AdditionFunctions = AdditionFunctions(emptyList())): Correlation {
+    fun <T1, T2, T3, R> correlation(participant: Participant3<T1, T2, T3, R>, correlationFunction: CFunc3<T1, T2, T3>): CorrelationBuilder3<T1, T2, T3, R> {
         val func = { args: Array<Any> ->
             correlationFunction(args[0] as T1, args[1] as T2, args[2] as T3)
         }
-        return create(participant, InputTypesFunction(func, correlationFunction.javaClass.declaredMethods), addFunctions)
+        return CorrelationBuilder3(participant, InputTypesFunction(func))
+    }
+
+    @JvmStatic
+    fun <T1, T2, T3, T4, R> correlation(participant: Participant4<T1, T2, T3, T4, R>, correlationFunction: CFunc4<T1, T2, T3, T4>): CorrelationBuilder4<T1, T2, T3, T4, R> {
+        val func = { args: Array<Any> ->
+            correlationFunction(args[0] as T1, args[1] as T2, args[2] as T3, args[3] as T4)
+        }
+        return CorrelationBuilder4(participant, InputTypesFunction(func))
     }
 
     @JvmStatic
     fun fromInput(addFunction: CFunc0): CorrelationFunction {
         val func = { _: Array<Any> -> addFunction() }
-        return InputTypesFunction(func, addFunction.javaClass.declaredMethods)
+        return InputTypesFunction(func)
     }
 
     @JvmStatic
@@ -59,7 +65,7 @@ object CorrelationFactory {
         val func = { args: Array<Any> ->
             addFunction(args[0] as T)
         }
-        return InputTypesFunction(func, addFunction.javaClass.declaredMethods)
+        return InputTypesFunction(func)
     }
 
     @JvmStatic
@@ -67,7 +73,7 @@ object CorrelationFactory {
         val func = { args: Array<Any> ->
             addFunction(args[0] as T1, args[1] as T2)
         }
-        return InputTypesFunction(func, addFunction.javaClass.declaredMethods)
+        return InputTypesFunction(func)
     }
 
     @JvmStatic
@@ -75,65 +81,20 @@ object CorrelationFactory {
         val func = { args: Array<Any> ->
             addFunction(args[0] as T1, args[1] as T2, args[2] as T3)
         }
-        return InputTypesFunction(func, addFunction.javaClass.declaredMethods)
+        return InputTypesFunction(func)
     }
 
     @JvmStatic
-    fun fromReturn(addFunction: CFunc0): CorrelationFunction {
-        val func = { _: Any -> addFunction() }
-        return ReturnTypesFunction(func, addFunction.javaClass.declaredMethods)
+    fun <T1, T2, T3, T4> fromInput(addFunction: CFunc4<T1, T2, T3, T4>): CorrelationFunction {
+        val func = { args: Array<Any> ->
+            addFunction(args[0] as T1, args[1] as T2, args[2] as T3, args[3] as T4)
+        }
+        return InputTypesFunction(func)
     }
 
     @JvmStatic
     fun <T> fromReturn(addFunction: CFunc1<T>): CorrelationFunction {
         val func = { returnArg: Any -> addFunction(returnArg as T) }
-        return ReturnTypesFunction(func, addFunction.javaClass.declaredMethods)
-    }
-
-    @JvmStatic
-    fun emptyAddFunctions(): AdditionFunctions {
-        return AdditionFunctions(emptyList())
-    }
-
-    @JvmStatic
-    fun addFunctions(addFunction: CorrelationFunction): AdditionFunctions {
-        return AdditionFunctions(listOf(addFunction))
-    }
-
-    @JvmStatic
-    fun addFunctions(addFunction1: CorrelationFunction, addFunction2: CorrelationFunction): AdditionFunctions {
-        return AdditionFunctions(listOf(addFunction1, addFunction2))
-    }
-
-    @JvmStatic
-    fun addFunctions(addFunction1: CorrelationFunction,
-                     addFunction2: CorrelationFunction,
-                     addFunction3: CorrelationFunction): AdditionFunctions {
-        return AdditionFunctions(listOf(addFunction1, addFunction2, addFunction3))
-    }
-
-    @JvmStatic
-    fun addFunctions(addFunction1: CorrelationFunction,
-                     addFunction2: CorrelationFunction,
-                     addFunction3: CorrelationFunction,
-                     addFunction4: CorrelationFunction): AdditionFunctions {
-        return AdditionFunctions(listOf(addFunction1, addFunction2, addFunction3, addFunction4))
-    }
-
-    @JvmStatic
-    private fun create(
-            participant: ObservableParticipant<*>,
-            correlationFunction: InputTypesFunction,
-            addFunctions: AdditionFunctions): Correlation {
-
-        for (func in listOf<CorrelationFunction>(correlationFunction).plus(addFunctions.additionFunctions)) {
-            if (!func.applicableTo(participant)) {
-                throw InvalidChoreographyException("Encountered a correlation function with invalid type definitions." + System.lineSeparator() +
-                        "The error was found for the participant $participant" + System.lineSeparator() +
-                        "The wrong function was $func")
-            }
-        }
-
-        return Correlation(participant, correlationFunction, addFunctions.additionFunctions)
+        return ReturnTypesFunction(func)
     }
 }

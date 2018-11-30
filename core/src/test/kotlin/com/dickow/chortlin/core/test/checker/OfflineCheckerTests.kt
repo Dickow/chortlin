@@ -5,6 +5,7 @@ import com.dickow.chortlin.core.checker.result.CheckResult
 import com.dickow.chortlin.core.choreography.Choreography
 import com.dickow.chortlin.core.choreography.participant.ParticipantFactory.external
 import com.dickow.chortlin.core.choreography.participant.ParticipantFactory.participant
+import com.dickow.chortlin.core.choreography.participant.observation.ObservedParticipantFactory.observed
 import com.dickow.chortlin.core.exceptions.InvalidASTException
 import com.dickow.chortlin.core.test.shared.A
 import com.dickow.chortlin.core.test.shared.B
@@ -18,9 +19,9 @@ import kotlin.test.assertFailsWith
 class OfflineCheckerTests {
 
     private val external = external("external")
-    private val aReceive = participant(A::class.java, "receive")
-    private val aB = participant(A::class.java, "b")
-    private val bB = participant(B::class.java, "b")
+    private val aReceive = participant(A::class.java, "receive", A::receive)
+    private val aB = participant(A::class.java, "b", A::b)
+    private val bB = participant(B::class.java, "b", B::b)
     private val allArguments = arrayOf<Any>()
     private val returnValue = Any()
 
@@ -29,7 +30,7 @@ class OfflineCheckerTests {
         val choreography = Choreography.builder()
                 .interaction(external, aReceive, "receive")
                 .end()
-        val trace = Trace(listOf(Invocation(participant(A::class.java, "receive"), allArguments)))
+        val trace = Trace(listOf(Invocation(observed(A::class.java, "receive"), allArguments)))
         val checker = ChoreographyChecker(choreography)
         assertEquals(CheckResult.Full, checker.check(trace))
         assertEquals(CheckResult.Full, checker.check(trace))
@@ -44,13 +45,13 @@ class OfflineCheckerTests {
     fun `check that full choreography matches the example trace`() {
         val choreography = Choreography.builder()
                 .interaction(external, aReceive, "receive")
-                .interaction(aReceive.nonObservable, aB, "call A#b")
-                .interaction(aB.nonObservable, bB, "invoke B#b")
+                .interaction(aReceive.nonObservable(), aB, "call A#b")
+                .interaction(aB.nonObservable(), bB, "invoke B#b")
                 .end()
         val trace = Trace(listOf(
-                Invocation(participant(A::class.java, "receive"), allArguments),
-                Invocation(participant(A::class.java, "b"), allArguments),
-                Invocation(participant(B::class.java, "b"), allArguments)))
+                Invocation(observed(A::class.java, "receive"), allArguments),
+                Invocation(observed(A::class.java, "b"), allArguments),
+                Invocation(observed(B::class.java, "b"), allArguments)))
 
         val checker = ChoreographyChecker(choreography)
         assertEquals(CheckResult.Full, checker.check(trace))
@@ -61,13 +62,13 @@ class OfflineCheckerTests {
     fun `check that trace in wrong order is not accepted`() {
         val choreography = Choreography.builder()
                 .interaction(external, aReceive, "receive")
-                .interaction(aReceive.nonObservable, aB, "call A#b")
-                .interaction(aB.nonObservable, bB, "invoke B#b")
+                .interaction(aReceive.nonObservable(), aB, "call A#b")
+                .interaction(aB.nonObservable(), bB, "invoke B#b")
                 .end()
         val trace = Trace(listOf(
-                Invocation(participant(A::class.java, "b"), allArguments),
-                Invocation(participant(A::class.java, "receive"), allArguments),
-                Invocation(participant(B::class.java, "b"), allArguments)))
+                Invocation(observed(A::class.java, "b"), allArguments),
+                Invocation(observed(A::class.java, "receive"), allArguments),
+                Invocation(observed(B::class.java, "b"), allArguments)))
 
         val checker = ChoreographyChecker(choreography)
         assertEquals(CheckResult.None, checker.check(trace))
@@ -78,18 +79,18 @@ class OfflineCheckerTests {
     fun `check that return is validated for traces`() {
         val choreography = Choreography.builder()
                 .interaction(external, aReceive, "receive")
-                .interaction(aReceive.nonObservable, aB, "call A#b")
-                .interaction(aB.nonObservable, bB, "invoke B#b")
+                .interaction(aReceive.nonObservable(), aB, "call A#b")
+                .interaction(aB.nonObservable(), bB, "invoke B#b")
                 .returnFrom(bB, "return from method B::b")
                 .returnFrom(aB, "return from method A::b")
                 .end()
         val checker = ChoreographyChecker(choreography)
         val trace = Trace(listOf(
-                Invocation(participant(A::class.java, "receive"), allArguments),
-                Invocation(participant(A::class.java, "b"), allArguments),
-                Invocation(participant(B::class.java, "b"), allArguments),
-                Return(participant(B::class.java, "b"), allArguments, returnValue),
-                Return(participant(A::class.java, "b"), allArguments, returnValue)))
+                Invocation(observed(A::class.java, "receive"), allArguments),
+                Invocation(observed(A::class.java, "b"), allArguments),
+                Invocation(observed(B::class.java, "b"), allArguments),
+                Return(observed(B::class.java, "b"), allArguments, returnValue),
+                Return(observed(A::class.java, "b"), allArguments, returnValue)))
         assertEquals(CheckResult.Full, checker.check(trace))
     }
 
@@ -101,8 +102,8 @@ class OfflineCheckerTests {
                 .end()
         val checker = ChoreographyChecker(choreography)
         val trace = Trace(listOf(
-                Invocation(participant(A::class.java, "receive"), allArguments),
-                Return(participant(A::class.java, "receive"), allArguments, returnValue)))
+                Invocation(observed(A::class.java, "receive"), allArguments),
+                Return(observed(A::class.java, "receive"), allArguments, returnValue)))
         assertEquals(CheckResult.Full, checker.check(trace))
     }
 
@@ -113,7 +114,7 @@ class OfflineCheckerTests {
                 .returnFrom(aReceive, "return")
                 .end()
         val checker = ChoreographyChecker(choreography)
-        val trace = Trace(listOf(Invocation(participant(A::class.java, "receive"), allArguments)))
+        val trace = Trace(listOf(Invocation(observed(A::class.java, "receive"), allArguments)))
         assertEquals(CheckResult.Partial, checker.check(trace))
     }
 
@@ -125,8 +126,8 @@ class OfflineCheckerTests {
                 .end()
         val checker = ChoreographyChecker(choreography)
         val trace = Trace(listOf(
-                Invocation(aReceive, allArguments),
-                Return(bB, allArguments, returnValue)))
+                Invocation(observed(A::class.java, "receive"), allArguments),
+                Return(observed(B::class.java, "b"), allArguments, returnValue)))
         assertEquals(CheckResult.None, checker.check(trace))
     }
 
