@@ -6,11 +6,8 @@ import com.dickow.chortlin.core.checker.session.InMemorySessionManager
 import com.dickow.chortlin.core.choreography.Choreography
 import com.dickow.chortlin.core.choreography.participant.ParticipantFactory.external
 import com.dickow.chortlin.core.choreography.participant.ParticipantFactory.participant
-import com.dickow.chortlin.core.correlation.factory.CorrelationFactory.addFunctions
 import com.dickow.chortlin.core.correlation.factory.CorrelationFactory.correlation
 import com.dickow.chortlin.core.correlation.factory.CorrelationFactory.defineCorrelationSet
-import com.dickow.chortlin.core.correlation.factory.CorrelationFactory.fromInput
-import com.dickow.chortlin.core.correlation.factory.CorrelationFactory.fromReturn
 import com.dickow.chortlin.core.exceptions.ChortlinRuntimeException
 import com.dickow.chortlin.core.exceptions.InvalidChoreographyException
 import com.dickow.chortlin.core.instrumentation.ASTInstrumentation
@@ -28,8 +25,8 @@ class CreateCorrelationSetsTest {
     private val instrumentation = ASTInstrumentation(ByteBuddyInstrumentation)
 
     private val client = external("Client")
-    private val auth = participant(Authentication::class.java, "authenticate")
-    private val buyService = participant(AuthenticatedService::class.java, "buyItem")
+    private val auth = participant(Authentication::class.java, "authenticate", Authentication::authenticate)
+    private val buyService = participant(AuthenticatedService::class.java, "buyItem", AuthenticatedService::buyItem)
     //private val sellService = participant(AuthenticatedService::class.java, "sellItem")
 
     private val authService = Authentication()
@@ -40,8 +37,11 @@ class CreateCorrelationSetsTest {
     private val buyerCorrelation = { _: String, authResult: AuthResult -> authResult.userId }
 
     private val cset = defineCorrelationSet()
-            .add(correlation(auth, authCorrelation, addFunctions(fromInput(authCorrelation), fromReturn(authExtendCorrelation))))
-            .add(correlation(buyService, buyerCorrelation))
+            .add(correlation(auth, authCorrelation)
+                    .extendFromInput(authCorrelation)
+                    .extendFromReturn(authExtendCorrelation)
+                    .done())
+            .add(correlation(buyService, buyerCorrelation).noExtensions())
             .finish()
 
     @Test
@@ -60,27 +60,6 @@ class CreateCorrelationSetsTest {
     }
 
     @Test
-    fun `expect error when supplying correlation function with wrong type parameters`(){
-        assertFailsWith(InvalidChoreographyException::class) {
-            correlation(auth, { username: String, _: Int -> username })
-        }
-    }
-
-    @Test
-    fun `expect error when supplying addition function for wrong input type params`() {
-        assertFailsWith(InvalidChoreographyException::class) {
-            correlation(auth, authCorrelation, addFunctions(fromInput { username: String, _: Int -> username }))
-        }
-    }
-
-    @Test
-    fun `expect error when supplying addition function for wrong return type`() {
-        assertFailsWith(InvalidChoreographyException::class) {
-            correlation(auth, authCorrelation, addFunctions(fromReturn { username: String -> username }))
-        }
-    }
-
-    @Test
     fun `expect error when creating checker for choreography with lacking correlation set`() {
         val choreography = Choreography.builder()
                 .interaction(client, auth, "Authenticate client")
@@ -89,8 +68,9 @@ class CreateCorrelationSetsTest {
                 .returnFrom(buyService, "Successful buy")
                 .end()
                 .setCorrelationSet(defineCorrelationSet()
-                        .add(correlation(auth, authCorrelation,
-                                addFunctions(fromInput(authCorrelation), fromReturn(authExtendCorrelation))))
+                        .add(correlation(auth, authCorrelation)
+                                .extendFromInput(authCorrelation)
+                                .extendFromReturn(authExtendCorrelation).done())
                         .finish())
 
         assertFailsWith(InvalidChoreographyException::class) {

@@ -5,7 +5,8 @@ import com.dickow.chortlin.core.checker.ParticipantRetriever
 import com.dickow.chortlin.core.checker.factory.CheckerFactory
 import com.dickow.chortlin.core.checker.result.CheckResult
 import com.dickow.chortlin.core.choreography.Choreography
-import com.dickow.chortlin.core.choreography.participant.ObservableParticipant
+import com.dickow.chortlin.core.choreography.participant.Participant
+import com.dickow.chortlin.core.choreography.participant.observation.ObservedParticipant
 import com.dickow.chortlin.core.trace.Trace
 import com.dickow.chortlin.core.trace.TraceElement
 import java.util.*
@@ -13,7 +14,7 @@ import java.util.*
 class Session(val sessionId: UUID, val choreography: Choreography, trace: TraceElement) {
     private val checker: ChoreographyChecker = CheckerFactory.createChecker(choreography)
     private val traces: MutableList<TraceElement> = LinkedList()
-    private val participantSet: Set<ObservableParticipant<*>>
+    private val participantSet: Set<Participant>
     private val correlationKeys: MutableSet<Any>
 
     init {
@@ -49,7 +50,7 @@ class Session(val sessionId: UUID, val choreography: Choreography, trace: TraceE
         }
     }
 
-    fun hasParticipant(participant: ObservableParticipant<*>): Boolean {
+    fun hasParticipant(participant: ObservedParticipant): Boolean {
         return participantSet.contains(participant)
     }
 
