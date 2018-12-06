@@ -1,6 +1,6 @@
 package com.dickow.chortlin.core.instrumentation
 
-import com.dickow.chortlin.core.choreography.participant.Participant
+import com.dickow.chortlin.core.choreography.participant.observation.ObservableParticipant
 import com.dickow.chortlin.core.instrumentation.advice.AfterAdvisorNoReturn
 import com.dickow.chortlin.core.instrumentation.advice.AfterAdvisorWithReturn
 import com.dickow.chortlin.core.instrumentation.advice.BeforeAdvisor
@@ -14,21 +14,21 @@ import net.bytebuddy.matcher.ElementMatchers
  * it is important that this class is static to maintain knowledge of the instrumented classes.
  */
 object ByteBuddyInstrumentation : Instrumentation {
-    private val appliedBeforeAdvices: MutableSet<Participant> = HashSet()
-    private val appliedAfterAdvices: MutableSet<Participant> = HashSet()
+    private val appliedBeforeAdvices: MutableSet<ObservableParticipant> = HashSet()
+    private val appliedAfterAdvices: MutableSet<ObservableParticipant> = HashSet()
 
     init {
         ByteBuddyAgent.install()
     }
 
-    override fun before(participant: Participant) {
+    override fun before(participant: ObservableParticipant) {
         if (!appliedBeforeAdvices.contains(participant)) {
             applyAdvice(participant, BeforeAdvisor::class.java)
             appliedBeforeAdvices.add(participant)
         }
     }
 
-    override fun after(participant: Participant) {
+    override fun after(participant: ObservableParticipant) {
         if (!appliedAfterAdvices.contains(participant)) {
             if (participant.method.returnType == Void.TYPE) {
                 applyAdvice(participant, AfterAdvisorNoReturn::class.java)
@@ -40,7 +40,7 @@ object ByteBuddyInstrumentation : Instrumentation {
         }
     }
 
-    private fun applyAdvice(participant: Participant, adviceClass: Class<*>) {
+    private fun applyAdvice(participant: ObservableParticipant, adviceClass: Class<*>) {
         AgentBuilder.Default()
                 .disableClassFormatChanges()
                 .with(AgentBuilder.RedefinitionStrategy.RETRANSFORMATION)

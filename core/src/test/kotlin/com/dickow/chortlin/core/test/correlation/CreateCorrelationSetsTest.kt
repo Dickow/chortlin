@@ -6,6 +6,7 @@ import com.dickow.chortlin.core.checker.session.InMemorySessionManager
 import com.dickow.chortlin.core.choreography.Choreography
 import com.dickow.chortlin.core.choreography.participant.ParticipantFactory.external
 import com.dickow.chortlin.core.choreography.participant.ParticipantFactory.participant
+import com.dickow.chortlin.core.choreography.participant.observation.ObservableFactory
 import com.dickow.chortlin.core.correlation.factory.CorrelationFactory.correlation
 import com.dickow.chortlin.core.correlation.factory.CorrelationFactory.defineCorrelationSet
 import com.dickow.chortlin.core.exceptions.ChortlinRuntimeException
@@ -25,9 +26,8 @@ class CreateCorrelationSetsTest {
     private val instrumentation = ASTInstrumentation(ByteBuddyInstrumentation)
 
     private val client = external("Client")
-    private val auth = participant(Authentication::class.java, "authenticate", Authentication::authenticate)
-    private val buyService = participant(AuthenticatedService::class.java, "buyItem", AuthenticatedService::buyItem)
-    //private val sellService = participant(AuthenticatedService::class.java, "sellItem")
+    private val auth = participant(Authentication::class.java) // "authenticate", Authentication::authenticate
+    private val buyService = participant(AuthenticatedService::class.java) // "buyItem", AuthenticatedService::buyItem
 
     private val authService = Authentication()
     private val itemService = AuthenticatedService()
@@ -37,38 +37,39 @@ class CreateCorrelationSetsTest {
     private val buyerCorrelation = { _: String, authResult: AuthResult -> authResult.userId }
 
     private val cset = defineCorrelationSet()
-            .add(correlation(auth, authCorrelation)
+            .add(correlation(auth.onMethod("authenticate", Authentication::authenticate), authCorrelation)
                     .extendFromInput(authCorrelation)
                     .extendFromReturn(authExtendCorrelation)
                     .done())
-            .add(correlation(buyService, buyerCorrelation).noExtensions())
+            .add(correlation(buyService.onMethod("buyItem", AuthenticatedService::buyItem), buyerCorrelation).noExtensions())
             .finish()
 
     @Test
     fun `create correlation set for small choreography`() {
         Choreography.builder()
-                .interaction(client, auth, "Authenticate client")
-                .returnFrom(auth, "Client is authenticated")
-                .interaction(client, buyService, "Buy the item")
-                .returnFrom(buyService, "Successful buy")
+                .interaction(client, auth.onMethod("authenticate", Authentication::authenticate), "Authenticate client")
+                .returnFrom(auth.onMethod("authenticate", Authentication::authenticate), "Client is authenticated")
+                .interaction(client, buyService.onMethod("buyItem", AuthenticatedService::buyItem), "Buy the item")
+                .returnFrom(buyService.onMethod("buyItem", AuthenticatedService::buyItem), "Successful buy")
                 .end()
                 .setCorrelationSet(cset)
 
         // Try to apply the correlation function to an invocation
-        val key = cset.get(auth)?.retrieveKey(arrayOf("jeppedickow", "1234!"))
+        val observableAuth = ObservableFactory.observable(auth, auth.onMethod("authenticate", Authentication::authenticate))
+        val key = cset.get(observableAuth)?.retrieveKey(arrayOf("jeppedickow", "1234!"))
         assertEquals("jeppedickow", key)
     }
 
     @Test
     fun `expect error when creating checker for choreography with lacking correlation set`() {
         val choreography = Choreography.builder()
-                .interaction(client, auth, "Authenticate client")
-                .returnFrom(auth, "Client is authenticated")
-                .interaction(client, buyService, "Buy the item")
-                .returnFrom(buyService, "Successful buy")
+                .interaction(client, auth.onMethod("authenticate", Authentication::authenticate), "Authenticate client")
+                .returnFrom(auth.onMethod("authenticate", Authentication::authenticate), "Client is authenticated")
+                .interaction(client, buyService.onMethod("buyItem", AuthenticatedService::buyItem), "Buy the item")
+                .returnFrom(buyService.onMethod("buyItem", AuthenticatedService::buyItem), "Successful buy")
                 .end()
                 .setCorrelationSet(defineCorrelationSet()
-                        .add(correlation(auth, authCorrelation)
+                        .add(correlation(auth.onMethod("authenticate", Authentication::authenticate), authCorrelation)
                                 .extendFromInput(authCorrelation)
                                 .extendFromReturn(authExtendCorrelation).done())
                         .finish())
@@ -81,10 +82,10 @@ class CreateCorrelationSetsTest {
     @Test
     fun `expect success when running multiple instances of the services with correlation sets`() {
         val choreography = Choreography.builder()
-                .interaction(client, auth, "Authenticate client")
-                .returnFrom(auth, "Client is authenticated")
-                .interaction(client, buyService, "Buy the item")
-                .returnFrom(buyService, "Successful buy")
+                .interaction(client, auth.onMethod("authenticate", Authentication::authenticate), "Authenticate client")
+                .returnFrom(auth.onMethod("authenticate", Authentication::authenticate), "Client is authenticated")
+                .interaction(client, buyService.onMethod("buyItem", AuthenticatedService::buyItem), "Buy the item")
+                .returnFrom(buyService.onMethod("buyItem", AuthenticatedService::buyItem), "Successful buy")
                 .end()
                 .setCorrelationSet(cset)
                 .runVisitor(instrumentation)
@@ -102,10 +103,10 @@ class CreateCorrelationSetsTest {
     @Test
     fun `expect error when executing a session in the wrong order`() {
         val choreography = Choreography.builder()
-                .interaction(client, auth, "Authenticate client")
-                .returnFrom(auth, "Client is authenticated")
-                .interaction(client, buyService, "Buy the item")
-                .returnFrom(buyService, "Successful buy")
+                .interaction(client, auth.onMethod("authenticate", Authentication::authenticate), "Authenticate client")
+                .returnFrom(auth.onMethod("authenticate", Authentication::authenticate), "Client is authenticated")
+                .interaction(client, buyService.onMethod("buyItem", AuthenticatedService::buyItem), "Buy the item")
+                .returnFrom(buyService.onMethod("buyItem", AuthenticatedService::buyItem), "Successful buy")
                 .end()
                 .setCorrelationSet(cset)
                 .runVisitor(instrumentation)

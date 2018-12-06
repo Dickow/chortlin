@@ -1,31 +1,17 @@
 package com.dickow.chortlin.core.checker.match
 
-import com.dickow.chortlin.core.choreography.participant.Participant
+import com.dickow.chortlin.core.choreography.participant.observation.Observable
 import com.dickow.chortlin.core.trace.Invocation
 import com.dickow.chortlin.core.trace.Return
-import com.dickow.chortlin.core.trace.TraceElement
 import com.dickow.chortlin.core.trace.TraceElementIndexed
 
 class Matcher {
 
-    fun matchOne(traces: MutableList<TraceElementIndexed>, expected: TraceElement): MatchResult {
+    fun matchReturn(traces: MutableList<TraceElementIndexed>, expected: Observable): MatchResult {
         return when (traces.isNotEmpty()) {
             true -> {
                 val element = traces.first()
-                when (element.traceElement == expected) {
-                    false -> InvalidTraceMatch()
-                    true -> SuccessfulMatch(element)
-                }
-            }
-            false -> NoMoreTraceMatch()
-        }
-    }
-
-    fun matchReturn(traces: MutableList<TraceElementIndexed>, expected: Participant): MatchResult {
-        return when (traces.isNotEmpty()) {
-            true -> {
-                val element = traces.first()
-                if (element.traceElement is Return && element.traceElement.getParticipant() == expected) {
+                if (element.traceElement is Return && element.traceElement.getObservation() == expected) {
                     SuccessfulMatch(element)
                 } else {
                     InvalidTraceMatch()
@@ -35,11 +21,11 @@ class Matcher {
         }
     }
 
-    fun matchInvocation(traces: MutableList<TraceElementIndexed>, expected: Participant): MatchResult {
+    fun matchInvocation(traces: MutableList<TraceElementIndexed>, expected: Observable): MatchResult {
         return when (traces.isNotEmpty()) {
             true -> {
                 val element = traces.first()
-                if (element.traceElement is Invocation && element.traceElement.getParticipant() == expected) {
+                if (element.traceElement is Invocation && element.traceElement.getObservation() == expected) {
                     SuccessfulMatch(element)
                 } else {
                     InvalidTraceMatch()

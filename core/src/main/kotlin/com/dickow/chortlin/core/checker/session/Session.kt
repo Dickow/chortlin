@@ -5,8 +5,8 @@ import com.dickow.chortlin.core.checker.ParticipantRetriever
 import com.dickow.chortlin.core.checker.factory.CheckerFactory
 import com.dickow.chortlin.core.checker.result.CheckResult
 import com.dickow.chortlin.core.choreography.Choreography
-import com.dickow.chortlin.core.choreography.participant.Participant
-import com.dickow.chortlin.core.choreography.participant.observation.ObservedParticipant
+import com.dickow.chortlin.core.choreography.participant.observation.Observable
+import com.dickow.chortlin.core.choreography.participant.observation.ObservableParticipant
 import com.dickow.chortlin.core.trace.Trace
 import com.dickow.chortlin.core.trace.TraceElement
 import java.util.*
@@ -14,14 +14,14 @@ import java.util.*
 class Session(val sessionId: UUID, val choreography: Choreography, trace: TraceElement) {
     private val checker: ChoreographyChecker = CheckerFactory.createChecker(choreography)
     private val traces: MutableList<TraceElement> = LinkedList()
-    private val participantSet: Set<Participant>
+    private val participantSet: Set<ObservableParticipant>
     private val correlationKeys: MutableSet<Any>
 
     init {
         val participantVisitor = ParticipantRetriever()
         choreography.runVisitor(participantVisitor)
         participantSet = participantVisitor.getParticipants()
-        correlationKeys = choreography.getCorrelation(trace.getParticipant())!!.getAdditionKeys(trace)
+        correlationKeys = choreography.getCorrelation(trace.getObservation())!!.getAdditionKeys(trace)
     }
 
     fun checkNewTrace(trace: TraceElement): CheckResult {
@@ -42,7 +42,7 @@ class Session(val sessionId: UUID, val choreography: Choreography, trace: TraceE
     }
 
     fun correlatesTo(trace: TraceElement): Boolean {
-        val key = choreography.getCorrelation(trace.getParticipant())?.retrieveKey(trace.getArguments())
+        val key = choreography.getCorrelation(trace.getObservation())?.retrieveKey(trace.getArguments())
         return if (key == null) {
             false
         } else {
@@ -50,11 +50,11 @@ class Session(val sessionId: UUID, val choreography: Choreography, trace: TraceE
         }
     }
 
-    fun hasParticipant(participant: ObservedParticipant): Boolean {
+    fun hasParticipant(participant: Observable): Boolean {
         return participantSet.contains(participant)
     }
 
     fun extendKeySet(trace: TraceElement) {
-        correlationKeys.addAll(choreography.getCorrelation(trace.getParticipant())!!.getAdditionKeys(trace))
+        correlationKeys.addAll(choreography.getCorrelation(trace.getObservation())!!.getAdditionKeys(trace))
     }
 }

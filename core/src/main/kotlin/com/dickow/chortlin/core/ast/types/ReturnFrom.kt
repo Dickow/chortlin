@@ -7,11 +7,11 @@ import com.dickow.chortlin.core.checker.match.Matcher
 import com.dickow.chortlin.core.checker.match.NoMoreTraceMatch
 import com.dickow.chortlin.core.checker.match.SuccessfulMatch
 import com.dickow.chortlin.core.checker.result.CheckResult
-import com.dickow.chortlin.core.choreography.participant.Participant
+import com.dickow.chortlin.core.choreography.participant.observation.ObservableParticipant
 import com.dickow.chortlin.core.trace.Trace
 
 class ReturnFrom(
-        val participant: Participant,
+        val participant: ObservableParticipant,
         val label: Label,
         previous: ASTNode?,
         next: ASTNode?) : ASTNode(previous, next) {

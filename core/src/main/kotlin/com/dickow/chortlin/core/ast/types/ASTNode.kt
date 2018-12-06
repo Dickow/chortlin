@@ -6,8 +6,9 @@ import com.dickow.chortlin.core.ast.types.placeholder.Placeholder
 import com.dickow.chortlin.core.checker.SatisfactionRelationship
 import com.dickow.chortlin.core.choreography.Choreography
 import com.dickow.chortlin.core.choreography.ChoreographyBuilder
-import com.dickow.chortlin.core.choreography.participant.NonObservableParticipant
+import com.dickow.chortlin.core.choreography.method.ChortlinMethod
 import com.dickow.chortlin.core.choreography.participant.Participant
+import com.dickow.chortlin.core.choreography.participant.observation.ObservableFactory
 
 abstract class ASTNode(var previous: ASTNode?, var next: ASTNode?) : ChoreographyBuilder, SatisfactionRelationship {
 
@@ -29,14 +30,16 @@ abstract class ASTNode(var previous: ASTNode?, var next: ASTNode?) : Choreograph
         return next
     }
 
-    override fun returnFrom(receiver: Participant, label: String): ChoreographyBuilder {
-        val next = ReturnFrom(receiver, Label(label), this, null)
+    override fun <C> returnFrom(method: ChortlinMethod<C>, label: String): ChoreographyBuilder {
+        val observableReceiver = ObservableFactory.observable(method.participant, method)
+        val next = ReturnFrom(observableReceiver, Label(label), this, null)
         this.next = next
         return next
     }
 
-    override fun interaction(sender: NonObservableParticipant, receiver: Participant, label: String): ChoreographyBuilder {
-        val next = Interaction(sender, receiver, Label(label), this, null)
+    override fun <C> interaction(sender: Participant, method: ChortlinMethod<C>, label: String): ChoreographyBuilder {
+        val observableReceiver = ObservableFactory.observable(method.participant, method)
+        val next = Interaction(sender, observableReceiver, Label(label), this, null)
         this.next = next
         return next
     }
