@@ -20,7 +20,7 @@ data class Choreography(val start: ASTNode) {
         return this
     }
 
-    fun setCorrelationSet(cdef: CorrelationParticipantMapping): Choreography {
+    fun setCorrelation(cdef: CorrelationParticipantMapping): Choreography {
         this.correlationParticipantMapping = cdef
         return this
     }

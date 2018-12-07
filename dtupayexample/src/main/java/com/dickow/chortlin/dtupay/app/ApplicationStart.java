@@ -67,7 +67,7 @@ public class ApplicationStart {
                 .returnFrom(dtuPay.onMethod("pay"), "return from dtu pay")
                 .returnFrom(merchant.onMethod("pay"), "finished payment")
                 .end()
-                .setCorrelationSet(cdef)
+                .setCorrelation(cdef)
                 .runVisitor(new ASTInstrumentation(ByteBuddyInstrumentation.INSTANCE));
 
         InstrumentationStrategy.setStrategy(
