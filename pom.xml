@@ -6,7 +6,7 @@
 
     <groupId>com.dickow.chortlin</groupId>
     <artifactId>master</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
     <modules>
         <module>core</module>
         <module>dtupayexample</module>
