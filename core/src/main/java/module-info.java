@@ -5,11 +5,6 @@ module chortlin.core {
     requires java.instrument;
     requires kotlinx.coroutines.core;
 
-    // Get this out at some point
-    requires kotlin.test;
-    requires kotlin.test.junit5;
-    requires org.junit.jupiter.api;
-
     exports com.dickow.chortlin.core.choreography;
     exports com.dickow.chortlin.core.choreography.participant;
     exports com.dickow.chortlin.core.exceptions;

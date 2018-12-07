@@ -21,7 +21,7 @@ import java.util.List;
 import static com.dickow.chortlin.core.choreography.participant.ParticipantFactory.external;
 import static com.dickow.chortlin.core.choreography.participant.ParticipantFactory.participant;
 import static com.dickow.chortlin.core.correlation.factory.CorrelationFactory.correlation;
-import static com.dickow.chortlin.core.correlation.factory.CorrelationFactory.defineCorrelationSet;
+import static com.dickow.chortlin.core.correlation.factory.CorrelationFactory.defineCorrelation;
 
 @EnableAutoConfiguration
 @Configuration
@@ -35,35 +35,39 @@ public class ApplicationStart {
 
     private static void configureChoreography() {
         var client = external("Client");
-        var merchant = participant(Merchant.class, "pay", Merchant::pay);
-        var dtuPay = participant(DTUPayController.class, "pay", DTUPayController::pay);
-        var dtuBank = participant(DTUBankIntegration.class, "transferMoney", DTUBankIntegration::transferMoney);
-        var bank = participant(BankController.class, "transfer", BankController::transfer);
+        var merchant = participant(Merchant.class);
+        var dtuPay = participant(DTUPayController.class);
+        var dtuBank = participant(DTUBankIntegration.class);
+        var bank = participant(BankController.class);
 
-        var cset = defineCorrelationSet()
-                .add(correlation(merchant, (String merchantId, PaymentDTO payment) -> merchantId)
-                        .extendFromInput((String merchantId, PaymentDTO payment) -> merchantId)
+        var cdef = defineCorrelation()
+                .add(correlation(merchant.onMethod("pay", Merchant::pay),
+                        "merchantId", (String merchantId, PaymentDTO payment) -> merchantId)
+                        .extendFromInput("merchantId", (String merchantId, PaymentDTO payment) -> merchantId)
                         .done())
-                .add(correlation(dtuPay, (String merchantId, Integer amount, String token) -> merchantId)
-                        .extendFromInput((String merchantId, Integer amount, String token) -> token)
+                .add(correlation(dtuPay.onMethod("pay", DTUPayController::pay),
+                        "merchantId", (String merchantId, Integer amount, String token) -> merchantId)
+                        .extendFromInput("userId", (String merchantId, Integer amount, String token) -> token)
                         .done())
-                .add(correlation(dtuBank, (String merchantId, String customer, Integer amount) -> customer)
+                .add(correlation(dtuBank.onMethod("transferMoney", DTUBankIntegration::transferMoney),
+                        "userId", (String merchantId, String customer, Integer amount) -> customer)
                         .noExtensions())
-                .add(correlation(bank, TransactionDTO::getCustomer)
+                .add(correlation(bank.onMethod("transfer", BankController::transfer),
+                        "userId", TransactionDTO::getCustomer)
                         .noExtensions())
                 .finish();
 
         var choreography = Choreography.Instance.builder()
-                .interaction(client, merchant, "initiate payment")
-                .interaction(merchant.nonObservable(), dtuPay, "pay")
-                .interaction(dtuPay.nonObservable(), dtuBank, "integrate with bank")
-                .interaction(dtuBank.nonObservable(), bank, "perform transfer at bank")
-                .returnFrom(bank, "return once transferred")
-                .returnFrom(dtuBank, "return from the DTU bank integration")
-                .returnFrom(dtuPay, "return from dtu pay")
-                .returnFrom(merchant, "finished payment")
+                .interaction(client, merchant.onMethod("pay"), "initiate payment")
+                .interaction(merchant, dtuPay.onMethod("pay"), "pay")
+                .interaction(dtuPay, dtuBank.onMethod("transferMoney"), "integrate with bank")
+                .interaction(dtuBank, bank.onMethod("transfer"), "perform transfer at bank")
+                .returnFrom(bank.onMethod("transfer"), "return once transferred")
+                .returnFrom(dtuBank.onMethod("transferMoney"), "return from the DTU bank integration")
+                .returnFrom(dtuPay.onMethod("pay"), "return from dtu pay")
+                .returnFrom(merchant.onMethod("pay"), "finished payment")
                 .end()
-                .setCorrelationSet(cset)
+                .setCorrelationSet(cdef)
                 .runVisitor(new ASTInstrumentation(ByteBuddyInstrumentation.INSTANCE));
 
         InstrumentationStrategy.setStrategy(

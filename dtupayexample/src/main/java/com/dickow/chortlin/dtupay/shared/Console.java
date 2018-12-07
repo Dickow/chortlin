@@ -10,6 +10,6 @@ public abstract class Console {
 
     public static <T> void invocation(Class<T> clazz){
        var callingMethod = new RuntimeException().getStackTrace()[1];
-       Console.println("Invocation of Class<%s>::Method<%s>", clazz.getName(), callingMethod.getMethodName());
+        Console.println("Invocation of Class<%s>::ChortlinMethod<%s>", clazz.getName(), callingMethod.getMethodName());
     }
 }

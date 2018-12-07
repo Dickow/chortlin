@@ -4,50 +4,48 @@ import com.dickow.chortlin.core.ast.Label
 import com.dickow.chortlin.core.ast.types.End
 import com.dickow.chortlin.core.ast.types.Interaction
 import com.dickow.chortlin.core.choreography.Choreography
-import com.dickow.chortlin.core.choreography.participant.NonObservableParticipant
+import com.dickow.chortlin.core.choreography.participant.ExternalParticipant
 import com.dickow.chortlin.core.choreography.participant.ParticipantFactory
 import com.dickow.chortlin.core.choreography.participant.ParticipantFactory.participant
-import com.dickow.chortlin.core.choreography.participant.entity.ExternalEntity
-import com.dickow.chortlin.core.choreography.participant.entity.InternalEntity
+import com.dickow.chortlin.core.choreography.participant.observation.ObservableFactory
 import com.dickow.chortlin.core.test.shared.A
 import com.dickow.chortlin.core.test.shared.B
-import kotlin.test.Test
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class ASTBuilderTests {
 
     private val external = ParticipantFactory.external("external")
-    private val aReceive = participant(A::class.java, "receive", A::receive)
-    private val aB = participant(A::class.java, "b", A::b)
-    private val bB = participant(B::class.java, "b", B::b)
+    private val a = participant(A::class.java) // "receive", A::receive
+    private val b = participant(B::class.java) // "b", B::b
 
     @Test
     fun `build simple receive then interaction choreography`() {
         val choreography = Choreography.builder()
-                .interaction(external, aReceive, "receive")
-                .interaction(aReceive.nonObservable(), aB, "call A#b")
-                .interaction(aB.nonObservable(), bB, "Invoke B#b")
+                .interaction(external, a.onMethod("receive"), "receive")
+                .interaction(a, a.onMethod("b", A::b), "call A#b")
+                .interaction(a, b.onMethod("b", B::b), "Invoke B#b")
                 .end()
 
         val interaction1 = Interaction(
-                NonObservableParticipant(ExternalEntity("external")),
-                participant(A::class.java, "receive", A::receive),
+                ExternalParticipant("external"),
+                ObservableFactory.observable(a, a.onMethod("receive")),
                 Label("receive"),
                 null,
                 null
         )
 
         val interaction2 = Interaction(
-                NonObservableParticipant(InternalEntity(A::class.java)),
-                participant(A::class.java, "b", A::b),
+                a,
+                ObservableFactory.observable(a, a.onMethod("b")),
                 Label("call A#b"),
                 interaction1,
                 null
         )
 
         val interaction3 = Interaction(
-                NonObservableParticipant(InternalEntity(A::class.java)),
-                participant(B::class.java, "b", B::b),
+                a,
+                ObservableFactory.observable(b, b.onMethod("b")),
                 Label("Invoke B#b"),
                 interaction2,
                 null
@@ -65,12 +63,12 @@ class ASTBuilderTests {
     @Test
     fun `build single found msg element ast`() {
         val choreography = Choreography.builder()
-                .interaction(external, aReceive, "receive")
+                .interaction(external, a.onMethod("receive"), "receive")
                 .end()
 
         val interaction = Interaction(
-                NonObservableParticipant(ExternalEntity("external")),
-                participant(A::class.java, "receive", A::receive),
+                ExternalParticipant("external"),
+                ObservableFactory.observable(a, a.onMethod("receive")),
                 Label("receive"),
                 null,
                 null

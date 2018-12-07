@@ -2,11 +2,11 @@ package com.dickow.chortlin.core.checker
 
 import com.dickow.chortlin.core.ast.ASTVisitor
 import com.dickow.chortlin.core.ast.types.*
-import com.dickow.chortlin.core.choreography.participant.Participant
+import com.dickow.chortlin.core.choreography.participant.observation.ObservableParticipant
 import java.util.*
 
 class ParticipantRetriever : ASTVisitor {
-    private val participants = HashSet<Participant>()
+    private val participants = HashSet<ObservableParticipant>()
 
     override fun visitEnd(astNode: End) {
     }
@@ -27,7 +27,7 @@ class ParticipantRetriever : ASTVisitor {
     override fun visitChoice(astNode: Choice) {
     }
 
-    fun getParticipants(): Set<Participant> {
+    fun getParticipants(): Set<ObservableParticipant> {
         return this.participants
     }
 }

@@ -6,8 +6,9 @@ import com.dickow.chortlin.core.ast.types.*
 import com.dickow.chortlin.core.checker.result.CheckResult
 import com.dickow.chortlin.core.choreography.Choreography
 import com.dickow.chortlin.core.choreography.ChoreographyBuilder
-import com.dickow.chortlin.core.choreography.participant.NonObservableParticipant
+import com.dickow.chortlin.core.choreography.method.ChortlinMethod
 import com.dickow.chortlin.core.choreography.participant.Participant
+import com.dickow.chortlin.core.choreography.participant.observation.ObservableFactory
 import com.dickow.chortlin.core.exceptions.InvalidASTException
 import com.dickow.chortlin.core.trace.Trace
 
@@ -29,12 +30,14 @@ class Marker : ASTNode(null, null), Placeholder {
         return Parallel(path(Choreography.builder()), null, null)
     }
 
-    override fun returnFrom(receiver: Participant, label: String): ChoreographyBuilder {
-        return ReturnFrom(receiver, Label(label), null, null)
+    override fun <C> returnFrom(method: ChortlinMethod<C>, label: String): ChoreographyBuilder {
+        val observableReceiver = ObservableFactory.observable(method.participant, method)
+        return ReturnFrom(observableReceiver, Label(label), null, null)
     }
 
-    override fun interaction(sender: NonObservableParticipant, receiver: Participant, label: String): ChoreographyBuilder {
-        return Interaction(sender, receiver, Label(label), null, null)
+    override fun <C> interaction(sender: Participant, method: ChortlinMethod<C>, label: String): ChoreographyBuilder {
+        val observableReceiver = ObservableFactory.observable(method.participant, method)
+        return Interaction(sender, observableReceiver, Label(label), null, null)
     }
 
     override fun end(): Choreography {

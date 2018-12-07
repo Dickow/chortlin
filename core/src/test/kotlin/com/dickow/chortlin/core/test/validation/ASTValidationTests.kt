@@ -16,7 +16,7 @@ class ASTValidationTests {
     @Test
     fun `check that validation fails for invalid ast end configuration`() {
         val choreography = Choreography.builder()
-                .returnFrom(participant(A::class.java, "receive", A::receive), "error")
+                .returnFrom(participant(A::class.java).onMethod("receive"), "error")
                 .end()
         assertFailsWith(InvalidASTException::class) { choreography.runVisitor(ASTValidator()) }
     }
@@ -24,7 +24,7 @@ class ASTValidationTests {
     @Test
     fun `check that validation accepts a valid ast`() {
         val choreography = Choreography.builder()
-                .interaction(external, participant(A::class.java, "receive", A::receive), "valid")
+                .interaction(external, participant(A::class.java).onMethod("receive"), "valid")
                 .end()
         choreography.runVisitor(ASTValidator())
     }
@@ -33,7 +33,7 @@ class ASTValidationTests {
     @Suppress("CAST_NEVER_SUCCEEDS")
     fun `check that validator fails for paths without end`() {
         val choreography = Choreography.builder()
-                .interaction(external, participant(A::class.java, "receive", A::receive), "invalid")
+                .interaction(external, participant(A::class.java).onMethod("receive"), "invalid")
         assertFailsWith(ClassCastException::class) { choreography as Choreography }
     }
 }

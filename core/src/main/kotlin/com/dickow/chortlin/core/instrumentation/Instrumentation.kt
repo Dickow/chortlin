@@ -1,8 +1,8 @@
 package com.dickow.chortlin.core.instrumentation
 
-import com.dickow.chortlin.core.choreography.participant.Participant
+import com.dickow.chortlin.core.choreography.participant.observation.ObservableParticipant
 
 interface Instrumentation {
-    fun before(participant: Participant)
-    fun after(participant: Participant)
+    fun before(participant: ObservableParticipant)
+    fun after(participant: ObservableParticipant)
 }

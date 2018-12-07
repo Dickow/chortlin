@@ -1,11 +1,10 @@
 package com.dickow.chortlin.core.choreography.participant.observation
 
-import com.dickow.chortlin.core.choreography.participant.Participant
 import java.lang.reflect.Method
 
-data class ObservedParticipant(override val clazz: Class<*>, override val method: Method) : Participant {
+abstract class Observable(val clazz: Class<*>, val method: Method) {
     override fun equals(other: Any?): Boolean {
-        return if (other is Participant) {
+        return if (other is Observable) {
             this.clazz == other.clazz && this.method == other.method
         } else {
             false
