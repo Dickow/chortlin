@@ -52,7 +52,7 @@ class OnlineCheckerTests {
             .returnFrom(onlineFirst.onMethod("method2", OnlineFirstClass::method2), "return #2")
             .returnFrom(onlineFirst.onMethod("method1", OnlineFirstClass::method1), "return #1")
             .end()
-            .setCorrelationSet(cdef)
+            .setCorrelation(cdef)
 
     private val expectedTraceSequence = listOf(
             Invocation(observed(OnlineFirstClass::class.java, "method1"), allArguments),
@@ -134,13 +134,13 @@ class OnlineCheckerTests {
                 .interaction(onlineFirst, onlineFirst.onMethod("method2"), "#2")
                 .interaction(onlineFirst, onlineSecond.onMethod("method1"), "#3")
                 .returnFrom(onlineSecond.onMethod("method1"), "return #3")
-                .end().setCorrelationSet(cset1)
+                .end().setCorrelation(cset1)
 
         val choreography2 = Choreography.builder()
                 .interaction(external, onlineSecond.onMethod("method2"), "#1")
                 .interaction(onlineSecond, onlineThird.onMethod("method1"), "#2")
                 .interaction(onlineThird, onlineThird.onMethod("method2"), "#3")
-                .end().setCorrelationSet(cset2)
+                .end().setCorrelation(cset2)
         val checker = OnlineChecker(InMemorySessionManager(listOf(choreography1, choreography2)))
         assertEquals(CheckResult.Partial, checker.check(Invocation(observed(OnlineFirstClass::class.java, "method1"), allArguments))) // Choreography 1
         assertEquals(CheckResult.Partial, checker.check(Invocation(observed(OnlineSecondClass::class.java, "method2"), allArguments))) // Choreography 2

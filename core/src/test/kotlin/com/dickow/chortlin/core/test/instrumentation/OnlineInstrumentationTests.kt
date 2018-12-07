@@ -12,6 +12,7 @@ import com.dickow.chortlin.core.instrumentation.ASTInstrumentation
 import com.dickow.chortlin.core.instrumentation.ByteBuddyInstrumentation
 import com.dickow.chortlin.core.instrumentation.strategy.CheckInMemory
 import com.dickow.chortlin.core.instrumentation.strategy.InstrumentationStrategy
+import com.dickow.chortlin.core.instrumentation.strategy.factory.StrategyFactory
 import com.dickow.chortlin.core.test.shared.OnlineFirstClass
 import com.dickow.chortlin.core.test.shared.OnlineSecondClass
 import com.dickow.chortlin.core.test.shared.OnlineThirdClass
@@ -49,7 +50,7 @@ class OnlineInstrumentationTests {
                 .interaction(onlineFirstClass, onlineFirstClass.onMethod("method2"), "#2")
                 .interaction(onlineFirstClass, onlineSecondClass.onMethod("method1"), "#3")
                 .returnFrom(onlineSecondClass.onMethod("method1"), "return #3")
-                .end().setCorrelationSet(cset)
+                .end().setCorrelation(cset)
         val onlineChecker = OnlineChecker(InMemorySessionManager(listOf(choreography)))
         InstrumentationStrategy.strategy = CheckInMemory(onlineChecker, true)
 
@@ -74,7 +75,7 @@ class OnlineInstrumentationTests {
                 .interaction(onlineFirstClass, onlineFirstClass.onMethod("method2"), "#2")
                 .interaction(onlineFirstClass, onlineSecondClass.onMethod("method1"), "#3")
                 .returnFrom(onlineSecondClass.onMethod("method1"), "return #3")
-                .end().setCorrelationSet(cset)
+                .end().setCorrelation(cset)
         val onlineChecker = OnlineChecker(InMemorySessionManager(listOf(choreography)))
         InstrumentationStrategy.strategy = CheckInMemory(onlineChecker, true)
 
@@ -108,13 +109,13 @@ class OnlineInstrumentationTests {
                 .interaction(onlineFirstClass, onlineFirstClass.onMethod("method2"), "#2")
                 .interaction(onlineFirstClass, onlineSecondClass.onMethod("method1"), "#3")
                 .returnFrom(onlineSecondClass.onMethod("method1"), "return #3")
-                .end().setCorrelationSet(cset1)
+                .end().setCorrelation(cset1)
 
         val choreography2 = Choreography.builder()
                 .interaction(external, onlineSecondClass.onMethod("method2"), "#1")
                 .interaction(onlineSecondClass, onlineThirdClass.onMethod("method1"), "#2")
                 .interaction(onlineThirdClass, onlineThirdClass.onMethod("method2"), "#3")
-                .end().setCorrelationSet(cset2)
+                .end().setCorrelation(cset2)
 
         val onlineChecker = OnlineChecker(InMemorySessionManager(listOf(choreography1, choreography2)))
         InstrumentationStrategy.strategy = CheckInMemory(onlineChecker, true)
@@ -160,16 +161,15 @@ class OnlineInstrumentationTests {
                 .interaction(onlineFirstClass, onlineFirstClass.onMethod("method2"), "#2")
                 .interaction(onlineFirstClass, onlineSecondClass.onMethod("method1"), "#3")
                 .returnFrom(onlineSecondClass.onMethod("method1"), "return #3")
-                .end().setCorrelationSet(cset1)
+                .end().setCorrelation(cset1)
 
         val choreography2 = Choreography.builder()
                 .interaction(external, onlineSecondClass.onMethod("method2"), "#1")
                 .interaction(onlineSecondClass, onlineThirdClass.onMethod("method1"), "#2")
                 .interaction(onlineThirdClass, onlineThirdClass.onMethod("method2"), "#3")
-                .end().setCorrelationSet(cset2)
+                .end().setCorrelation(cset2)
 
-        val onlineChecker = OnlineChecker(InMemorySessionManager(listOf(choreography1, choreography2)))
-        InstrumentationStrategy.strategy = CheckInMemory(onlineChecker, true)
+        InstrumentationStrategy.strategy = StrategyFactory.createInMemoryChecker(listOf(choreography1, choreography2), true)
 
         val thread1 = GlobalScope.async {
             OnlineFirstClass().method1()
