@@ -10,6 +10,7 @@ import com.dickow.chortlin.core.instrumentation.strategy.InterceptStrategy
 import com.dickow.chortlin.core.instrumentation.strategy.StoreInMemory
 
 object StrategyFactory {
+    @JvmStatic
     fun createInMemoryChecker(choreographies: List<Choreography>, failFast: Boolean = true): InterceptStrategy {
         val instrumentation = ASTInstrumentation(ByteBuddyInstrumentation)
         for (choreography in choreographies) {

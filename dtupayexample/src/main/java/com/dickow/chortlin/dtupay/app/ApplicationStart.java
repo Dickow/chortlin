@@ -1,8 +1,6 @@
 package com.dickow.chortlin.dtupay.app;
 
 import com.dickow.chortlin.core.choreography.Choreography;
-import com.dickow.chortlin.core.instrumentation.ASTInstrumentation;
-import com.dickow.chortlin.core.instrumentation.ByteBuddyInstrumentation;
 import com.dickow.chortlin.core.instrumentation.strategy.InstrumentationStrategy;
 import com.dickow.chortlin.core.instrumentation.strategy.factory.StrategyFactory;
 import com.dickow.chortlin.dtupay.bank.BankController;
@@ -67,10 +65,8 @@ public class ApplicationStart {
                 .returnFrom(dtuPay.onMethod("pay"), "return from dtu pay")
                 .returnFrom(merchant.onMethod("pay"), "finished payment")
                 .end()
-                .setCorrelation(cdef)
-                .runVisitor(new ASTInstrumentation(ByteBuddyInstrumentation.INSTANCE));
+                .setCorrelation(cdef);
 
-        InstrumentationStrategy.setStrategy(
-                StrategyFactory.INSTANCE.createInMemoryChecker(List.of(choreography), true));
+        InstrumentationStrategy.setStrategy(StrategyFactory.createInMemoryChecker(List.of(choreography), true));
     }
 }
