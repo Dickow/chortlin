@@ -53,11 +53,11 @@ class ApplyInstrumentationTests {
         InstrumentationStrategy.strategy = interceptStrategy
         val sessionId = UUID.randomUUID()
         val cset = defineCorrelation()
-                .add(correlation(initial.onMethod("begin", Initial::begin), { sessionId })
-                        .extendFromInput { sessionId }
+                .add(correlation(initial.onMethod("begin", Initial::begin), "sid", { sessionId })
+                        .extendFromInput("sid") { sessionId }
                         .done())
-                .add(correlation(delegate.onMethod("delegate", Initial::delegate), { sessionId }).noExtensions())
-                .add(correlation(processor.onMethod("process", Second::process), { sessionId }).noExtensions())
+                .add(correlation(delegate.onMethod("delegate", Initial::delegate), "sid", { sessionId }).noExtensions())
+                .add(correlation(processor.onMethod("process", Second::process), "sid", { sessionId }).noExtensions())
                 .finish()
 
         val checker = CheckerFactory.createChecker(
@@ -78,9 +78,9 @@ class ApplyInstrumentationTests {
         InstrumentationStrategy.strategy = interceptStrategy
         val sessionId = UUID.randomUUID()
         val cset = defineCorrelation()
-                .add(correlation(delegate.onMethod("delegate", Initial::delegate), { sessionId }).extendFromInput { sessionId }.done())
-                .add(correlation(initial.onMethod("begin", Initial::begin), { sessionId }).noExtensions())
-                .add(correlation(processor.onMethod("process", Second::process), { sessionId }).noExtensions())
+                .add(correlation(delegate.onMethod("delegate", Initial::delegate), "sid", { sessionId }).extendFromInput("sid") { sessionId }.done())
+                .add(correlation(initial.onMethod("begin", Initial::begin), "sid", { sessionId }).noExtensions())
+                .add(correlation(processor.onMethod("process", Second::process), "sid", { sessionId }).noExtensions())
                 .finish()
 
         val checker = CheckerFactory.createChecker(
@@ -102,9 +102,9 @@ class ApplyInstrumentationTests {
         InstrumentationStrategy.strategy = interceptStrategy
         val sessionId = UUID.randomUUID()
         val cset = defineCorrelation()
-                .add(correlation(firstClass.onMethod("first", FirstClass::first), { sessionId }).extendFromInput { sessionId }.done())
-                .add(correlation(secondClass.onMethod("second", SecondClass::second), { sessionId }).noExtensions())
-                .add(correlation(thirdClass.onMethod("third", ThirdClass::third), { sessionId }).noExtensions())
+                .add(correlation(firstClass.onMethod("first", FirstClass::first), "sid", { sessionId }).extendFromInput("sid") { sessionId }.done())
+                .add(correlation(secondClass.onMethod("second", SecondClass::second), "sid", { sessionId }).noExtensions())
+                .add(correlation(thirdClass.onMethod("third", ThirdClass::third), "sid", { sessionId }).noExtensions())
                 .finish()
 
         val checker = CheckerFactory.createChecker(
@@ -130,9 +130,9 @@ class ApplyInstrumentationTests {
         InstrumentationStrategy.strategy = interceptStrategy
         val sessionId = UUID.randomUUID()
         val cset = defineCorrelation()
-                .add(correlation(firstClass.onMethod("first", FirstClass::first), { sessionId }).extendFromInput { sessionId }.done())
-                .add(correlation(secondClass.onMethod("second", SecondClass::second), { sessionId }).noExtensions())
-                .add(correlation(thirdClass.onMethod("third", ThirdClass::third), { sessionId }).noExtensions())
+                .add(correlation(firstClass.onMethod("first", FirstClass::first), "sid", { sessionId }).extendFromInput("sid") { sessionId }.done())
+                .add(correlation(secondClass.onMethod("second", SecondClass::second), "sid", { sessionId }).noExtensions())
+                .add(correlation(thirdClass.onMethod("third", ThirdClass::third), "sid", { sessionId }).noExtensions())
                 .finish()
 
         val checker = CheckerFactory.createChecker(
@@ -158,11 +158,11 @@ class ApplyInstrumentationTests {
         InstrumentationStrategy.strategy = interceptStrategy
         val sessionId = UUID.randomUUID()
         val cset = defineCorrelation()
-                .add(correlation(partialFirst1.onMethod("first", PartialFirst::first), { sessionId }).extendFromInput { sessionId }.done())
-                .add(correlation(partialFirst1.onMethod("second", PartialFirst::second), { sessionId }).noExtensions())
-                .add(correlation(partialSecond2.onMethod("second", PartialSecond::second), { sessionId }).noExtensions())
-                .add(correlation(partialSecond2.onMethod("third", PartialSecond::third), { sessionId }).noExtensions())
-                .add(correlation(partialThird3.onMethod("third", PartialThird::third), { sessionId }).noExtensions())
+                .add(correlation(partialFirst1.onMethod("first", PartialFirst::first), "sid", { sessionId }).extendFromInput("sid") { sessionId }.done())
+                .add(correlation(partialFirst1.onMethod("second", PartialFirst::second), "sid", { sessionId }).noExtensions())
+                .add(correlation(partialSecond2.onMethod("second", PartialSecond::second), "sid", { sessionId }).noExtensions())
+                .add(correlation(partialSecond2.onMethod("third", PartialSecond::third), "sid", { sessionId }).noExtensions())
+                .add(correlation(partialThird3.onMethod("third", PartialThird::third), "sid", { sessionId }).noExtensions())
                 .finish()
 
         val checker = CheckerFactory.createChecker(

@@ -42,17 +42,18 @@ public class ApplicationStart {
 
         var cdef = defineCorrelation()
                 .add(correlation(merchant.onMethod("pay", Merchant::pay),
-                        (String merchantId, PaymentDTO payment) -> merchantId)
-                        .extendFromInput((String merchantId, PaymentDTO payment) -> merchantId)
+                        "merchantId", (String merchantId, PaymentDTO payment) -> merchantId)
+                        .extendFromInput("merchantId", (String merchantId, PaymentDTO payment) -> merchantId)
                         .done())
                 .add(correlation(dtuPay.onMethod("pay", DTUPayController::pay),
-                        (String merchantId, Integer amount, String token) -> merchantId)
-                        .extendFromInput((String merchantId, Integer amount, String token) -> token)
+                        "merchantId", (String merchantId, Integer amount, String token) -> merchantId)
+                        .extendFromInput("userId", (String merchantId, Integer amount, String token) -> token)
                         .done())
                 .add(correlation(dtuBank.onMethod("transferMoney", DTUBankIntegration::transferMoney),
-                        (String merchantId, String customer, Integer amount) -> customer)
+                        "userId", (String merchantId, String customer, Integer amount) -> customer)
                         .noExtensions())
-                .add(correlation(bank.onMethod("transfer", BankController::transfer), TransactionDTO::getCustomer)
+                .add(correlation(bank.onMethod("transfer", BankController::transfer),
+                        "userId", TransactionDTO::getCustomer)
                         .noExtensions())
                 .finish();
 

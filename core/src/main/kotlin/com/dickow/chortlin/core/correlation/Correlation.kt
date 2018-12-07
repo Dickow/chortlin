@@ -14,7 +14,7 @@ class Correlation(
         return correlationFunction.apply(arguments)
     }
 
-    fun getAdditionKeys(trace: TraceElement): MutableSet<Any> {
+    fun getAdditionKeys(trace: TraceElement): MutableSet<CorrelationValue> {
         val applicableFunctions = addFunctions.filter { func -> func.applicableTo(trace) }
         return when (trace) {
             is Invocation -> {
