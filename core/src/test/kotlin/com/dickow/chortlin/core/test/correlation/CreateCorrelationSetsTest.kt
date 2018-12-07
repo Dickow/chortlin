@@ -76,7 +76,7 @@ class CreateCorrelationSetsTest {
 
     @Test
     fun `expect success when running multiple instances of the services with correlation sets`() {
-        authenticationChoreography.setCorrelationSet(cset).runVisitor(instrumentation)
+        authenticationChoreography.setCorrelationSet(cset)
         val onlineChecker = OnlineChecker(InMemorySessionManager(listOf(authenticationChoreography)))
         InstrumentationStrategy.strategy = CheckInMemory(onlineChecker, true)
 
@@ -90,7 +90,7 @@ class CreateCorrelationSetsTest {
 
     @Test
     fun `expect error when executing a session in the wrong order`() {
-        authenticationChoreography.setCorrelationSet(cset).runVisitor(instrumentation)
+        authenticationChoreography.setCorrelationSet(cset)
         val onlineChecker = OnlineChecker(InMemorySessionManager(listOf(authenticationChoreography)))
         InstrumentationStrategy.strategy = CheckInMemory(onlineChecker, true)
 
@@ -103,7 +103,7 @@ class CreateCorrelationSetsTest {
 
     @Test
     fun `expect an error when correlation function uses wrong correlation key`() {
-        authenticationChoreography.runVisitor(instrumentation)
+        authenticationChoreography
                 .setCorrelationSet(defineCorrelation()
                         .add(correlation(auth.onMethod("authenticate", Authentication::authenticate), "uName", authCorrelation)
                                 .extendFromInput("user", authCorrelation) // Adding the value under another identifier

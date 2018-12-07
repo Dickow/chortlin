@@ -50,7 +50,6 @@ class OnlineInstrumentationTests {
                 .interaction(onlineFirstClass, onlineSecondClass.onMethod("method1"), "#3")
                 .returnFrom(onlineSecondClass.onMethod("method1"), "return #3")
                 .end().setCorrelationSet(cset)
-                .runVisitor(instrumentationVisitor)
         val onlineChecker = OnlineChecker(InMemorySessionManager(listOf(choreography)))
         InstrumentationStrategy.strategy = CheckInMemory(onlineChecker, true)
 
@@ -76,7 +75,6 @@ class OnlineInstrumentationTests {
                 .interaction(onlineFirstClass, onlineSecondClass.onMethod("method1"), "#3")
                 .returnFrom(onlineSecondClass.onMethod("method1"), "return #3")
                 .end().setCorrelationSet(cset)
-                .runVisitor(instrumentationVisitor)
         val onlineChecker = OnlineChecker(InMemorySessionManager(listOf(choreography)))
         InstrumentationStrategy.strategy = CheckInMemory(onlineChecker, true)
 
@@ -111,14 +109,12 @@ class OnlineInstrumentationTests {
                 .interaction(onlineFirstClass, onlineSecondClass.onMethod("method1"), "#3")
                 .returnFrom(onlineSecondClass.onMethod("method1"), "return #3")
                 .end().setCorrelationSet(cset1)
-                .runVisitor(instrumentationVisitor)
 
         val choreography2 = Choreography.builder()
                 .interaction(external, onlineSecondClass.onMethod("method2"), "#1")
                 .interaction(onlineSecondClass, onlineThirdClass.onMethod("method1"), "#2")
                 .interaction(onlineThirdClass, onlineThirdClass.onMethod("method2"), "#3")
                 .end().setCorrelationSet(cset2)
-                .runVisitor(instrumentationVisitor)
 
         val onlineChecker = OnlineChecker(InMemorySessionManager(listOf(choreography1, choreography2)))
         InstrumentationStrategy.strategy = CheckInMemory(onlineChecker, true)
@@ -165,14 +161,12 @@ class OnlineInstrumentationTests {
                 .interaction(onlineFirstClass, onlineSecondClass.onMethod("method1"), "#3")
                 .returnFrom(onlineSecondClass.onMethod("method1"), "return #3")
                 .end().setCorrelationSet(cset1)
-                .runVisitor(instrumentationVisitor)
 
         val choreography2 = Choreography.builder()
                 .interaction(external, onlineSecondClass.onMethod("method2"), "#1")
                 .interaction(onlineSecondClass, onlineThirdClass.onMethod("method1"), "#2")
                 .interaction(onlineThirdClass, onlineThirdClass.onMethod("method2"), "#3")
                 .end().setCorrelationSet(cset2)
-                .runVisitor(instrumentationVisitor)
 
         val onlineChecker = OnlineChecker(InMemorySessionManager(listOf(choreography1, choreography2)))
         InstrumentationStrategy.strategy = CheckInMemory(onlineChecker, true)
