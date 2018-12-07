@@ -22,14 +22,14 @@ class ASTBuilderTests {
     @Test
     fun `build simple receive then interaction choreography`() {
         val choreography = Choreography.builder()
-                .interaction(external, a.onMethod("receive", A::receive), "receive")
+                .interaction(external, a.onMethod("receive"), "receive")
                 .interaction(a, a.onMethod("b", A::b), "call A#b")
                 .interaction(a, b.onMethod("b", B::b), "Invoke B#b")
                 .end()
 
         val interaction1 = Interaction(
                 ExternalParticipant("external"),
-                ObservableFactory.observable(a, a.onMethod("receive", A::receive)),
+                ObservableFactory.observable(a, a.onMethod("receive")),
                 Label("receive"),
                 null,
                 null
@@ -37,7 +37,7 @@ class ASTBuilderTests {
 
         val interaction2 = Interaction(
                 a,
-                ObservableFactory.observable(a, a.onMethod("b", A::b)),
+                ObservableFactory.observable(a, a.onMethod("b")),
                 Label("call A#b"),
                 interaction1,
                 null
@@ -45,7 +45,7 @@ class ASTBuilderTests {
 
         val interaction3 = Interaction(
                 a,
-                ObservableFactory.observable(b, b.onMethod("b", B::b)),
+                ObservableFactory.observable(b, b.onMethod("b")),
                 Label("Invoke B#b"),
                 interaction2,
                 null
@@ -63,12 +63,12 @@ class ASTBuilderTests {
     @Test
     fun `build single found msg element ast`() {
         val choreography = Choreography.builder()
-                .interaction(external, a.onMethod("receive", A::receive), "receive")
+                .interaction(external, a.onMethod("receive"), "receive")
                 .end()
 
         val interaction = Interaction(
                 ExternalParticipant("external"),
-                ObservableFactory.observable(a, a.onMethod("receive", A::receive)),
+                ObservableFactory.observable(a, a.onMethod("receive")),
                 Label("receive"),
                 null,
                 null

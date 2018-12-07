@@ -21,18 +21,18 @@ class ParticipantVisitorTests {
         val third = participant(ThirdClass::class.java) // "third", ThirdClass::third
 
         val choreography = Choreography.builder()
-                .interaction(external, first.onMethod("first", FirstClass::first), "#1")
-                .interaction(first, second.onMethod("second", SecondClass::second), "#2")
-                .interaction(second, third.onMethod("third", ThirdClass::third), "#3")
-                .returnFrom(third.onMethod("third", ThirdClass::third), "return #3")
+                .interaction(external, first.onMethod("first"), "#1")
+                .interaction(first, second.onMethod("second"), "#2")
+                .interaction(second, third.onMethod("third"), "#3")
+                .returnFrom(third.onMethod("third"), "return #3")
                 .end()
 
         val participantRetriever = ParticipantRetriever()
         choreography.runVisitor(participantRetriever)
         val expected = setOf(
-                ObservableFactory.observable(first, first.onMethod("first", FirstClass::first)),
-                ObservableFactory.observable(second, second.onMethod("second", SecondClass::second)),
-                ObservableFactory.observable(third, third.onMethod("third", ThirdClass::third))
+                ObservableFactory.observable(first, first.onMethod("first")),
+                ObservableFactory.observable(second, second.onMethod("second")),
+                ObservableFactory.observable(third, third.onMethod("third"))
         )
         assertEquals(expected, participantRetriever.getParticipants())
     }

@@ -5,6 +5,11 @@ import com.dickow.chortlin.core.exceptions.factory.TypeApiExceptionFactory
 import java.lang.reflect.Method
 
 object MethodFactory {
+    fun <C> method(participant: InternalParticipant<C>, methodName: String): ChortlinMethod<*> {
+        val method = getMethodFromName(participant.clazz, methodName)
+        return NoSigChortlinMethod(method, participant)
+    }
+
     @JvmStatic
     fun <C, R> method(participant: InternalParticipant<C>, name: String, signature: (C) -> R): ChortlinMethod0<C, R> {
         val method = getMethodFromName(participant.clazz, name)

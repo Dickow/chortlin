@@ -6,7 +6,7 @@ import com.dickow.chortlin.core.choreography.Choreography
 import com.dickow.chortlin.core.choreography.participant.ParticipantFactory.external
 import com.dickow.chortlin.core.choreography.participant.ParticipantFactory.participant
 import com.dickow.chortlin.core.correlation.factory.CorrelationFactory.correlation
-import com.dickow.chortlin.core.correlation.factory.CorrelationFactory.defineCorrelationSet
+import com.dickow.chortlin.core.correlation.factory.CorrelationFactory.defineCorrelation
 import com.dickow.chortlin.core.instrumentation.ASTInstrumentation
 import com.dickow.chortlin.core.instrumentation.ByteBuddyInstrumentation
 import com.dickow.chortlin.core.instrumentation.strategy.InstrumentationStrategy
@@ -52,7 +52,7 @@ class ApplyInstrumentationTests {
         traces.clear()
         InstrumentationStrategy.strategy = interceptStrategy
         val sessionId = UUID.randomUUID()
-        val cset = defineCorrelationSet()
+        val cset = defineCorrelation()
                 .add(correlation(initial.onMethod("begin", Initial::begin), { sessionId })
                         .extendFromInput { sessionId }
                         .done())
@@ -62,9 +62,9 @@ class ApplyInstrumentationTests {
 
         val checker = CheckerFactory.createChecker(
                 Choreography.builder()
-                        .interaction(external, initial.onMethod("begin", Initial::begin), "start")
-                        .interaction(initial, delegate.onMethod("delegate", Initial::delegate), "delegate")
-                        .interaction(delegate, processor.onMethod("process", Second::process), "processing")
+                        .interaction(external, initial.onMethod("begin"), "start")
+                        .interaction(initial, delegate.onMethod("delegate"), "delegate")
+                        .interaction(delegate, processor.onMethod("process"), "processing")
                         .end().setCorrelationSet(cset)
                         .runVisitor(instrumentationVisitor))
         Initial().begin()
@@ -77,7 +77,7 @@ class ApplyInstrumentationTests {
         traces.clear()
         InstrumentationStrategy.strategy = interceptStrategy
         val sessionId = UUID.randomUUID()
-        val cset = defineCorrelationSet()
+        val cset = defineCorrelation()
                 .add(correlation(delegate.onMethod("delegate", Initial::delegate), { sessionId }).extendFromInput { sessionId }.done())
                 .add(correlation(initial.onMethod("begin", Initial::begin), { sessionId }).noExtensions())
                 .add(correlation(processor.onMethod("process", Second::process), { sessionId }).noExtensions())
@@ -85,9 +85,9 @@ class ApplyInstrumentationTests {
 
         val checker = CheckerFactory.createChecker(
                 Choreography.builder()
-                        .interaction(external, delegate.onMethod("delegate", Initial::delegate), "start")
-                        .interaction(delegate, initial.onMethod("begin", Initial::begin), "then initial")
-                        .interaction(initial, processor.onMethod("process", Second::process), "process it")
+                        .interaction(external, delegate.onMethod("delegate"), "start")
+                        .interaction(delegate, initial.onMethod("begin"), "then initial")
+                        .interaction(initial, processor.onMethod("process"), "process it")
                         .end().setCorrelationSet(cset)
                         .runVisitor(instrumentationVisitor)
         )
@@ -101,7 +101,7 @@ class ApplyInstrumentationTests {
         traces.clear()
         InstrumentationStrategy.strategy = interceptStrategy
         val sessionId = UUID.randomUUID()
-        val cset = defineCorrelationSet()
+        val cset = defineCorrelation()
                 .add(correlation(firstClass.onMethod("first", FirstClass::first), { sessionId }).extendFromInput { sessionId }.done())
                 .add(correlation(secondClass.onMethod("second", SecondClass::second), { sessionId }).noExtensions())
                 .add(correlation(thirdClass.onMethod("third", ThirdClass::third), { sessionId }).noExtensions())
@@ -109,12 +109,12 @@ class ApplyInstrumentationTests {
 
         val checker = CheckerFactory.createChecker(
                 Choreography.builder()
-                        .interaction(external, firstClass.onMethod("first", FirstClass::first), "initial receive")
-                        .interaction(firstClass, secondClass.onMethod("second", SecondClass::second), "second call")
-                        .interaction(secondClass, thirdClass.onMethod("third", ThirdClass::third), "third call")
-                        .returnFrom(thirdClass.onMethod("third", ThirdClass::third), "return from third call")
-                        .returnFrom(secondClass.onMethod("second", SecondClass::second), "return from Second::second")
-                        .returnFrom(firstClass.onMethod("first", FirstClass::first), "return from First::first")
+                        .interaction(external, firstClass.onMethod("first"), "initial receive")
+                        .interaction(firstClass, secondClass.onMethod("second"), "second call")
+                        .interaction(secondClass, thirdClass.onMethod("third"), "third call")
+                        .returnFrom(thirdClass.onMethod("third"), "return from third call")
+                        .returnFrom(secondClass.onMethod("second"), "return from Second::second")
+                        .returnFrom(firstClass.onMethod("first"), "return from First::first")
                         .end().setCorrelationSet(cset)
                         .runVisitor(instrumentationVisitor)
         )
@@ -129,7 +129,7 @@ class ApplyInstrumentationTests {
         traces.clear()
         InstrumentationStrategy.strategy = interceptStrategy
         val sessionId = UUID.randomUUID()
-        val cset = defineCorrelationSet()
+        val cset = defineCorrelation()
                 .add(correlation(firstClass.onMethod("first", FirstClass::first), { sessionId }).extendFromInput { sessionId }.done())
                 .add(correlation(secondClass.onMethod("second", SecondClass::second), { sessionId }).noExtensions())
                 .add(correlation(thirdClass.onMethod("third", ThirdClass::third), { sessionId }).noExtensions())
@@ -137,12 +137,12 @@ class ApplyInstrumentationTests {
 
         val checker = CheckerFactory.createChecker(
                 Choreography.builder()
-                        .interaction(external, firstClass.onMethod("first", FirstClass::first), "initial receive")
-                        .interaction(firstClass, secondClass.onMethod("second", SecondClass::second), "second call")
-                        .interaction(secondClass, thirdClass.onMethod("third", ThirdClass::third), "third call")
-                        .returnFrom(thirdClass.onMethod("third", ThirdClass::third), "return from third call")
-                        .returnFrom(secondClass.onMethod("second", SecondClass::second), "return from Second::second")
-                        .returnFrom(firstClass.onMethod("first", FirstClass::first), "return from First::first")
+                        .interaction(external, firstClass.onMethod("first"), "initial receive")
+                        .interaction(firstClass, secondClass.onMethod("second"), "second call")
+                        .interaction(secondClass, thirdClass.onMethod("third"), "third call")
+                        .returnFrom(thirdClass.onMethod("third"), "return from third call")
+                        .returnFrom(secondClass.onMethod("second"), "return from Second::second")
+                        .returnFrom(firstClass.onMethod("first"), "return from First::first")
                         .end().setCorrelationSet(cset)
                         .runVisitor(instrumentationVisitor)
         )
@@ -157,7 +157,7 @@ class ApplyInstrumentationTests {
         traces.clear()
         InstrumentationStrategy.strategy = interceptStrategy
         val sessionId = UUID.randomUUID()
-        val cset = defineCorrelationSet()
+        val cset = defineCorrelation()
                 .add(correlation(partialFirst1.onMethod("first", PartialFirst::first), { sessionId }).extendFromInput { sessionId }.done())
                 .add(correlation(partialFirst1.onMethod("second", PartialFirst::second), { sessionId }).noExtensions())
                 .add(correlation(partialSecond2.onMethod("second", PartialSecond::second), { sessionId }).noExtensions())
@@ -167,12 +167,12 @@ class ApplyInstrumentationTests {
 
         val checker = CheckerFactory.createChecker(
                 Choreography.builder()
-                        .interaction(external, partialFirst1.onMethod("first", PartialFirst::first), "initialize calls")
-                        .interaction(partialFirst1, partialFirst1.onMethod("second", PartialFirst::second), "call second method of first class")
-                        .interaction(partialFirst2, partialSecond2.onMethod("second", PartialSecond::second), "call second method of second class")
-                        .interaction(partialSecond2, partialSecond2.onMethod("third", PartialSecond::third), "call third method of second class")
-                        .interaction(partialSecond3, partialThird3.onMethod("third", PartialThird::third), "call third method of third class")
-                        .returnFrom(partialThird3.onMethod("third", PartialThird::third), "return from the third participant again")
+                        .interaction(external, partialFirst1.onMethod("first"), "initialize calls")
+                        .interaction(partialFirst1, partialFirst1.onMethod("second"), "call second method of first class")
+                        .interaction(partialFirst2, partialSecond2.onMethod("second"), "call second method of second class")
+                        .interaction(partialSecond2, partialSecond2.onMethod("third"), "call third method of second class")
+                        .interaction(partialSecond3, partialThird3.onMethod("third"), "call third method of third class")
+                        .returnFrom(partialThird3.onMethod("third"), "return from the third participant again")
                         .end().setCorrelationSet(cset)
                         .runVisitor(instrumentationVisitor)
         )

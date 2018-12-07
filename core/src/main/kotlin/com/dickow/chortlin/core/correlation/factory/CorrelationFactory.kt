@@ -12,7 +12,7 @@ import com.dickow.chortlin.core.correlation.functiondefinitions.*
 object CorrelationFactory {
 
     @JvmStatic
-    fun defineCorrelationSet(): CorrelationSetBuilder {
+    fun defineCorrelation(): CorrelationSetBuilder {
         return CorrelationSetBuilder()
     }
 

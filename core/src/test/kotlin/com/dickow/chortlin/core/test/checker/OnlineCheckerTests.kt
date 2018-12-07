@@ -8,7 +8,7 @@ import com.dickow.chortlin.core.choreography.participant.ParticipantFactory.exte
 import com.dickow.chortlin.core.choreography.participant.ParticipantFactory.participant
 import com.dickow.chortlin.core.choreography.participant.observation.ObservableFactory.observed
 import com.dickow.chortlin.core.correlation.factory.CorrelationFactory.correlation
-import com.dickow.chortlin.core.correlation.factory.CorrelationFactory.defineCorrelationSet
+import com.dickow.chortlin.core.correlation.factory.CorrelationFactory.defineCorrelation
 import com.dickow.chortlin.core.test.shared.OnlineFirstClass
 import com.dickow.chortlin.core.test.shared.OnlineSecondClass
 import com.dickow.chortlin.core.test.shared.OnlineThirdClass
@@ -25,7 +25,7 @@ class OnlineCheckerTests {
     private val onlineThird = participant(OnlineThirdClass::class.java)
 
     private val sessionId = UUID.randomUUID()
-    private val cdef = defineCorrelationSet()
+    private val cdef = defineCorrelation()
             .add(correlation(onlineFirst.onMethod("method1", OnlineFirstClass::method1)) { sessionId }.extendFromInput { sessionId }.done())
             .add(correlation(onlineFirst.onMethod("method2", OnlineFirstClass::method2)) { sessionId }.noExtensions())
             .add(correlation(onlineSecond.onMethod("method1", OnlineSecondClass::method1)) { sessionId }.noExtensions())
@@ -117,28 +117,28 @@ class OnlineCheckerTests {
     fun `check that online checker works for unrelated choreographies with interleaved execution`() {
         val sessionId1 = UUID.randomUUID()
         val sessionId2 = UUID.randomUUID()
-        val cset1 = defineCorrelationSet()
+        val cset1 = defineCorrelation()
                 .add(correlation(onlineFirst.onMethod("method1", OnlineFirstClass::method1)) { sessionId1 }.extendFromInput { sessionId1 }.done())
                 .add(correlation(onlineFirst.onMethod("method2", OnlineFirstClass::method2)) { sessionId1 }.noExtensions())
                 .add(correlation(onlineSecond.onMethod("method1", OnlineSecondClass::method1)) { sessionId1 }.noExtensions())
                 .finish()
-        val cset2 = defineCorrelationSet()
+        val cset2 = defineCorrelation()
                 .add(correlation(onlineSecond.onMethod("method2", OnlineSecondClass::method2)) { sessionId2 }.extendFromInput { sessionId2 }.done())
                 .add(correlation(onlineThird.onMethod("method1", OnlineThirdClass::method1)) { sessionId2 }.noExtensions())
                 .add(correlation(onlineThird.onMethod("method2", OnlineThirdClass::method2)) { sessionId2 }.noExtensions())
                 .finish()
 
         val choreography1 = Choreography.builder()
-                .interaction(external, onlineFirst.onMethod("method1", OnlineFirstClass::method1), "#1")
-                .interaction(onlineFirst, onlineFirst.onMethod("method2", OnlineFirstClass::method2), "#2")
-                .interaction(onlineFirst, onlineSecond.onMethod("method1", OnlineSecondClass::method1), "#3")
-                .returnFrom(onlineSecond.onMethod("method1", OnlineSecondClass::method1), "return #3")
+                .interaction(external, onlineFirst.onMethod("method1"), "#1")
+                .interaction(onlineFirst, onlineFirst.onMethod("method2"), "#2")
+                .interaction(onlineFirst, onlineSecond.onMethod("method1"), "#3")
+                .returnFrom(onlineSecond.onMethod("method1"), "return #3")
                 .end().setCorrelationSet(cset1)
 
         val choreography2 = Choreography.builder()
-                .interaction(external, onlineSecond.onMethod("method2", OnlineSecondClass::method2), "#1")
-                .interaction(onlineSecond, onlineThird.onMethod("method1", OnlineThirdClass::method1), "#2")
-                .interaction(onlineThird, onlineThird.onMethod("method2", OnlineThirdClass::method2), "#3")
+                .interaction(external, onlineSecond.onMethod("method2"), "#1")
+                .interaction(onlineSecond, onlineThird.onMethod("method1"), "#2")
+                .interaction(onlineThird, onlineThird.onMethod("method2"), "#3")
                 .end().setCorrelationSet(cset2)
         val checker = OnlineChecker(InMemorySessionManager(listOf(choreography1, choreography2)))
         assertEquals(CheckResult.Partial, checker.check(Invocation(observed(OnlineFirstClass::class.java, "method1"), allArguments))) // Choreography 1

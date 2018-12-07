@@ -27,7 +27,7 @@ class OfflineCheckerTests {
     @Test
     fun `check that trace conforms to configured choreography`() {
         val choreography = Choreography.builder()
-                .interaction(external, a.onMethod("receive", A::receive), "receive")
+                .interaction(external, a.onMethod("receive"), "receive")
                 .end()
         val trace = Trace(listOf(Invocation(observed(A::class.java, "receive"), allArguments)))
         val checker = ChoreographyChecker(choreography)
@@ -43,9 +43,9 @@ class OfflineCheckerTests {
     @Test
     fun `check that full choreography matches the example trace`() {
         val choreography = Choreography.builder()
-                .interaction(external, a.onMethod("receive", A::receive), "receive")
-                .interaction(a, a.onMethod("b", A::b), "call A#b")
-                .interaction(a, b.onMethod("b", B::b), "invoke B#b")
+                .interaction(external, a.onMethod("receive"), "receive")
+                .interaction(a, a.onMethod("b"), "call A#b")
+                .interaction(a, b.onMethod("b"), "invoke B#b")
                 .end()
         val trace = Trace(listOf(
                 Invocation(observed(A::class.java, "receive"), allArguments),
@@ -60,9 +60,9 @@ class OfflineCheckerTests {
     @Test
     fun `check that trace in wrong order is not accepted`() {
         val choreography = Choreography.builder()
-                .interaction(external, a.onMethod("receive", A::receive), "receive")
-                .interaction(a, a.onMethod("b", A::b), "call A#b")
-                .interaction(a, b.onMethod("b", B::b), "invoke B#b")
+                .interaction(external, a.onMethod("receive"), "receive")
+                .interaction(a, a.onMethod("b"), "call A#b")
+                .interaction(a, b.onMethod("b"), "invoke B#b")
                 .end()
         val trace = Trace(listOf(
                 Invocation(observed(A::class.java, "b"), allArguments),
@@ -77,11 +77,11 @@ class OfflineCheckerTests {
     @Test
     fun `check that return is validated for traces`() {
         val choreography = Choreography.builder()
-                .interaction(external, a.onMethod("receive", A::receive), "receive")
-                .interaction(a, a.onMethod("b", A::b), "call A#b")
-                .interaction(a, b.onMethod("b", B::b), "invoke B#b")
-                .returnFrom(b.onMethod("b", B::b), "return from method B::b")
-                .returnFrom(a.onMethod("b", A::b), "return from method A::b")
+                .interaction(external, a.onMethod("receive"), "receive")
+                .interaction(a, a.onMethod("b"), "call A#b")
+                .interaction(a, b.onMethod("b"), "invoke B#b")
+                .returnFrom(b.onMethod("b"), "return from method B::b")
+                .returnFrom(a.onMethod("b"), "return from method A::b")
                 .end()
         val checker = ChoreographyChecker(choreography)
         val trace = Trace(listOf(
@@ -96,8 +96,8 @@ class OfflineCheckerTests {
     @Test
     fun `check that found message with return trace is accepted`() {
         val choreography = Choreography.builder()
-                .interaction(external, a.onMethod("receive", A::receive), "receive")
-                .returnFrom(a.onMethod("receive", A::receive), "return")
+                .interaction(external, a.onMethod("receive"), "receive")
+                .returnFrom(a.onMethod("receive"), "return")
                 .end()
         val checker = ChoreographyChecker(choreography)
         val trace = Trace(listOf(
@@ -109,8 +109,8 @@ class OfflineCheckerTests {
     @Test
     fun `check that trace is only partially valid when return trace is missing`() {
         val choreography = Choreography.builder()
-                .interaction(external, a.onMethod("receive", A::receive), "receive")
-                .returnFrom(a.onMethod("receive", A::receive), "return")
+                .interaction(external, a.onMethod("receive"), "receive")
+                .returnFrom(a.onMethod("receive"), "return")
                 .end()
         val checker = ChoreographyChecker(choreography)
         val trace = Trace(listOf(Invocation(observed(A::class.java, "receive"), allArguments)))
@@ -120,8 +120,8 @@ class OfflineCheckerTests {
     @Test
     fun `check that trace is not valid when return from wrong participant is encountered`() {
         val choreography = Choreography.builder()
-                .interaction(external, a.onMethod("receive", A::receive), "receive")
-                .returnFrom(a.onMethod("receive", A::receive), "return")
+                .interaction(external, a.onMethod("receive"), "receive")
+                .returnFrom(a.onMethod("receive"), "return")
                 .end()
         val checker = ChoreographyChecker(choreography)
         val trace = Trace(listOf(

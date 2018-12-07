@@ -4,6 +4,7 @@ import com.dickow.chortlin.core.choreography.method.MethodFactory
 
 class InternalParticipant<C>(val clazz: Class<C>) : Participant {
 
+    fun onMethod(methodName: String) = MethodFactory.method(this, methodName)
     fun <R> onMethod(name: String, signature: (C) -> R) = MethodFactory.method(this, name, signature)
     fun <T1, R> onMethod(name: String, signature: (C, T1) -> R) = MethodFactory.method(this, name, signature)
     fun <T1, T2, R> onMethod(name: String, signature: (C, T1, T2) -> R) = MethodFactory.method(this, name, signature)
