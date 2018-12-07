@@ -14,8 +14,8 @@ import com.dickow.chortlin.core.test.shared.OnlineSecondClass
 import com.dickow.chortlin.core.test.shared.OnlineThirdClass
 import com.dickow.chortlin.core.trace.Invocation
 import com.dickow.chortlin.core.trace.Return
-import org.junit.jupiter.api.Test
 import java.util.*
+import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class OnlineCheckerTests {

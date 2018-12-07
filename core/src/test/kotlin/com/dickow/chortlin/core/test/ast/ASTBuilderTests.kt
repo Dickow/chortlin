@@ -10,7 +10,7 @@ import com.dickow.chortlin.core.choreography.participant.ParticipantFactory.part
 import com.dickow.chortlin.core.choreography.participant.observation.ObservableFactory
 import com.dickow.chortlin.core.test.shared.A
 import com.dickow.chortlin.core.test.shared.B
-import kotlin.test.Test
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class ASTBuilderTests {

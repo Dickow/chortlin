@@ -35,7 +35,7 @@ class OfflineCheckerTests {
         assertEquals(CheckResult.Full, checker.check(trace))
     }
 
-    @Test
+    @kotlin.test.Test
     fun `ensure that single end is invalid as everything matches a single end`() {
         assertFailsWith(InvalidASTException::class) { Choreography.builder().end() }
     }
