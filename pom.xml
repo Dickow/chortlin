@@ -9,7 +9,6 @@
     <version>1.0</version>
     <modules>
         <module>core</module>
-        <module>dtupayexample</module>
         <module>interception</module>
         <module>checker</module>
         <module>shared</module>

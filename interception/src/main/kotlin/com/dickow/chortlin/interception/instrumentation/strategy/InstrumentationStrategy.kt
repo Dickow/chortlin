@@ -1,6 +1,6 @@
-package com.dickow.chortlin.inteception.instrumentation.strategy
+package com.dickow.chortlin.interception.instrumentation.strategy
 
-import com.dickow.chortlin.inteception.instrumentation.strategy.factory.StrategyFactory
+import com.dickow.chortlin.interception.instrumentation.strategy.factory.StrategyFactory
 
 object InstrumentationStrategy {
     @JvmStatic

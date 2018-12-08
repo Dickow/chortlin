@@ -1,6 +1,6 @@
-package com.dickow.chortlin.inteception.instrumentation.advice
+package com.dickow.chortlin.interception.instrumentation.advice
 
-import com.dickow.chortlin.inteception.instrumentation.strategy.InstrumentationStrategy
+import com.dickow.chortlin.interception.instrumentation.strategy.InstrumentationStrategy
 import com.dickow.chortlin.shared.observation.Observation
 import com.dickow.chortlin.shared.trace.Invocation
 import net.bytebuddy.asm.Advice

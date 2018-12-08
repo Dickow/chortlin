@@ -1,4 +1,4 @@
-package com.dickow.chortlin.inteception.instrumentation.strategy
+package com.dickow.chortlin.interception.instrumentation.strategy
 
 import com.dickow.chortlin.shared.trace.TraceElement
 

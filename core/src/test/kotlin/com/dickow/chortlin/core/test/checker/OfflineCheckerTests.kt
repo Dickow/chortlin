@@ -1,17 +1,17 @@
 package com.dickow.chortlin.core.test.checker
 
-import com.dickow.chortlin.core.checker.ChoreographyChecker
-import com.dickow.chortlin.core.checker.result.CheckResult
-import com.dickow.chortlin.core.choreography.Choreography
-import com.dickow.chortlin.core.choreography.participant.ParticipantFactory.external
-import com.dickow.chortlin.core.choreography.participant.ParticipantFactory.participant
-import com.dickow.chortlin.core.choreography.participant.observation.ObservableFactory.observed
-import com.dickow.chortlin.core.exceptions.InvalidASTException
+import com.dickow.chortlin.checker.checker.ChoreographyChecker
+import com.dickow.chortlin.checker.checker.result.CheckResult
+import com.dickow.chortlin.checker.choreography.Choreography
+import com.dickow.chortlin.checker.choreography.participant.ParticipantFactory.participant
+import com.dickow.chortlin.checker.choreography.participant.ParticipantFactory.external
 import com.dickow.chortlin.core.test.shared.A
 import com.dickow.chortlin.core.test.shared.B
-import com.dickow.chortlin.core.trace.Invocation
-import com.dickow.chortlin.core.trace.Return
-import com.dickow.chortlin.core.trace.Trace
+import com.dickow.chortlin.shared.exceptions.InvalidASTException
+import com.dickow.chortlin.shared.observation.ObservableFactory.observed
+import com.dickow.chortlin.shared.trace.Invocation
+import com.dickow.chortlin.shared.trace.Return
+import com.dickow.chortlin.shared.trace.Trace
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith

@@ -1,21 +1,19 @@
 package com.dickow.chortlin.core.test.instrumentation
 
-import com.dickow.chortlin.core.checker.OnlineChecker
-import com.dickow.chortlin.core.checker.session.InMemorySessionManager
-import com.dickow.chortlin.core.choreography.Choreography
-import com.dickow.chortlin.core.choreography.participant.ParticipantFactory.external
-import com.dickow.chortlin.core.choreography.participant.ParticipantFactory.participant
-import com.dickow.chortlin.core.correlation.factory.CorrelationFactory.correlation
-import com.dickow.chortlin.core.correlation.factory.CorrelationFactory.defineCorrelation
-import com.dickow.chortlin.core.exceptions.ChortlinRuntimeException
-import com.dickow.chortlin.core.instrumentation.ASTInstrumentation
-import com.dickow.chortlin.core.instrumentation.ByteBuddyInstrumentation
-import com.dickow.chortlin.core.instrumentation.strategy.CheckInMemory
-import com.dickow.chortlin.core.instrumentation.strategy.InstrumentationStrategy
-import com.dickow.chortlin.core.instrumentation.strategy.factory.StrategyFactory
+import com.dickow.chortlin.checker.checker.OnlineChecker
+import com.dickow.chortlin.checker.checker.session.InMemorySessionManager
+import com.dickow.chortlin.checker.choreography.Choreography
+import com.dickow.chortlin.checker.choreography.participant.ParticipantFactory.external
+import com.dickow.chortlin.checker.choreography.participant.ParticipantFactory.participant
+import com.dickow.chortlin.checker.correlation.factory.CorrelationFactory.correlation
+import com.dickow.chortlin.checker.correlation.factory.CorrelationFactory.defineCorrelation
+import com.dickow.chortlin.core.CheckInMemory
+import com.dickow.chortlin.core.InMemoryStrategyFactory
 import com.dickow.chortlin.core.test.shared.OnlineFirstClass
 import com.dickow.chortlin.core.test.shared.OnlineSecondClass
 import com.dickow.chortlin.core.test.shared.OnlineThirdClass
+import com.dickow.chortlin.interception.instrumentation.strategy.InstrumentationStrategy
+import com.dickow.chortlin.shared.exceptions.ChortlinRuntimeException
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -27,8 +25,6 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
 class OnlineInstrumentationTests {
-    private val instrumentationVisitor = ASTInstrumentation(ByteBuddyInstrumentation)
-
     private val external = external("External client")
     private val onlineFirstClass = participant(OnlineFirstClass::class.java)
     private val onlineSecondClass = participant(OnlineSecondClass::class.java)
@@ -169,7 +165,7 @@ class OnlineInstrumentationTests {
                 .interaction(onlineThirdClass, onlineThirdClass.onMethod("method2"), "#3")
                 .end().setCorrelation(cset2)
 
-        InstrumentationStrategy.strategy = StrategyFactory.createInMemoryChecker(listOf(choreography1, choreography2), true)
+        InstrumentationStrategy.strategy = InMemoryStrategyFactory.createInMemoryChecker(listOf(choreography1, choreography2), true)
 
         val thread1 = GlobalScope.async {
             OnlineFirstClass().method1()

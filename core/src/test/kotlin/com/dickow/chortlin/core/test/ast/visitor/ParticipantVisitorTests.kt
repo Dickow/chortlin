@@ -1,13 +1,13 @@
 package com.dickow.chortlin.core.test.ast.visitor
 
-import com.dickow.chortlin.core.checker.ParticipantRetriever
-import com.dickow.chortlin.core.choreography.Choreography
-import com.dickow.chortlin.core.choreography.participant.ParticipantFactory.external
-import com.dickow.chortlin.core.choreography.participant.ParticipantFactory.participant
-import com.dickow.chortlin.core.choreography.participant.observation.ObservableFactory
+import com.dickow.chortlin.checker.checker.ParticipantRetriever
+import com.dickow.chortlin.checker.choreography.Choreography
+import com.dickow.chortlin.checker.choreography.participant.ParticipantFactory.external
+import com.dickow.chortlin.checker.choreography.participant.ParticipantFactory.participant
 import com.dickow.chortlin.core.test.shared.FirstClass
 import com.dickow.chortlin.core.test.shared.SecondClass
 import com.dickow.chortlin.core.test.shared.ThirdClass
+import com.dickow.chortlin.shared.observation.ObservableParticipant
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
@@ -30,9 +30,9 @@ class ParticipantVisitorTests {
         val participantRetriever = ParticipantRetriever()
         choreography.runVisitor(participantRetriever)
         val expected = setOf(
-                ObservableFactory.observable(first, first.onMethod("first")),
-                ObservableFactory.observable(second, second.onMethod("second")),
-                ObservableFactory.observable(third, third.onMethod("third"))
+                ObservableParticipant(first.clazz, first.onMethod("first").jvmMethod),
+                ObservableParticipant(second.clazz, second.onMethod("second").jvmMethod),
+                ObservableParticipant(third.clazz, third.onMethod("third").jvmMethod)
         )
         assertEquals(expected, participantRetriever.getParticipants())
     }

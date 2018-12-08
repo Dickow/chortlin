@@ -1,8 +1,8 @@
-package com.dickow.chortlin.inteception.instrumentation
+package com.dickow.chortlin.interception.instrumentation
 
-import com.dickow.chortlin.inteception.instrumentation.advice.AfterAdvisorNoReturn
-import com.dickow.chortlin.inteception.instrumentation.advice.AfterAdvisorWithReturn
-import com.dickow.chortlin.inteception.instrumentation.advice.BeforeAdvisor
+import com.dickow.chortlin.interception.instrumentation.advice.AfterAdvisorNoReturn
+import com.dickow.chortlin.interception.instrumentation.advice.AfterAdvisorWithReturn
+import com.dickow.chortlin.interception.instrumentation.advice.BeforeAdvisor
 import com.dickow.chortlin.shared.observation.ObservableParticipant
 import net.bytebuddy.agent.ByteBuddyAgent
 import net.bytebuddy.agent.builder.AgentBuilder

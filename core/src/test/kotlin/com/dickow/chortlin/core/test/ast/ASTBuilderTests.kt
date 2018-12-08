@@ -1,15 +1,16 @@
 package com.dickow.chortlin.core.test.ast
 
-import com.dickow.chortlin.core.ast.Label
-import com.dickow.chortlin.core.ast.types.End
-import com.dickow.chortlin.core.ast.types.Interaction
-import com.dickow.chortlin.core.choreography.Choreography
-import com.dickow.chortlin.core.choreography.participant.ExternalParticipant
-import com.dickow.chortlin.core.choreography.participant.ParticipantFactory
-import com.dickow.chortlin.core.choreography.participant.ParticipantFactory.participant
-import com.dickow.chortlin.core.choreography.participant.observation.ObservableFactory
+import com.dickow.chortlin.checker.ast.Label
+import com.dickow.chortlin.checker.ast.types.End
+import com.dickow.chortlin.checker.ast.types.Interaction
+import com.dickow.chortlin.checker.choreography.Choreography
+import com.dickow.chortlin.checker.choreography.participant.ExternalParticipant
+import com.dickow.chortlin.checker.choreography.participant.ParticipantFactory
+import com.dickow.chortlin.checker.choreography.participant.ParticipantFactory.participant
 import com.dickow.chortlin.core.test.shared.A
 import com.dickow.chortlin.core.test.shared.B
+import com.dickow.chortlin.shared.observation.ObservableFactory
+import com.dickow.chortlin.shared.observation.ObservableParticipant
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
@@ -29,7 +30,7 @@ class ASTBuilderTests {
 
         val interaction1 = Interaction(
                 ExternalParticipant("external"),
-                ObservableFactory.observable(a, a.onMethod("receive")),
+                ObservableParticipant(a.clazz, a.onMethod("receive").jvmMethod),
                 Label("receive"),
                 null,
                 null
@@ -37,7 +38,7 @@ class ASTBuilderTests {
 
         val interaction2 = Interaction(
                 a,
-                ObservableFactory.observable(a, a.onMethod("b")),
+                ObservableParticipant(a.clazz, a.onMethod("b").jvmMethod),
                 Label("call A#b"),
                 interaction1,
                 null
@@ -45,7 +46,7 @@ class ASTBuilderTests {
 
         val interaction3 = Interaction(
                 a,
-                ObservableFactory.observable(b, b.onMethod("b")),
+                ObservableParticipant(b.clazz, b.onMethod("b").jvmMethod),
                 Label("Invoke B#b"),
                 interaction2,
                 null
@@ -68,7 +69,7 @@ class ASTBuilderTests {
 
         val interaction = Interaction(
                 ExternalParticipant("external"),
-                ObservableFactory.observable(a, a.onMethod("receive")),
+                ObservableParticipant(a.clazz, a.onMethod("receive").jvmMethod),
                 Label("receive"),
                 null,
                 null

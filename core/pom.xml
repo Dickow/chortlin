@@ -23,6 +23,23 @@
     </properties>
 
     <dependencies>
+        <!-- CHORTLIN -->
+        <dependency>
+            <groupId>com.dickow.chortlin</groupId>
+            <artifactId>shared</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.dickow.chortlin</groupId>
+            <artifactId>checker</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.dickow.chortlin</groupId>
+            <artifactId>interception</artifactId>
+            <version>1.0</version>
+        </dependency>
+
         <!-- Kotlin -->
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>

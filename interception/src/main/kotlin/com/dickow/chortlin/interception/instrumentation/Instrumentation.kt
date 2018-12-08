@@ -1,4 +1,4 @@
-package com.dickow.chortlin.inteception.instrumentation
+package com.dickow.chortlin.interception.instrumentation
 
 import com.dickow.chortlin.shared.observation.ObservableParticipant
 

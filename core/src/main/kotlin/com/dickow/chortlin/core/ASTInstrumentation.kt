@@ -1,7 +1,9 @@
-package com.dickow.chortlin.core.instrumentation
+package com.dickow.chortlin.core
 
-import com.dickow.chortlin.core.ast.ASTVisitor
-import com.dickow.chortlin.core.ast.types.*
+import com.dickow.chortlin.checker.ast.ASTVisitor
+import com.dickow.chortlin.checker.ast.types.*
+import com.dickow.chortlin.interception.instrumentation.Instrumentation
+
 
 class ASTInstrumentation(private val instrumentation: Instrumentation) : ASTVisitor {
     override fun visitChoice(astNode: Choice) {

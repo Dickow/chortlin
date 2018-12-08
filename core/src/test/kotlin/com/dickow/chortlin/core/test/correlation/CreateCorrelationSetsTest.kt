@@ -1,20 +1,20 @@
 package com.dickow.chortlin.core.test.correlation
 
-import com.dickow.chortlin.core.checker.factory.CheckerFactory
-import com.dickow.chortlin.core.choreography.Choreography
-import com.dickow.chortlin.core.choreography.participant.ParticipantFactory.external
-import com.dickow.chortlin.core.choreography.participant.ParticipantFactory.participant
-import com.dickow.chortlin.core.choreography.participant.observation.ObservableFactory
-import com.dickow.chortlin.core.correlation.CorrelationValue
-import com.dickow.chortlin.core.correlation.factory.CorrelationFactory.correlation
-import com.dickow.chortlin.core.correlation.factory.CorrelationFactory.defineCorrelation
-import com.dickow.chortlin.core.exceptions.ChortlinRuntimeException
-import com.dickow.chortlin.core.exceptions.InvalidChoreographyException
-import com.dickow.chortlin.core.instrumentation.strategy.InstrumentationStrategy
-import com.dickow.chortlin.core.instrumentation.strategy.factory.StrategyFactory
+import com.dickow.chortlin.checker.checker.factory.CheckerFactory
+import com.dickow.chortlin.checker.choreography.Choreography
+import com.dickow.chortlin.checker.choreography.participant.ParticipantFactory.external
+import com.dickow.chortlin.checker.choreography.participant.ParticipantFactory.participant
+import com.dickow.chortlin.checker.correlation.CorrelationValue
+import com.dickow.chortlin.checker.correlation.factory.CorrelationFactory.correlation
+import com.dickow.chortlin.checker.correlation.factory.CorrelationFactory.defineCorrelation
+import com.dickow.chortlin.core.InMemoryStrategyFactory
 import com.dickow.chortlin.core.test.shared.AuthResult
 import com.dickow.chortlin.core.test.shared.AuthenticatedService
 import com.dickow.chortlin.core.test.shared.Authentication
+import com.dickow.chortlin.interception.instrumentation.strategy.InstrumentationStrategy
+import com.dickow.chortlin.shared.exceptions.ChortlinRuntimeException
+import com.dickow.chortlin.shared.exceptions.InvalidChoreographyException
+import com.dickow.chortlin.shared.observation.ObservableParticipant
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -49,7 +49,7 @@ class CreateCorrelationSetsTest {
     @Test
     fun `create correlation set for small choreography`() {
         // Try to apply the correlation function to an invocation
-        val observableAuth = ObservableFactory.observable(auth, auth.onMethod("authenticate"))
+        val observableAuth = ObservableParticipant(auth.clazz, auth.onMethod("authenticate").jvmMethod)
         val key = cset.get(observableAuth)?.retrieveKey(arrayOf("jeppedickow", "1234!"))
         assertEquals(CorrelationValue("uName", "jeppedickow"), key)
     }
@@ -71,7 +71,7 @@ class CreateCorrelationSetsTest {
     @Test
     fun `expect success when running multiple instances of the services with correlation sets`() {
         authenticationChoreography.setCorrelation(cset)
-        StrategyFactory.createInMemoryChecker(listOf(authenticationChoreography), true)
+        InMemoryStrategyFactory.createInMemoryChecker(listOf(authenticationChoreography), true)
 
         val authResult1 = authService.authenticate("jeppedickow", "1234!")
         val authResult2 = authService.authenticate("lars", "4321!")
@@ -84,7 +84,7 @@ class CreateCorrelationSetsTest {
     @Test
     fun `expect error when executing a session in the wrong order`() {
         authenticationChoreography.setCorrelation(cset)
-        InstrumentationStrategy.strategy = StrategyFactory.createInMemoryChecker(listOf(authenticationChoreography), true)
+        InstrumentationStrategy.strategy = InMemoryStrategyFactory.createInMemoryChecker(listOf(authenticationChoreography), true)
 
         val authResult1 = authService.authenticate("jeppedickow", "1234!")
         val authResult2 = authService.authenticate("lars", "4321!")
@@ -104,7 +104,7 @@ class CreateCorrelationSetsTest {
                         .add(correlation(buyService.onMethod("buyItem", AuthenticatedService::buyItem), "userId", buyerCorrelation)
                                 .noExtensions())
                         .finish())
-        InstrumentationStrategy.strategy = StrategyFactory.createInMemoryChecker(listOf(authenticationChoreography), true)
+        InstrumentationStrategy.strategy = InMemoryStrategyFactory.createInMemoryChecker(listOf(authenticationChoreography), true)
         assertFailsWith(ChortlinRuntimeException::class) { authService.authenticate("jeppedickow", "1234!") }
     }
 }

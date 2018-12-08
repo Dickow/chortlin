@@ -1,9 +1,10 @@
-package com.dickow.chortlin.core.instrumentation.strategy
+package com.dickow.chortlin.core
 
-import com.dickow.chortlin.core.checker.OnlineChecker
-import com.dickow.chortlin.core.checker.result.CheckResult
-import com.dickow.chortlin.core.exceptions.ChortlinRuntimeException
-import com.dickow.chortlin.core.trace.TraceElement
+import com.dickow.chortlin.checker.checker.OnlineChecker
+import com.dickow.chortlin.checker.checker.result.CheckResult
+import com.dickow.chortlin.interception.instrumentation.strategy.InterceptStrategy
+import com.dickow.chortlin.shared.exceptions.ChortlinRuntimeException
+import com.dickow.chortlin.shared.trace.TraceElement
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 

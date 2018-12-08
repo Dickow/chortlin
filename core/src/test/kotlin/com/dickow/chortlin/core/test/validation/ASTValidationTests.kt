@@ -1,11 +1,11 @@
 package com.dickow.chortlin.core.test.validation
 
-import com.dickow.chortlin.core.ast.validation.ASTValidator
-import com.dickow.chortlin.core.choreography.Choreography
-import com.dickow.chortlin.core.choreography.participant.ParticipantFactory.external
-import com.dickow.chortlin.core.choreography.participant.ParticipantFactory.participant
-import com.dickow.chortlin.core.exceptions.InvalidASTException
+import com.dickow.chortlin.checker.ast.validation.ASTValidator
+import com.dickow.chortlin.checker.choreography.Choreography
+import com.dickow.chortlin.checker.choreography.participant.ParticipantFactory.participant
+import com.dickow.chortlin.checker.choreography.participant.ParticipantFactory.external
 import com.dickow.chortlin.core.test.shared.A
+import com.dickow.chortlin.shared.exceptions.InvalidASTException
 import org.junit.jupiter.api.Test
 import kotlin.test.assertFailsWith
 
