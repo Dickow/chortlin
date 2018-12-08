@@ -1,6 +1,7 @@
 module chortlin.interception {
 
     requires kotlin.stdlib;
+    requires kotlin.reflect;
     requires kotlinx.coroutines.core;
     requires net.bytebuddy;
     requires net.bytebuddy.agent;

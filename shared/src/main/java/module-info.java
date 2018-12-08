@@ -6,4 +6,5 @@ module chortlin.shared {
     exports com.dickow.chortlin.shared.observation;
     exports com.dickow.chortlin.shared.scope;
     exports com.dickow.chortlin.shared.trace;
+    exports com.dickow.chortlin.shared.annotations;
 }
