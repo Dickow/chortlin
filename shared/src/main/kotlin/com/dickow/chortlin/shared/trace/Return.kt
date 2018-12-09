@@ -2,8 +2,8 @@ package com.dickow.chortlin.shared.trace
 
 import com.dickow.chortlin.shared.observation.Observation
 
-data class Return(private val observation: Observation, private val allArguments: Array<Any>, val returnValue: Any?) : TraceElement() {
-    override fun getArguments(): Array<Any> {
+data class Return(private val observation: Observation, private val allArguments: Array<Any?>, val returnValue: Any?) : TraceElement() {
+    override fun getArguments(): Array<Any?> {
         return allArguments
     }
 

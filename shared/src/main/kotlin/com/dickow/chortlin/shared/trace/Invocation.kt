@@ -3,8 +3,8 @@ package com.dickow.chortlin.shared.trace
 import com.dickow.chortlin.shared.observation.Observation
 
 
-data class Invocation(private val observation: Observation, private val allArguments: Array<Any>) : TraceElement() {
-    override fun getArguments(): Array<Any> {
+data class Invocation(private val observation: Observation, private val allArguments: Array<Any?>) : TraceElement() {
+    override fun getArguments(): Array<Any?> {
         return allArguments
     }
 

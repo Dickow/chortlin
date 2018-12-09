@@ -10,7 +10,7 @@ class Correlation(
         private val correlationFunction: InputTypesFunction,
         val addFunctions: List<CorrelationFunction>) {
 
-    fun retrieveKey(arguments: Array<Any>): Any {
+    fun retrieveKey(arguments: Array<Any?>): Any? {
         return correlationFunction.apply(arguments)
     }
 
@@ -21,7 +21,7 @@ class Correlation(
                 applicableFunctions.map { func -> func.apply(trace.getArguments()) }.toMutableSet()
             }
             is Return -> {
-                val input = if (trace.returnValue == null) arrayOf(); else arrayOf(trace.returnValue!!) // TODO once the compiler works remove the '!!'
+                val input = if (trace.returnValue == null) arrayOf(); else arrayOf(trace.returnValue)
                 applicableFunctions.map { func -> func.apply(input) }.toMutableSet()
             }
             else -> return mutableSetOf()

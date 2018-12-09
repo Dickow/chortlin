@@ -11,7 +11,7 @@ class BeforeAdvisor {
     companion object {
         @JvmStatic
         @Advice.OnMethodEnter
-        fun beforeMethod(@Advice.AllArguments allArguments: Array<Any>, @Advice.Origin method: Method) {
+        fun beforeMethod(@Advice.AllArguments allArguments: Array<Any?>, @Advice.Origin method: Method) {
             InstrumentationStrategy.strategy.intercept(Invocation(Observation(method.declaringClass, method), allArguments))
         }
     }

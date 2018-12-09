@@ -13,7 +13,7 @@ class AfterAdvisorWithReturn {
         @JvmStatic
         @Advice.OnMethodExit
         fun afterMethodWithReturnType(
-                @Advice.AllArguments allArguments: Array<Any>,
+                @Advice.AllArguments allArguments: Array<Any?>,
                 @Advice.Origin method: Method,
                 @Advice.Return(typing = Assigner.Typing.DYNAMIC) returnValue: Any?)
         {
