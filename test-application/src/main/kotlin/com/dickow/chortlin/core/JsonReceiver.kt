@@ -1,14 +1,23 @@
 package com.dickow.chortlin.core
 
-import com.dickow.chortlin.shared.trace.dto.TraceElementDTO
+import com.dickow.chortlin.shared.trace.dto.InvocationDTO
+import com.dickow.chortlin.shared.trace.dto.ReturnDTO
 import com.google.gson.Gson
 
 class JsonReceiver {
     private val gson = Gson()
-    fun receive(json: String?) {
+
+    fun receiveReturn(json: String?){
         if(json != null){
-            val trace = gson.fromJson(json, TraceElementDTO::class.java)
-            System.out.println(trace.toString())
+            val traceDTO = gson.fromJson(json, ReturnDTO::class.java)
+            val trace = traceDTO.toReturn()
+        }
+    }
+
+    fun receiveInvocation(json: String?){
+        if(json != null){
+            val traceDTO = gson.fromJson(json, InvocationDTO::class.java)
+            val trace = traceDTO.toInvocation()
         }
     }
 }
