@@ -3,6 +3,7 @@ module chortlin.checker {
     requires kotlinx.coroutines.core;
 
     requires chortlin.shared;
+    requires gson;
 
     exports com.dickow.chortlin.checker.correlation;
     exports com.dickow.chortlin.checker.correlation.factory;
@@ -18,4 +19,5 @@ module chortlin.checker {
     exports com.dickow.chortlin.checker.ast;
     exports com.dickow.chortlin.checker.ast.validation;
     exports com.dickow.chortlin.checker.ast.types;
+    exports com.dickow.chortlin.checker.receiver;
 }

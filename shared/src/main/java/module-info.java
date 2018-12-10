@@ -1,5 +1,6 @@
 module chortlin.shared {
     requires kotlin.stdlib;
+    requires gson;
 
     exports com.dickow.chortlin.shared.exceptions;
     exports com.dickow.chortlin.shared.exceptions.factory;

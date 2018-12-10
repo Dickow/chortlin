@@ -8,9 +8,9 @@ module chortlin.interception {
     requires java.instrument;
 
     requires chortlin.shared;
+    requires gson;
 
     exports com.dickow.chortlin.interception.instrumentation;
     exports com.dickow.chortlin.interception.instrumentation.advice;
-    exports com.dickow.chortlin.interception.instrumentation.strategy;
-    exports com.dickow.chortlin.interception.instrumentation.strategy.factory;
+    exports com.dickow.chortlin.interception.strategy;
 }

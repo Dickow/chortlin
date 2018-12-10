@@ -2,11 +2,12 @@
 
 package com.dickow.chortlin.core.test.shared
 
+import com.dickow.chortlin.core.test.shared.objects.Receipt
 import com.dickow.chortlin.shared.annotations.ChortlinOnInvoke
 import com.dickow.chortlin.shared.annotations.ChortlinOnReturn
 import java.util.*
 
-class AuthResult(val userId: String)
+data class AuthResult(val userId: String)
 
 class Authentication {
     @ChortlinOnInvoke
@@ -25,7 +26,7 @@ class AuthenticatedService {
 
     @ChortlinOnInvoke
     @ChortlinOnReturn
-    fun sellItem(item: String, price: Int, authResult: AuthResult): Boolean {
-        return false
+    fun sellItem(item: String, price: Int, authResult: AuthResult): Receipt {
+        return Receipt(100, price, item, authResult.userId)
     }
 }

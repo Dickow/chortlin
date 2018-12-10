@@ -12,7 +12,7 @@ import com.dickow.chortlin.core.InMemoryStrategyFactory
 import com.dickow.chortlin.core.test.shared.OnlineFirstClass
 import com.dickow.chortlin.core.test.shared.OnlineSecondClass
 import com.dickow.chortlin.core.test.shared.OnlineThirdClass
-import com.dickow.chortlin.interception.instrumentation.strategy.InstrumentationStrategy
+import com.dickow.chortlin.interception.strategy.InstrumentationStrategy
 import com.dickow.chortlin.shared.exceptions.ChortlinRuntimeException
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async

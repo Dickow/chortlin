@@ -11,7 +11,7 @@ import com.dickow.chortlin.core.InMemoryStrategyFactory
 import com.dickow.chortlin.core.test.shared.AuthResult
 import com.dickow.chortlin.core.test.shared.AuthenticatedService
 import com.dickow.chortlin.core.test.shared.Authentication
-import com.dickow.chortlin.interception.instrumentation.strategy.InstrumentationStrategy
+import com.dickow.chortlin.interception.strategy.InstrumentationStrategy
 import com.dickow.chortlin.shared.exceptions.ChortlinRuntimeException
 import com.dickow.chortlin.shared.exceptions.InvalidChoreographyException
 import com.dickow.chortlin.shared.observation.ObservableParticipant

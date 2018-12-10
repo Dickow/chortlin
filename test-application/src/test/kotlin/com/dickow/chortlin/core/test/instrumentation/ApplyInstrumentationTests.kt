@@ -9,8 +9,8 @@ import com.dickow.chortlin.checker.correlation.factory.CorrelationFactory.correl
 import com.dickow.chortlin.checker.correlation.factory.CorrelationFactory.defineCorrelation
 import com.dickow.chortlin.core.test.shared.*
 import com.dickow.chortlin.interception.instrumentation.ByteBuddyInstrumentation
-import com.dickow.chortlin.interception.instrumentation.strategy.InstrumentationStrategy
-import com.dickow.chortlin.interception.instrumentation.strategy.InterceptStrategy
+import com.dickow.chortlin.interception.strategy.InstrumentationStrategy
+import com.dickow.chortlin.interception.strategy.InterceptStrategy
 import com.dickow.chortlin.shared.trace.Trace
 import com.dickow.chortlin.shared.trace.TraceElement
 import java.util.*

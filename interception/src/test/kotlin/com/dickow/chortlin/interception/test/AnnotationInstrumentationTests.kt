@@ -1,8 +1,8 @@
 package com.dickow.chortlin.interception.test
 
 import com.dickow.chortlin.interception.instrumentation.ByteBuddyInstrumentation
-import com.dickow.chortlin.interception.instrumentation.strategy.InstrumentationStrategy
-import com.dickow.chortlin.interception.instrumentation.strategy.InterceptStrategy
+import com.dickow.chortlin.interception.strategy.InstrumentationStrategy
+import com.dickow.chortlin.interception.strategy.InterceptStrategy
 import com.dickow.chortlin.shared.trace.TraceElement
 import org.junit.jupiter.api.Test
 import java.util.*
