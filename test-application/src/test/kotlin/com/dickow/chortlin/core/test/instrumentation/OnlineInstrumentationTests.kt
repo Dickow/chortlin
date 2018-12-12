@@ -7,9 +7,9 @@ import com.dickow.chortlin.checker.correlation.factory.CorrelationFactory.correl
 import com.dickow.chortlin.checker.correlation.factory.CorrelationFactory.defineCorrelation
 import com.dickow.chortlin.checker.receiver.ChortlinReceiverFactory
 import com.dickow.chortlin.core.test.networkinterception.SerializedInterceptionValuesTests
-import com.dickow.chortlin.core.test.shared.OnlineFirstClass
-import com.dickow.chortlin.core.test.shared.OnlineSecondClass
-import com.dickow.chortlin.core.test.shared.OnlineThirdClass
+import com.dickow.chortlin.core.test.shared.OnlineInstrumentFirstClass
+import com.dickow.chortlin.core.test.shared.OnlineInstrumentSecondClass
+import com.dickow.chortlin.core.test.shared.OnlineInstrumentThirdClass
 import com.dickow.chortlin.core.test.shared.TestErrorCallback
 import com.dickow.chortlin.interception.strategy.InterceptionConfiguration
 import com.dickow.chortlin.shared.exceptions.ChortlinRuntimeException
@@ -25,19 +25,22 @@ import kotlin.test.assertTrue
 
 class OnlineInstrumentationTests {
     private val external = external("External client")
-    private val onlineFirstClass = participant(OnlineFirstClass::class.java)
-    private val onlineSecondClass = participant(OnlineSecondClass::class.java)
-    private val onlineThirdClass = participant(OnlineThirdClass::class.java)
+    private val onlineFirstClass = participant(OnlineInstrumentFirstClass::class.java)
+    private val onlineSecondClass = participant(OnlineInstrumentSecondClass::class.java)
+    private val onlineThirdClass = participant(OnlineInstrumentThirdClass::class.java)
 
     @Test
     fun `check online checker on simple choreography with manual execution`() {
         val sessionId = UUID.randomUUID()
         val cset = defineCorrelation()
-                .add(correlation(onlineFirstClass.onMethod("method1", OnlineFirstClass::method1), "sid", { sessionId })
+                .add(correlation(onlineFirstClass.onMethod("method1", OnlineInstrumentFirstClass::method1),
+                        "sid", { sessionId })
                         .extendFromInput("sid") { sessionId }.done())
-                .add(correlation(onlineFirstClass.onMethod("method2", OnlineFirstClass::method2), "sid", { sessionId })
+                .add(correlation(onlineFirstClass.onMethod("method2", OnlineInstrumentFirstClass::method2),
+                        "sid", { sessionId })
                         .noExtensions())
-                .add(correlation(onlineSecondClass.onMethod("method1", OnlineSecondClass::method1), "sid", { sessionId })
+                .add(correlation(onlineSecondClass.onMethod("method1", OnlineInstrumentSecondClass::method1),
+                        "sid", { sessionId })
                         .noExtensions())
                 .finish()
         val choreography = Choreography.builder()
@@ -51,20 +54,23 @@ class OnlineInstrumentationTests {
         val sender = SerializedInterceptionValuesTests.TestSender(receiver)
         InterceptionConfiguration.setupInterception(sender)
 
-        OnlineFirstClass().method1()
-        OnlineFirstClass().method2()
-        OnlineSecondClass().method1()
+        OnlineInstrumentFirstClass().method1()
+        OnlineInstrumentFirstClass().method2()
+        OnlineInstrumentSecondClass().method1()
     }
 
     @Test
     fun `check that online checker fails fast if traces do not conform`() {
         val sessionId = UUID.randomUUID()
         val cset = defineCorrelation()
-                .add(correlation(onlineFirstClass.onMethod("method1", OnlineFirstClass::method1), "sid", { sessionId })
+                .add(correlation(onlineFirstClass.onMethod("method1", OnlineInstrumentFirstClass::method1),
+                        "sid", { sessionId })
                         .extendFromInput("sid") { sessionId }.done())
-                .add(correlation(onlineFirstClass.onMethod("method2", OnlineFirstClass::method2), "sid", { sessionId })
+                .add(correlation(onlineFirstClass.onMethod("method2", OnlineInstrumentFirstClass::method2),
+                        "sid", { sessionId })
                         .noExtensions())
-                .add(correlation(onlineSecondClass.onMethod("method1", OnlineSecondClass::method1), "sid", { sessionId })
+                .add(correlation(onlineSecondClass.onMethod("method1", OnlineInstrumentSecondClass::method1),
+                        "sid", { sessionId })
                         .noExtensions())
                 .finish()
         val choreography = Choreography.builder()
@@ -77,9 +83,9 @@ class OnlineInstrumentationTests {
         val sender = SerializedInterceptionValuesTests.TestSender(receiver)
         InterceptionConfiguration.setupInterception(sender)
 
-        OnlineFirstClass().method1()
-        assertFailsWith(ChortlinRuntimeException::class) { OnlineSecondClass().method1() } // Out of order execution
-        assertFailsWith(ChortlinRuntimeException::class) { OnlineFirstClass().method2() } // Now the entire choreography is failing
+        OnlineInstrumentFirstClass().method1()
+        assertFailsWith(ChortlinRuntimeException::class) { OnlineInstrumentSecondClass().method1() } // Out of order execution
+        assertFailsWith(ChortlinRuntimeException::class) { OnlineInstrumentFirstClass().method2() } // Now the entire choreography is failing
     }
 
     @Test
@@ -87,19 +93,25 @@ class OnlineInstrumentationTests {
         val sessionId1 = UUID.randomUUID()
         val sessionId2 = UUID.randomUUID()
         val cset1 = defineCorrelation()
-                .add(correlation(onlineFirstClass.onMethod("method1", OnlineFirstClass::method1), "sid", { sessionId1 })
+                .add(correlation(onlineFirstClass.onMethod("method1", OnlineInstrumentFirstClass::method1),
+                        "sid", { sessionId1 })
                         .extendFromInput("sid") { sessionId1 }.done())
-                .add(correlation(onlineFirstClass.onMethod("method2", OnlineFirstClass::method2), "sid", { sessionId1 })
+                .add(correlation(onlineFirstClass.onMethod("method2", OnlineInstrumentFirstClass::method2),
+                        "sid", { sessionId1 })
                         .noExtensions())
-                .add(correlation(onlineSecondClass.onMethod("method1", OnlineSecondClass::method1), "sid", { sessionId1 })
+                .add(correlation(onlineSecondClass.onMethod("method1", OnlineInstrumentSecondClass::method1),
+                        "sid", { sessionId1 })
                         .noExtensions())
                 .finish()
         val cset2 = defineCorrelation()
-                .add(correlation(onlineSecondClass.onMethod("method2", OnlineSecondClass::method2), "sid", { sessionId2 })
+                .add(correlation(onlineSecondClass.onMethod("method2", OnlineInstrumentSecondClass::method2),
+                        "sid", { sessionId2 })
                         .extendFromInput("sid") { sessionId2 }.done())
-                .add(correlation(onlineThirdClass.onMethod("method1", OnlineThirdClass::method1), "sid", { sessionId2 })
+                .add(correlation(onlineThirdClass.onMethod("method1", OnlineInstrumentThirdClass::method1),
+                        "sid", { sessionId2 })
                         .noExtensions())
-                .add(correlation(onlineThirdClass.onMethod("method2", OnlineThirdClass::method2), "sid", { sessionId2 })
+                .add(correlation(onlineThirdClass.onMethod("method2", OnlineInstrumentThirdClass::method2),
+                        "sid", { sessionId2 })
                         .noExtensions())
                 .finish()
         val choreography1 = Choreography.builder()
@@ -120,15 +132,15 @@ class OnlineInstrumentationTests {
         InterceptionConfiguration.setupInterception(sender)
 
         val thread1 = GlobalScope.async {
-            OnlineFirstClass().method1()
-            OnlineFirstClass().method2()
-            OnlineSecondClass().method1()
+            OnlineInstrumentFirstClass().method1()
+            OnlineInstrumentFirstClass().method2()
+            OnlineInstrumentSecondClass().method1()
         }
 
         val thread2 = GlobalScope.async {
-            OnlineSecondClass().method2()
-            OnlineThirdClass().method1()
-            OnlineThirdClass().method2()
+            OnlineInstrumentSecondClass().method2()
+            OnlineInstrumentThirdClass().method1()
+            OnlineInstrumentThirdClass().method2()
         }
 
         runBlocking { awaitAll(thread1, thread2) }
@@ -139,19 +151,25 @@ class OnlineInstrumentationTests {
         val sessionId1 = UUID.randomUUID()
         val sessionId2 = UUID.randomUUID()
         val cset1 = defineCorrelation()
-                .add(correlation(onlineFirstClass.onMethod("method1", OnlineFirstClass::method1), "sid", { sessionId1 })
+                .add(correlation(onlineFirstClass.onMethod("method1", OnlineInstrumentFirstClass::method1),
+                        "sid", { sessionId1 })
                         .extendFromInput("sid") { sessionId1 }.done())
-                .add(correlation(onlineFirstClass.onMethod("method2", OnlineFirstClass::method2), "sid", { sessionId1 })
+                .add(correlation(onlineFirstClass.onMethod("method2", OnlineInstrumentFirstClass::method2),
+                        "sid", { sessionId1 })
                         .noExtensions())
-                .add(correlation(onlineSecondClass.onMethod("method1", OnlineSecondClass::method1), "sid", { sessionId1 })
+                .add(correlation(onlineSecondClass.onMethod("method1", OnlineInstrumentSecondClass::method1),
+                        "sid", { sessionId1 })
                         .noExtensions())
                 .finish()
         val cset2 = defineCorrelation()
-                .add(correlation(onlineSecondClass.onMethod("method2", OnlineSecondClass::method2), "sid", { sessionId2 })
+                .add(correlation(onlineSecondClass.onMethod("method2", OnlineInstrumentSecondClass::method2),
+                        "sid", { sessionId2 })
                         .extendFromInput("sid") { sessionId2 }.done())
-                .add(correlation(onlineThirdClass.onMethod("method1", OnlineThirdClass::method1), "sid", { sessionId2 })
+                .add(correlation(onlineThirdClass.onMethod("method1", OnlineInstrumentThirdClass::method1),
+                        "sid", { sessionId2 })
                         .noExtensions())
-                .add(correlation(onlineThirdClass.onMethod("method2", OnlineThirdClass::method2), "sid", { sessionId2 })
+                .add(correlation(onlineThirdClass.onMethod("method2", OnlineInstrumentThirdClass::method2),
+                        "sid", { sessionId2 })
                         .noExtensions())
                 .finish()
 
@@ -173,15 +191,15 @@ class OnlineInstrumentationTests {
         InterceptionConfiguration.setupInterception(sender)
 
         val thread1 = GlobalScope.async {
-            OnlineFirstClass().method1()
-            OnlineSecondClass().method1() // Wrong execution order
-            OnlineFirstClass().method2()
+            OnlineInstrumentFirstClass().method1()
+            OnlineInstrumentSecondClass().method1() // Wrong execution order
+            OnlineInstrumentFirstClass().method2()
         }
 
         val thread2 = GlobalScope.async {
-            OnlineSecondClass().method2()
-            OnlineThirdClass().method1()
-            OnlineThirdClass().method2()
+            OnlineInstrumentSecondClass().method2()
+            OnlineInstrumentThirdClass().method1()
+            OnlineInstrumentThirdClass().method2()
         }
 
         val atomicBoolean = AtomicBoolean()
