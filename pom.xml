@@ -7,9 +7,23 @@
     <groupId>com.dickow.chortlin</groupId>
     <artifactId>master</artifactId>
     <version>1.0</version>
+
+    <properties>
+        <java.version>11</java.version>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+        <kotlin.version>1.3.11</kotlin.version>
+        <kotlin.coroutines.version>1.0.1</kotlin.coroutines.version>
+        <kotlin.compiler.apiVersion>1.3</kotlin.compiler.apiVersion>
+        <byte.buddy.version>1.9.2</byte.buddy.version>
+        <junit.version>5.3.2</junit.version>
+    </properties>
+
     <modules>
-        <module>core</module>
-        <module>dtupayexample</module>
+        <module>test-application</module>
+        <module>interception</module>
+        <module>checker</module>
+        <module>shared</module>
     </modules>
     <packaging>pom</packaging>
 </project>
