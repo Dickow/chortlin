@@ -2,6 +2,9 @@ package com.dickow.chortlin.checker.ast.validation
 
 import com.dickow.chortlin.checker.ast.ASTVisitor
 import com.dickow.chortlin.checker.ast.types.*
+import com.dickow.chortlin.shared.annotations.ChortlinOnInvoke
+import com.dickow.chortlin.shared.annotations.ChortlinOnReturn
+import com.dickow.chortlin.shared.annotations.util.ChortlinAnnotationUtil
 import com.dickow.chortlin.shared.exceptions.InvalidASTException
 import java.util.function.Predicate
 
@@ -26,8 +29,12 @@ class ASTValidator : ASTVisitor {
 
     override fun visitReturnFrom(astNode: ReturnFrom) {
         if (!hasMatchingInvocation(astNode)) {
-            throw InvalidASTException("Found a foundMessage return node with no matching invocation node. " +
+            throw InvalidASTException("Found a return node with no matching invocation node. " +
                     "The node causing the error was $astNode")
+        }
+        if (!ChortlinAnnotationUtil.isAnnotationPresent(ChortlinOnReturn::class, astNode.participant.method)) {
+            throw InvalidASTException("Found a return node with no annotation present, " +
+                    "expected the annotation @${ChortlinOnReturn::class.java.name} on method ${astNode.participant.method}")
         } else {
             scope.beginNewScope(astNode)
             nextNode(astNode)
@@ -36,6 +43,10 @@ class ASTValidator : ASTVisitor {
     }
 
     override fun visitInteraction(astNode: Interaction) {
+        if (!ChortlinAnnotationUtil.isAnnotationPresent(ChortlinOnInvoke::class, astNode.receiver.method)) {
+            throw InvalidASTException("Found an interaction node with no annotation present, " +
+                    "expected the annotation @${ChortlinOnInvoke::class.java.name} on method ${astNode.receiver.method}")
+        }
         scope.beginNewScope(astNode)
         nextNode(astNode)
         scope.exitScope()

@@ -9,7 +9,9 @@ import com.dickow.chortlin.shared.observation.Observable
 
 data class Choreography(val start: ASTNode) {
     private lateinit var correlationParticipantMapping: CorrelationParticipantMapping
-    companion object Instance {
+
+    companion object {
+        @JvmStatic
         fun builder(): ChoreographyBuilder {
             return Marker()
         }

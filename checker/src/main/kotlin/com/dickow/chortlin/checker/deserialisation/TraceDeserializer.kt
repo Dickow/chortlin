@@ -8,10 +8,10 @@ import com.dickow.chortlin.shared.trace.dto.InvocationDTO
 import com.dickow.chortlin.shared.trace.dto.ReturnDTO
 import com.google.gson.Gson
 
-class TraceDeserialiser {
+class TraceDeserializer {
     private val gson = Gson()
 
-    fun deserialise(invocationDTO: InvocationDTO) : Invocation{
+    fun deserialize(invocationDTO: InvocationDTO): Invocation {
         val clazz = Class.forName(invocationDTO.classCanonicalName)
         if(clazz != null){
             val observed = ObservableFactory.observed(clazz, invocationDTO.methodName)
@@ -23,7 +23,7 @@ class TraceDeserialiser {
         }
     }
 
-    fun deserialise(returnDTO: ReturnDTO) : Return {
+    fun deserialize(returnDTO: ReturnDTO): Return {
         val clazz = Class.forName(returnDTO.classCanonicalName)
         if(clazz != null){
             val observed = ObservableFactory.observed(clazz, returnDTO.methodName)
