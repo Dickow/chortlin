@@ -7,7 +7,7 @@ module chortlin.interception {
     requires net.bytebuddy.agent;
     requires java.instrument;
 
-    requires chortlin.shared;
+    requires transitive chortlin.shared;
     requires gson;
 
     exports com.dickow.chortlin.interception.instrumentation;
