@@ -1,7 +1,6 @@
 package com.dickow.chortlin.core.test.networkinterception
 
 import com.dickow.chortlin.checker.receiver.ChortlinReceiver
-import com.dickow.chortlin.checker.receiver.ChortlinReceiverFactory
 import com.dickow.chortlin.core.test.shared.AuthResult
 import com.dickow.chortlin.core.test.shared.AuthenticatedService
 import com.dickow.chortlin.core.test.shared.Authentication
@@ -33,9 +32,9 @@ class SerializedInterceptionValuesTests {
         val trace = Invocation(observed, arrayOf("jeppeDickow", "password"))
         receiver.invocationDTOCallback = {invocationDTO ->
             assertEquals(trace.getObservation().clazz.canonicalName, invocationDTO.classCanonicalName)
-            assertEquals(trace.getObservation().method, invocationDTO.methodName)
-            assertEquals(trace.getArguments()[0], invocationDTO.arguments.get(0).value)
-            assertEquals(trace.getArguments()[1], invocationDTO.arguments.get(1).value)
+            assertEquals(trace.getObservation().method.name, invocationDTO.methodName)
+            assertEquals(trace.getArguments()[0], invocationDTO.arguments[0].value!!.replace("\"", ""))
+            assertEquals(trace.getArguments()[1], invocationDTO.arguments[1].value!!.replace("\"", ""))
         }
         interceptor.intercept(trace)
     }

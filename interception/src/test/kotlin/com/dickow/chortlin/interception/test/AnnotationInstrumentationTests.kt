@@ -9,17 +9,10 @@ import java.util.*
 import kotlin.test.assertEquals
 
 class AnnotationInstrumentationTests {
-    companion object {
-        private var isInstrumented = false
-        fun applyInstrumentation(){
-            if(!isInstrumented){
-                ByteBuddyInstrumentation.instrumentAnnotatedMethods()
-                isInstrumented = true
-            }
-        }
-    }
 
-    init { applyInstrumentation() }
+    init {
+        ByteBuddyInstrumentation.instrumentAnnotatedMethods()
+    }
 
 
     @Test

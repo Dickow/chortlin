@@ -28,11 +28,19 @@ class TraceDeserialiser {
         if(clazz != null){
             val observed = ObservableFactory.observed(clazz, returnDTO.methodName)
             val originalArguments = returnDTO.arguments.map { argDTO -> gson.fromJson(argDTO.value, Class.forName(argDTO.argumentClassCanonicalName)) }
-            val originalReturn = gson.fromJson(returnDTO.returnValue.value, Class.forName(returnDTO.returnValue.argumentClassCanonicalName))
+            val originalReturn = retrieveReturnValue(returnDTO)
             return Return(observed, originalArguments.toTypedArray(), originalReturn)
         }
         else{
             throw ChortlinRuntimeException("Unable to find class ${returnDTO.classCanonicalName}")
+        }
+    }
+
+    private fun retrieveReturnValue(returnDTO: ReturnDTO): Any? {
+        return if (returnDTO.returnValue.argumentClassCanonicalName == Void.TYPE.canonicalName) {
+            null
+        } else {
+            gson.fromJson<Any?>(returnDTO.returnValue.value, Class.forName(returnDTO.returnValue.argumentClassCanonicalName))
         }
     }
 }

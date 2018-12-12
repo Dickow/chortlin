@@ -9,7 +9,6 @@ import com.dickow.chortlin.checker.choreography.participant.ParticipantFactory
 import com.dickow.chortlin.checker.choreography.participant.ParticipantFactory.participant
 import com.dickow.chortlin.core.test.shared.A
 import com.dickow.chortlin.core.test.shared.B
-import com.dickow.chortlin.shared.observation.ObservableFactory
 import com.dickow.chortlin.shared.observation.ObservableParticipant
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals

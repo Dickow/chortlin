@@ -1,26 +1,25 @@
 package com.dickow.chortlin.core.test.instrumentation
 
-import com.dickow.chortlin.checker.checker.OnlineChecker
-import com.dickow.chortlin.checker.checker.session.InMemorySessionManager
 import com.dickow.chortlin.checker.choreography.Choreography
 import com.dickow.chortlin.checker.choreography.participant.ParticipantFactory.external
 import com.dickow.chortlin.checker.choreography.participant.ParticipantFactory.participant
 import com.dickow.chortlin.checker.correlation.factory.CorrelationFactory.correlation
 import com.dickow.chortlin.checker.correlation.factory.CorrelationFactory.defineCorrelation
-import com.dickow.chortlin.core.CheckInMemory
-import com.dickow.chortlin.core.InMemoryStrategyFactory
+import com.dickow.chortlin.checker.receiver.ChortlinReceiverFactory
+import com.dickow.chortlin.core.test.networkinterception.SerializedInterceptionValuesTests
 import com.dickow.chortlin.core.test.shared.OnlineFirstClass
 import com.dickow.chortlin.core.test.shared.OnlineSecondClass
 import com.dickow.chortlin.core.test.shared.OnlineThirdClass
-import com.dickow.chortlin.interception.strategy.InstrumentationStrategy
+import com.dickow.chortlin.core.test.shared.TestErrorCallback
+import com.dickow.chortlin.interception.strategy.InterceptionConfiguration
 import com.dickow.chortlin.shared.exceptions.ChortlinRuntimeException
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
-import org.junit.jupiter.api.Test
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
+import kotlin.test.Test
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
@@ -47,8 +46,10 @@ class OnlineInstrumentationTests {
                 .interaction(onlineFirstClass, onlineSecondClass.onMethod("method1"), "#3")
                 .returnFrom(onlineSecondClass.onMethod("method1"), "return #3")
                 .end().setCorrelation(cset)
-        val onlineChecker = OnlineChecker(InMemorySessionManager(listOf(choreography)))
-        InstrumentationStrategy.strategy = CheckInMemory(onlineChecker, true)
+
+        val receiver = ChortlinReceiverFactory.setupSynchronousReceiver(listOf(choreography), TestErrorCallback())
+        val sender = SerializedInterceptionValuesTests.TestSender(receiver)
+        InterceptionConfiguration.setupInterception(sender)
 
         OnlineFirstClass().method1()
         OnlineFirstClass().method2()
@@ -72,8 +73,9 @@ class OnlineInstrumentationTests {
                 .interaction(onlineFirstClass, onlineSecondClass.onMethod("method1"), "#3")
                 .returnFrom(onlineSecondClass.onMethod("method1"), "return #3")
                 .end().setCorrelation(cset)
-        val onlineChecker = OnlineChecker(InMemorySessionManager(listOf(choreography)))
-        InstrumentationStrategy.strategy = CheckInMemory(onlineChecker, true)
+        val receiver = ChortlinReceiverFactory.setupSynchronousReceiver(listOf(choreography), TestErrorCallback())
+        val sender = SerializedInterceptionValuesTests.TestSender(receiver)
+        InterceptionConfiguration.setupInterception(sender)
 
         OnlineFirstClass().method1()
         assertFailsWith(ChortlinRuntimeException::class) { OnlineSecondClass().method1() } // Out of order execution
@@ -113,8 +115,9 @@ class OnlineInstrumentationTests {
                 .interaction(onlineThirdClass, onlineThirdClass.onMethod("method2"), "#3")
                 .end().setCorrelation(cset2)
 
-        val onlineChecker = OnlineChecker(InMemorySessionManager(listOf(choreography1, choreography2)))
-        InstrumentationStrategy.strategy = CheckInMemory(onlineChecker, true)
+        val receiver = ChortlinReceiverFactory.setupSynchronousReceiver(listOf(choreography1, choreography2), TestErrorCallback())
+        val sender = SerializedInterceptionValuesTests.TestSender(receiver)
+        InterceptionConfiguration.setupInterception(sender)
 
         val thread1 = GlobalScope.async {
             OnlineFirstClass().method1()
@@ -165,7 +168,9 @@ class OnlineInstrumentationTests {
                 .interaction(onlineThirdClass, onlineThirdClass.onMethod("method2"), "#3")
                 .end().setCorrelation(cset2)
 
-        InstrumentationStrategy.strategy = InMemoryStrategyFactory.createInMemoryChecker(listOf(choreography1, choreography2), true)
+        val receiver = ChortlinReceiverFactory.setupSynchronousReceiver(listOf(choreography1, choreography2), TestErrorCallback())
+        val sender = SerializedInterceptionValuesTests.TestSender(receiver)
+        InterceptionConfiguration.setupInterception(sender)
 
         val thread1 = GlobalScope.async {
             OnlineFirstClass().method1()
