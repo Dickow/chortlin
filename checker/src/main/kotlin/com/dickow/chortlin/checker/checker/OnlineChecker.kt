@@ -26,9 +26,7 @@ class OnlineChecker(private val sessionManager: SessionManager) {
         when (result) {
             CheckResult.None -> sessionManager.clearSession(session)
             CheckResult.Full -> sessionManager.clearSession(session)
-            CheckResult.Partial -> {
-                session.extendKeySet(trace)
-            }
+            CheckResult.Partial -> session.extendKeySet(trace)
         }
         return result
     }

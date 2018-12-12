@@ -33,7 +33,6 @@ class InMemorySessionManager(choreographies: List<Choreography>) : SessionManage
             val session = Session(sessionId, choreography, trace)
             ongoingSessions[sessionId] = session
             return session
-
         } else {
             throw ChortlinRuntimeException("Unable to find a possible choreography instance for trace: $trace")
         }
