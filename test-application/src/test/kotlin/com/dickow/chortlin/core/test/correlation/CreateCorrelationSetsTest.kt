@@ -17,7 +17,7 @@ import com.dickow.chortlin.interception.strategy.InterceptionConfiguration
 import com.dickow.chortlin.shared.exceptions.ChortlinRuntimeException
 import com.dickow.chortlin.shared.exceptions.InvalidChoreographyException
 import com.dickow.chortlin.shared.observation.ObservableParticipant
-import org.junit.jupiter.api.Test
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
