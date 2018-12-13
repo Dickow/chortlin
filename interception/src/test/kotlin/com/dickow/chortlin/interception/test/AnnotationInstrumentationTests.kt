@@ -1,8 +1,8 @@
 package com.dickow.chortlin.interception.test
 
+import com.dickow.chortlin.interception.InterceptStrategy
+import com.dickow.chortlin.interception.configuration.InterceptionStrategy
 import com.dickow.chortlin.interception.instrumentation.ByteBuddyInstrumentation
-import com.dickow.chortlin.interception.strategy.InstrumentationStrategy
-import com.dickow.chortlin.interception.strategy.InterceptStrategy
 import com.dickow.chortlin.shared.trace.TraceElement
 import org.junit.jupiter.api.Test
 import java.util.*
@@ -18,7 +18,7 @@ class AnnotationInstrumentationTests {
     @Test
     fun `check that annotated methods are intercepted correctly`(){
         val traces = LinkedList<TraceElement>()
-        InstrumentationStrategy.strategy = object : InterceptStrategy {
+        InterceptionStrategy.strategy = object : InterceptStrategy {
             override fun intercept(trace: TraceElement) {
                 traces.add(trace)
             }
@@ -32,7 +32,7 @@ class AnnotationInstrumentationTests {
     @Test
     fun `check that method with void return types are intercepted on return as well`(){
         val traces = LinkedList<TraceElement>()
-        InstrumentationStrategy.strategy = object : InterceptStrategy {
+        InterceptionStrategy.strategy = object : InterceptStrategy {
             override fun intercept(trace: TraceElement) {
                 traces.add(trace)
             }
@@ -46,7 +46,7 @@ class AnnotationInstrumentationTests {
     @Test
     fun `check that methods that are not annotated are not intercepted`(){
         val traces = LinkedList<TraceElement>()
-        InstrumentationStrategy.strategy = object : InterceptStrategy {
+        InterceptionStrategy.strategy = object : InterceptStrategy {
             override fun intercept(trace: TraceElement) {
                 traces.add(trace)
             }

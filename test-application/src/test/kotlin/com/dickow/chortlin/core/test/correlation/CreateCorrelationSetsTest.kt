@@ -13,7 +13,7 @@ import com.dickow.chortlin.core.test.shared.AuthResult
 import com.dickow.chortlin.core.test.shared.AuthenticatedService
 import com.dickow.chortlin.core.test.shared.Authentication
 import com.dickow.chortlin.core.test.shared.TestErrorCallback
-import com.dickow.chortlin.interception.strategy.InterceptionConfiguration
+import com.dickow.chortlin.interception.configuration.InterceptionConfiguration
 import com.dickow.chortlin.shared.exceptions.ChortlinRuntimeException
 import com.dickow.chortlin.shared.exceptions.InvalidChoreographyException
 import com.dickow.chortlin.shared.observation.ObservableParticipant

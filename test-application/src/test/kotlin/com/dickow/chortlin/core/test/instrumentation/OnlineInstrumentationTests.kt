@@ -11,7 +11,7 @@ import com.dickow.chortlin.core.test.shared.OnlineInstrumentFirstClass
 import com.dickow.chortlin.core.test.shared.OnlineInstrumentSecondClass
 import com.dickow.chortlin.core.test.shared.OnlineInstrumentThirdClass
 import com.dickow.chortlin.core.test.shared.TestErrorCallback
-import com.dickow.chortlin.interception.strategy.InterceptionConfiguration
+import com.dickow.chortlin.interception.configuration.InterceptionConfiguration
 import com.dickow.chortlin.shared.exceptions.ChortlinRuntimeException
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async

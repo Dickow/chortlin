@@ -8,9 +8,9 @@ import com.dickow.chortlin.checker.choreography.participant.ParticipantFactory.p
 import com.dickow.chortlin.checker.correlation.factory.CorrelationFactory.correlation
 import com.dickow.chortlin.checker.correlation.factory.CorrelationFactory.defineCorrelation
 import com.dickow.chortlin.core.test.shared.*
+import com.dickow.chortlin.interception.InterceptStrategy
+import com.dickow.chortlin.interception.configuration.InterceptionStrategy
 import com.dickow.chortlin.interception.instrumentation.ByteBuddyInstrumentation
-import com.dickow.chortlin.interception.strategy.InstrumentationStrategy
-import com.dickow.chortlin.interception.strategy.InterceptStrategy
 import com.dickow.chortlin.shared.trace.Trace
 import com.dickow.chortlin.shared.trace.TraceElement
 import java.util.*
@@ -52,7 +52,7 @@ class ApplyInstrumentationTests {
     @Test
     fun `apply instrumentation to simple in memory communication`() {
         traces.clear()
-        InstrumentationStrategy.strategy = interceptStrategy
+        InterceptionStrategy.strategy = interceptStrategy
         val sessionId = UUID.randomUUID()
         val cset = defineCorrelation()
                 .add(correlation(initial.onMethod("begin", Initial::begin), "sid", { sessionId })
@@ -76,7 +76,7 @@ class ApplyInstrumentationTests {
     @Test
     fun `validate that instrumentation catches an error in the invocation`() {
         traces.clear()
-        InstrumentationStrategy.strategy = interceptStrategy
+        InterceptionStrategy.strategy = interceptStrategy
         val sessionId = UUID.randomUUID()
         val cset = defineCorrelation()
                 .add(correlation(delegate.onMethod("delegate", Initial::delegate), "sid", { sessionId }).extendFromInput("sid") { sessionId }.done())
@@ -99,7 +99,7 @@ class ApplyInstrumentationTests {
     @Test
     fun `validate instrumentation when returns are used correctly`() {
         traces.clear()
-        InstrumentationStrategy.strategy = interceptStrategy
+        InterceptionStrategy.strategy = interceptStrategy
         val sessionId = UUID.randomUUID()
         val cset = defineCorrelation()
                 .add(correlation(firstClass.onMethod("first", FirstClass::first), "sid", { sessionId }).extendFromInput("sid") { sessionId }.done())
@@ -126,7 +126,7 @@ class ApplyInstrumentationTests {
     @Test
     fun `check that checker invalidates gathered traces for wrong call sequence`() {
         traces.clear()
-        InstrumentationStrategy.strategy = interceptStrategy
+        InterceptionStrategy.strategy = interceptStrategy
         val sessionId = UUID.randomUUID()
         val cset = defineCorrelation()
                 .add(correlation(firstClass.onMethod("first", FirstClass::first), "sid", { sessionId }).extendFromInput("sid") { sessionId }.done())
@@ -153,7 +153,7 @@ class ApplyInstrumentationTests {
     @Test
     fun `check that traces gathered from instrumentation partially matches when partially executed`() {
         traces.clear()
-        InstrumentationStrategy.strategy = interceptStrategy
+        InterceptionStrategy.strategy = interceptStrategy
         val sessionId = UUID.randomUUID()
         val cset = defineCorrelation()
                 .add(correlation(partialFirst1.onMethod("first", PartialFirst::first), "sid", { sessionId }).extendFromInput("sid") { sessionId }.done())

@@ -5,8 +5,8 @@ import com.dickow.chortlin.core.test.shared.AuthResult
 import com.dickow.chortlin.core.test.shared.AuthenticatedService
 import com.dickow.chortlin.core.test.shared.Authentication
 import com.dickow.chortlin.core.test.shared.objects.Receipt
-import com.dickow.chortlin.interception.strategy.ChortlinIntercept
-import com.dickow.chortlin.interception.strategy.ChortlinSender
+import com.dickow.chortlin.interception.defaults.ChortlinIntercept
+import com.dickow.chortlin.interception.sending.ChortlinSender
 import com.dickow.chortlin.shared.observation.ObservableFactory
 import com.dickow.chortlin.shared.trace.Invocation
 import com.dickow.chortlin.shared.trace.Return

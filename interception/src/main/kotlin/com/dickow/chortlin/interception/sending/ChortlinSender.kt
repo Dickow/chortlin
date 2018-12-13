@@ -1,4 +1,4 @@
-package com.dickow.chortlin.interception.strategy
+package com.dickow.chortlin.interception.sending
 
 import com.dickow.chortlin.shared.trace.dto.InvocationDTO
 import com.dickow.chortlin.shared.trace.dto.ReturnDTO

@@ -10,7 +10,10 @@ module chortlin.interception {
     requires transitive chortlin.shared;
     requires gson;
 
+    exports com.dickow.chortlin.interception;
+    exports com.dickow.chortlin.interception.configuration;
+    exports com.dickow.chortlin.interception.defaults;
     exports com.dickow.chortlin.interception.instrumentation;
     exports com.dickow.chortlin.interception.instrumentation.advice;
-    exports com.dickow.chortlin.interception.strategy;
+    exports com.dickow.chortlin.interception.sending;
 }

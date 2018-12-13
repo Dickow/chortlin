@@ -1,6 +1,6 @@
 package com.dickow.chortlin.interception.instrumentation
 
-import com.dickow.chortlin.interception.instrumentation.advice.AfterAdvisorWithReturn
+import com.dickow.chortlin.interception.instrumentation.advice.AfterAdvisor
 import com.dickow.chortlin.interception.instrumentation.advice.BeforeAdvisor
 import com.dickow.chortlin.shared.annotations.ChortlinOnInvoke
 import com.dickow.chortlin.shared.annotations.ChortlinOnReturn
@@ -14,6 +14,7 @@ import net.bytebuddy.matcher.ElementMatchers
  * it is important that this class is static to maintain knowledge of the instrumented classes.
  */
 object ByteBuddyInstrumentation{
+    @JvmStatic
     private var hasInstrumented = false
     init {
         ByteBuddyAgent.install()
@@ -43,7 +44,7 @@ object ByteBuddyInstrumentation{
                         methodDescription -> methodDescription.declaredAnnotations.any {
                         annotation -> annotation.annotationType.isAssignableTo(ChortlinOnReturn::class.java) } })
                     .transform { builder, _, _, _ ->
-                        builder.visit(Advice.to(AfterAdvisorWithReturn::class.java)
+                        builder.visit(Advice.to(AfterAdvisor::class.java)
                                 .on(ElementMatchers.isAnnotatedWith(ChortlinOnReturn::class.java)))
                     }
                     .installOnByteBuddyAgent()

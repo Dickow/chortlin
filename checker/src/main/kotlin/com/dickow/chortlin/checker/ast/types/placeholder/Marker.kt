@@ -1,11 +1,11 @@
 package com.dickow.chortlin.checker.ast.types.placeholder
 
+import com.dickow.chortlin.checker.ast.ASTBuilder
 import com.dickow.chortlin.checker.ast.ASTVisitor
 import com.dickow.chortlin.checker.ast.Label
 import com.dickow.chortlin.checker.ast.types.*
 import com.dickow.chortlin.checker.checker.result.CheckResult
 import com.dickow.chortlin.checker.choreography.Choreography
-import com.dickow.chortlin.checker.choreography.ChoreographyBuilder
 import com.dickow.chortlin.checker.choreography.method.ChortlinMethod
 import com.dickow.chortlin.checker.choreography.participant.Participant
 import com.dickow.chortlin.shared.exceptions.InvalidASTException
@@ -22,20 +22,20 @@ class Marker : ASTNode(null, null), Placeholder {
                 "You probably asked for a builder and forgot to configure the choreography.")
     }
 
-    override fun choice(vararg possiblePaths: (ChoreographyBuilder) -> Choreography): Choreography {
+    override fun choice(vararg possiblePaths: (ASTBuilder) -> Choreography): Choreography {
         return Choreography(Choice(possiblePaths.map { it(Choreography.builder()) }, null))
     }
 
-    override fun parallel(path: (ChoreographyBuilder) -> Choreography): ChoreographyBuilder {
+    override fun parallel(path: (ASTBuilder) -> Choreography): ASTBuilder {
         return Parallel(path(Choreography.builder()), null, null)
     }
 
-    override fun <C> returnFrom(method: ChortlinMethod<C>, label: String): ChoreographyBuilder {
+    override fun <C> returnFrom(method: ChortlinMethod<C>, label: String): ASTBuilder {
         val observableReceiver = ObservableParticipant(method.participant.clazz, method.jvmMethod)
         return ReturnFrom(observableReceiver, Label(label), null, null)
     }
 
-    override fun <C> interaction(sender: Participant, method: ChortlinMethod<C>, label: String): ChoreographyBuilder {
+    override fun <C> interaction(sender: Participant, method: ChortlinMethod<C>, label: String): ASTBuilder {
         val observableReceiver = ObservableParticipant(method.participant.clazz, method.jvmMethod)
         return Interaction(sender, observableReceiver, Label(label), null, null)
     }
