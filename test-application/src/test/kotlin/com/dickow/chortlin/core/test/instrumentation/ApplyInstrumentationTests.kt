@@ -1,6 +1,6 @@
 package com.dickow.chortlin.core.test.instrumentation
 
-import com.dickow.chortlin.checker.checker.factory.CheckerFactory
+import com.dickow.chortlin.checker.checker.factory.OnlineCheckerFactory
 import com.dickow.chortlin.checker.checker.result.CheckResult
 import com.dickow.chortlin.checker.choreography.Choreography
 import com.dickow.chortlin.checker.choreography.participant.ParticipantFactory.external
@@ -62,7 +62,7 @@ class ApplyInstrumentationTests {
                 .add(correlation(processor.onMethod("process", Second::process), "sid", { sessionId }).noExtensions())
                 .finish()
 
-        val checker = CheckerFactory.createChecker(
+        val checker = OnlineCheckerFactory.createChecker(
                 Choreography.builder()
                         .interaction(external, initial.onMethod("begin"), "start")
                         .interaction(initial, delegate.onMethod("delegate"), "delegate")
@@ -84,7 +84,7 @@ class ApplyInstrumentationTests {
                 .add(correlation(processor.onMethod("process", Second::process), "sid", { sessionId }).noExtensions())
                 .finish()
 
-        val checker = CheckerFactory.createChecker(
+        val checker = OnlineCheckerFactory.createChecker(
                 Choreography.builder()
                         .interaction(external, delegate.onMethod("delegate"), "start")
                         .interaction(delegate, initial.onMethod("begin"), "then initial")
@@ -107,7 +107,7 @@ class ApplyInstrumentationTests {
                 .add(correlation(thirdClass.onMethod("third", ThirdClass::third), "sid", { sessionId }).noExtensions())
                 .finish()
 
-        val checker = CheckerFactory.createChecker(
+        val checker = OnlineCheckerFactory.createChecker(
                 Choreography.builder()
                         .interaction(external, firstClass.onMethod("first"), "initial receive")
                         .interaction(firstClass, secondClass.onMethod("second"), "second call")
@@ -134,7 +134,7 @@ class ApplyInstrumentationTests {
                 .add(correlation(thirdClass.onMethod("third", ThirdClass::third), "sid", { sessionId }).noExtensions())
                 .finish()
 
-        val checker = CheckerFactory.createChecker(
+        val checker = OnlineCheckerFactory.createChecker(
                 Choreography.builder()
                         .interaction(external, firstClass.onMethod("first"), "initial receive")
                         .interaction(firstClass, secondClass.onMethod("second"), "second call")
@@ -163,7 +163,7 @@ class ApplyInstrumentationTests {
                 .add(correlation(partialThird3.onMethod("third", PartialThird::third), "sid", { sessionId }).noExtensions())
                 .finish()
 
-        val checker = CheckerFactory.createChecker(
+        val checker = OnlineCheckerFactory.createChecker(
                 Choreography.builder()
                         .interaction(external, partialFirst1.onMethod("first"), "initialize calls")
                         .interaction(partialFirst1, partialFirst1.onMethod("second"), "call second method of first class")

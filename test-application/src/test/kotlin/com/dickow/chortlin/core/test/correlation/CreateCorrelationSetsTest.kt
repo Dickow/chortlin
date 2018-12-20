@@ -1,13 +1,12 @@
 package com.dickow.chortlin.core.test.correlation
 
-import com.dickow.chortlin.checker.checker.factory.CheckerFactory
+import com.dickow.chortlin.checker.checker.factory.OnlineCheckerFactory
 import com.dickow.chortlin.checker.choreography.Choreography
 import com.dickow.chortlin.checker.choreography.participant.ParticipantFactory.external
 import com.dickow.chortlin.checker.choreography.participant.ParticipantFactory.participant
 import com.dickow.chortlin.checker.correlation.CorrelationValue
 import com.dickow.chortlin.checker.correlation.factory.CorrelationFactory.correlation
 import com.dickow.chortlin.checker.correlation.factory.CorrelationFactory.defineCorrelation
-import com.dickow.chortlin.checker.receiver.ChortlinReceiverFactory
 import com.dickow.chortlin.core.test.networkinterception.SerializedInterceptionValuesTests
 import com.dickow.chortlin.core.test.shared.AuthResult
 import com.dickow.chortlin.core.test.shared.AuthenticatedService
@@ -73,7 +72,7 @@ class CreateCorrelationSetsTest {
                         .finish())
 
         assertFailsWith(InvalidChoreographyException::class) {
-            CheckerFactory.createChecker(authenticationChoreography)
+            OnlineCheckerFactory.createChecker(authenticationChoreography)
         }
     }
 

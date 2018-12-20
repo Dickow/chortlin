@@ -4,16 +4,16 @@ import com.dickow.chortlin.shared.observation.Observable
 import java.util.*
 
 
-class CorrelationParticipantMapping(correlations: List<Correlation>) {
+class CorrelationDefinition(correlations: List<Correlation>) {
     private val correlationSetMappings = Hashtable<Observable, Correlation>()
 
     init {
         for (corr in correlations) {
-            correlationSetMappings[corr.participant] = corr
+            correlationSetMappings[corr.observable] = corr
         }
     }
 
-    fun get(participant: Observable): Correlation? {
-        return correlationSetMappings[participant]
+    fun get(observable: Observable): Correlation? {
+        return correlationSetMappings[observable]
     }
 }
