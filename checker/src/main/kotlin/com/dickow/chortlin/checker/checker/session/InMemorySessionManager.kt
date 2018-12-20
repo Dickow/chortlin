@@ -1,7 +1,7 @@
 package com.dickow.chortlin.checker.checker.session
 
 import com.dickow.chortlin.checker.choreography.Choreography
-import com.dickow.chortlin.shared.exceptions.ChortlinRuntimeException
+import com.dickow.chortlin.shared.exceptions.ChoreographyRuntimeException
 import com.dickow.chortlin.shared.trace.TraceElement
 import java.util.*
 
@@ -21,7 +21,7 @@ class InMemorySessionManager(private val choreographies: List<Choreography>) : S
             ongoingSessions[sessionId] = session
             return session
         } else {
-            throw ChortlinRuntimeException("Unable to find a possible choreography instance for trace: $trace")
+            throw ChoreographyRuntimeException("Unable to find a possible choreography instance for trace: $trace")
         }
     }
 

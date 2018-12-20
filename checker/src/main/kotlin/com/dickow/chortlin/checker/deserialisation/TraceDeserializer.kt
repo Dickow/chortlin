@@ -1,6 +1,6 @@
 package com.dickow.chortlin.checker.deserialisation
 
-import com.dickow.chortlin.shared.exceptions.ChortlinRuntimeException
+import com.dickow.chortlin.shared.exceptions.ChoreographyRuntimeException
 import com.dickow.chortlin.shared.observation.ObservableFactory
 import com.dickow.chortlin.shared.trace.Invocation
 import com.dickow.chortlin.shared.trace.Return
@@ -19,7 +19,7 @@ class TraceDeserializer {
             return Invocation(observed, originalArguments.toTypedArray())
         }
         else{
-            throw ChortlinRuntimeException("Unable to find class ${invocationDTO.classCanonicalName}")
+            throw ChoreographyRuntimeException("Unable to find class ${invocationDTO.classCanonicalName}")
         }
     }
 
@@ -32,7 +32,7 @@ class TraceDeserializer {
             return Return(observed, originalArguments.toTypedArray(), originalReturn)
         }
         else{
-            throw ChortlinRuntimeException("Unable to find class ${returnDTO.classCanonicalName}")
+            throw ChoreographyRuntimeException("Unable to find class ${returnDTO.classCanonicalName}")
         }
     }
 

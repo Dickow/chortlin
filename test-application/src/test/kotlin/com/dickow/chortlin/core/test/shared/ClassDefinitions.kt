@@ -1,25 +1,25 @@
 package com.dickow.chortlin.core.test.shared
 
-import com.dickow.chortlin.shared.annotations.ChortlinOnInvoke
-import com.dickow.chortlin.shared.annotations.ChortlinOnReturn
+import com.dickow.chortlin.shared.annotations.TraceInvocation
+import com.dickow.chortlin.shared.annotations.TraceReturn
 
 class A {
-    @ChortlinOnInvoke
-    @ChortlinOnReturn
+    @TraceInvocation
+    @TraceReturn
     fun receive(): String {
         return "Hello world!"
     }
 
-    @ChortlinOnInvoke
-    @ChortlinOnReturn
+    @TraceInvocation
+    @TraceReturn
     fun b(value: String): String {
         return value
     }
 }
 
 class B {
-    @ChortlinOnInvoke
-    @ChortlinOnReturn
+    @TraceInvocation
+    @TraceReturn
     fun b(value: String): String {
         return value
     }

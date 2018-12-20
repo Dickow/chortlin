@@ -12,8 +12,8 @@ import com.dickow.chortlin.core.test.shared.OnlineInstrumentFirstClass
 import com.dickow.chortlin.core.test.shared.OnlineInstrumentSecondClass
 import com.dickow.chortlin.core.test.shared.OnlineInstrumentThirdClass
 import com.dickow.chortlin.interception.configuration.InterceptionConfiguration
-import com.dickow.chortlin.interception.sending.ChortlinSender
-import com.dickow.chortlin.shared.exceptions.ChortlinRuntimeException
+import com.dickow.chortlin.interception.sending.TraceSender
+import com.dickow.chortlin.shared.exceptions.ChoreographyRuntimeException
 import com.dickow.chortlin.shared.trace.TraceElement
 import com.dickow.chortlin.shared.trace.dto.InvocationDTO
 import com.dickow.chortlin.shared.trace.dto.ReturnDTO
@@ -87,8 +87,8 @@ class OnlineInstrumentationTests {
         InterceptionConfiguration.setupInterception(sender)
 
         OnlineInstrumentFirstClass().method1()
-        assertFailsWith(ChortlinRuntimeException::class) { OnlineInstrumentSecondClass().method1() } // Out of order execution
-        assertFailsWith(ChortlinRuntimeException::class) { OnlineInstrumentFirstClass().method2() } // Now the entire choreography is failing
+        assertFailsWith(ChoreographyRuntimeException::class) { OnlineInstrumentSecondClass().method1() } // Out of order execution
+        assertFailsWith(ChoreographyRuntimeException::class) { OnlineInstrumentFirstClass().method2() } // Now the entire choreography is failing
     }
 
     @Test
@@ -210,36 +210,36 @@ class OnlineInstrumentationTests {
         runBlocking {
             try {
                 thread1.await()
-            } catch (e: ChortlinRuntimeException) {
+            } catch (e: ChoreographyRuntimeException) {
                 atomicBoolean.set(true)
             }
             thread2.await()
         }
-        assertTrue(atomicBoolean.get(), "Expected exception of type ${ChortlinRuntimeException::class}")
+        assertTrue(atomicBoolean.get(), "Expected exception of type ${ChoreographyRuntimeException::class}")
     }
 
     class InterceptingTestChecker(private val checker : ChoreographyChecker) : ChoreographyChecker {
         override fun check(trace: TraceElement): CheckResult {
             val result = checker.check(trace)
-            if (result == CheckResult.None) throw ChortlinRuntimeException("NO MATCH FOUND")
+            if (result == CheckResult.None) throw ChoreographyRuntimeException("NO MATCH FOUND")
             else return result
         }
 
         override fun check(traceDTO: InvocationDTO): CheckResult {
             val result = checker.check(traceDTO)
-            if (result == CheckResult.None) throw ChortlinRuntimeException("NO MATCH FOUND")
+            if (result == CheckResult.None) throw ChoreographyRuntimeException("NO MATCH FOUND")
             else return result
         }
 
         override fun check(traceDTO: ReturnDTO): CheckResult {
             val result = checker.check(traceDTO)
-            if (result == CheckResult.None) throw ChortlinRuntimeException("NO MATCH FOUND")
+            if (result == CheckResult.None) throw ChoreographyRuntimeException("NO MATCH FOUND")
             else return result
         }
 
     }
 
-    class TestSender(private val checker: ChoreographyChecker) : ChortlinSender {
+    class TestSender(private val checker: ChoreographyChecker) : TraceSender {
         override fun send(invocationDTO: InvocationDTO) {
             checker.check(invocationDTO)
         }

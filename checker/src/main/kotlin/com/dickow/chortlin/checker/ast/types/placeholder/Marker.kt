@@ -6,7 +6,7 @@ import com.dickow.chortlin.checker.ast.Label
 import com.dickow.chortlin.checker.ast.types.*
 import com.dickow.chortlin.checker.checker.result.CheckResult
 import com.dickow.chortlin.checker.choreography.Choreography
-import com.dickow.chortlin.checker.choreography.method.ChortlinMethod
+import com.dickow.chortlin.checker.choreography.method.ObservableMethod
 import com.dickow.chortlin.checker.choreography.participant.Participant
 import com.dickow.chortlin.shared.exceptions.InvalidASTException
 import com.dickow.chortlin.shared.observation.ObservableParticipant
@@ -30,13 +30,13 @@ class Marker : ASTNode(null, null), Placeholder {
         return Parallel(path(Choreography.builder()), null, null)
     }
 
-    override fun <C> returnFrom(method: ChortlinMethod<C>, label: String): ASTBuilder {
-        val observableReceiver = ObservableParticipant(method.participant.clazz, method.jvmMethod)
+    override fun <C> returnFrom(observableMethod: ObservableMethod<C>, label: String): ASTBuilder {
+        val observableReceiver = ObservableParticipant(observableMethod.participant.clazz, observableMethod.jvmMethod)
         return ReturnFrom(observableReceiver, Label(label), null, null)
     }
 
-    override fun <C> interaction(sender: Participant, method: ChortlinMethod<C>, label: String): ASTBuilder {
-        val observableReceiver = ObservableParticipant(method.participant.clazz, method.jvmMethod)
+    override fun <C> interaction(sender: Participant, observableMethod: ObservableMethod<C>, label: String): ASTBuilder {
+        val observableReceiver = ObservableParticipant(observableMethod.participant.clazz, observableMethod.jvmMethod)
         return Interaction(sender, observableReceiver, Label(label), null, null)
     }
 

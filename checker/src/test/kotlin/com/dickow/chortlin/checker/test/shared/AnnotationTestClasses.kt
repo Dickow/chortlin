@@ -1,11 +1,11 @@
 package com.dickow.chortlin.checker.test.shared
 
-import com.dickow.chortlin.shared.annotations.ChortlinOnInvoke
-import com.dickow.chortlin.shared.annotations.ChortlinOnReturn
+import com.dickow.chortlin.shared.annotations.TraceInvocation
+import com.dickow.chortlin.shared.annotations.TraceReturn
 
 class Annotated1 {
-    @ChortlinOnInvoke
-    @ChortlinOnReturn
+    @TraceInvocation
+    @TraceReturn
     fun annotatedMethod(input: String): String {
         return input
     }
@@ -16,12 +16,12 @@ class Annotated1 {
 }
 
 class Annotated2 {
-    @ChortlinOnInvoke
+    @TraceInvocation
     fun invocationAnnotatedMethod(input: String): String {
         return input
     }
 
-    @ChortlinOnReturn
+    @TraceReturn
     fun returnAnnotatedMethod(input: String): String {
         return input
     }

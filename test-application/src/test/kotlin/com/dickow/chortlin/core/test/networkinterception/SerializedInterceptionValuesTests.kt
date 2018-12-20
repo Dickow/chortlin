@@ -4,8 +4,8 @@ import com.dickow.chortlin.core.test.shared.AuthResult
 import com.dickow.chortlin.core.test.shared.AuthenticatedService
 import com.dickow.chortlin.core.test.shared.Authentication
 import com.dickow.chortlin.core.test.shared.objects.Receipt
-import com.dickow.chortlin.interception.defaults.ChortlinIntercept
-import com.dickow.chortlin.interception.sending.ChortlinSender
+import com.dickow.chortlin.interception.defaults.DefaultIntercept
+import com.dickow.chortlin.interception.sending.TraceSender
 import com.dickow.chortlin.shared.observation.ObservableFactory
 import com.dickow.chortlin.shared.trace.Invocation
 import com.dickow.chortlin.shared.trace.Return
@@ -17,7 +17,7 @@ import kotlin.test.assertEquals
 
 class SerializedInterceptionValuesTests {
     private val sender = TestSender()
-    private var interceptor = ChortlinIntercept(sender)
+    private var interceptor = DefaultIntercept(sender)
 
     @BeforeEach
     internal fun setUp() {
@@ -55,7 +55,7 @@ class SerializedInterceptionValuesTests {
         interceptor.intercept(trace)
     }
 
-    class TestSender : ChortlinSender {
+    class TestSender : TraceSender {
         var invocationDTOCallback : (InvocationDTO) -> Unit = {}
         var returnDTOCallback : (ReturnDTO) -> Unit = {}
 

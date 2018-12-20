@@ -12,7 +12,7 @@ import com.dickow.chortlin.core.test.shared.AuthResult
 import com.dickow.chortlin.core.test.shared.AuthenticatedService
 import com.dickow.chortlin.core.test.shared.Authentication
 import com.dickow.chortlin.interception.configuration.InterceptionConfiguration
-import com.dickow.chortlin.shared.exceptions.ChortlinRuntimeException
+import com.dickow.chortlin.shared.exceptions.ChoreographyRuntimeException
 import com.dickow.chortlin.shared.exceptions.InvalidChoreographyException
 import com.dickow.chortlin.shared.observation.ObservableParticipant
 import kotlin.test.Test
@@ -93,7 +93,7 @@ class CreateCorrelationSetsTest {
         val authResult2 = authService.authenticate("lars", "4321!")
         itemService.buyItem("test", authResult1)
         itemService.buyItem("horse", authResult2)
-        assertFailsWith(ChortlinRuntimeException::class) { itemService.buyItem("bucket", AuthResult("lars")) }
+        assertFailsWith(ChoreographyRuntimeException::class) { itemService.buyItem("bucket", AuthResult("lars")) }
     }
 
     @Test
@@ -110,6 +110,6 @@ class CreateCorrelationSetsTest {
         val checker = OnlineInstrumentationTests.InterceptingTestChecker(OnlineCheckerFactory.createOnlineChecker(listOf(authenticationChoreography)))
         val sender = OnlineInstrumentationTests.TestSender(checker)
         InterceptionConfiguration.setupInterception(sender)
-        assertFailsWith(ChortlinRuntimeException::class) { authService.authenticate("jeppedickow", "1234!") }
+        assertFailsWith(ChoreographyRuntimeException::class) { authService.authenticate("jeppedickow", "1234!") }
     }
 }
