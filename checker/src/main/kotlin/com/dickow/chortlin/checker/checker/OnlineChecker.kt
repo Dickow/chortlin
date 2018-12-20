@@ -4,6 +4,7 @@ import com.dickow.chortlin.checker.checker.result.CheckResult
 import com.dickow.chortlin.checker.checker.session.Session
 import com.dickow.chortlin.checker.checker.session.SessionManager
 import com.dickow.chortlin.checker.deserialisation.TraceDeserializer
+import com.dickow.chortlin.shared.exceptions.ChoreographyRuntimeException
 import com.dickow.chortlin.shared.trace.TraceElement
 import com.dickow.chortlin.shared.trace.dto.InvocationDTO
 import com.dickow.chortlin.shared.trace.dto.ReturnDTO
@@ -38,7 +39,11 @@ class OnlineChecker(private val sessionManager: SessionManager) : ChoreographyCh
     private fun checkTraceAgainstSession(session: Session, trace: TraceElement): CheckResult {
         val result = check(session, trace)
         when (result) {
-            CheckResult.None -> sessionManager.clearSession(session)
+            CheckResult.None -> {
+                sessionManager.clearSession(session)
+                throw ChoreographyRuntimeException("Unexpected trace encountered: $trace ${System.lineSeparator()}"+
+                "The following traces were observed prior: ${session.observedTraces()}")
+            }
             CheckResult.Full -> sessionManager.clearSession(session)
             CheckResult.Partial -> session.extendKeys(trace)
         }

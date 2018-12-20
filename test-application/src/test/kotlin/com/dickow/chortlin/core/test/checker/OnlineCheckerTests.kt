@@ -11,12 +11,14 @@ import com.dickow.chortlin.checker.correlation.factory.CorrelationFactory.define
 import com.dickow.chortlin.core.test.shared.OnlineFirstClass
 import com.dickow.chortlin.core.test.shared.OnlineSecondClass
 import com.dickow.chortlin.core.test.shared.OnlineThirdClass
+import com.dickow.chortlin.shared.exceptions.ChoreographyRuntimeException
 import com.dickow.chortlin.shared.observation.ObservableFactory.observed
 import com.dickow.chortlin.shared.trace.Invocation
 import com.dickow.chortlin.shared.trace.Return
 import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 class OnlineCheckerTests {
     private val external = external("External client")
@@ -85,7 +87,7 @@ class OnlineCheckerTests {
         assertEquals(CheckResult.Partial, onlineChecker.check(Invocation(observed(OnlineSecondClass::class.java, "method1"), allArguments)))
 
         // Apply the out of order execution
-        assertEquals(CheckResult.None, onlineChecker.check(Invocation(observed(OnlineThirdClass::class.java, "method2"), allArguments)))
+        assertFailsWith(ChoreographyRuntimeException::class) {onlineChecker.check(Invocation(observed(OnlineThirdClass::class.java, "method2"), allArguments))}
     }
 
     @Test
@@ -106,7 +108,7 @@ class OnlineCheckerTests {
         onlineChecker.check(Invocation(observed(OnlineSecondClass::class.java, "method1"), allArguments))
 
         // Apply the out of order execution
-        onlineChecker.check(Invocation(observed(OnlineThirdClass::class.java, "method2"), allArguments))
+        assertFailsWith(ChoreographyRuntimeException::class){onlineChecker.check(Invocation(observed(OnlineThirdClass::class.java, "method2"), allArguments))}
 
         // Then check that a new instance can run
         val allExceptLastTrace = expectedTraceSequence.subList(0, expectedTraceSequence.size - 1)

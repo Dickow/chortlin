@@ -1,6 +1,6 @@
 package com.dickow.chortlin.shared.trace
 
-class Trace(private val traces: List<TraceElement>) {
+data class Trace(private val traces: List<TraceElement>) {
     private var workingTraces = constructWorkingList()
 
     fun getNotConsumed(): MutableList<TraceElementIndexed> {
