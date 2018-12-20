@@ -1,6 +1,5 @@
 package com.dickow.chortlin.core.test.instrumentation
 
-import com.dickow.chortlin.checker.checker.factory.OnlineCheckerFactory
 import com.dickow.chortlin.checker.checker.result.CheckResult
 import com.dickow.chortlin.checker.choreography.Choreography
 import com.dickow.chortlin.checker.choreography.participant.ParticipantFactory.external
@@ -62,15 +61,15 @@ class ApplyInstrumentationTests {
                 .add(correlation(processor.onMethod("process", Second::process), "sid", { sessionId }).noExtensions())
                 .finish()
 
-        val checker = OnlineCheckerFactory.createChecker(
-                Choreography.builder()
-                        .interaction(external, initial.onMethod("begin"), "start")
-                        .interaction(initial, delegate.onMethod("delegate"), "delegate")
-                        .interaction(delegate, processor.onMethod("process"), "processing")
-                        .end().setCorrelation(cset))
+        val choreography = Choreography.builder()
+                .interaction(external, initial.onMethod("begin"), "start")
+                .interaction(initial, delegate.onMethod("delegate"), "delegate")
+                .interaction(delegate, processor.onMethod("process"), "processing")
+                .end().setCorrelation(cset)
+
         Initial().begin()
         assertEquals(3, traces.size)
-        assertEquals(CheckResult.Full, checker.check(Trace(traces)))
+        assertEquals(CheckResult.Full, choreography.start.satisfy(Trace(traces)))
     }
 
     @Test
@@ -84,16 +83,15 @@ class ApplyInstrumentationTests {
                 .add(correlation(processor.onMethod("process", Second::process), "sid", { sessionId }).noExtensions())
                 .finish()
 
-        val checker = OnlineCheckerFactory.createChecker(
-                Choreography.builder()
-                        .interaction(external, delegate.onMethod("delegate"), "start")
-                        .interaction(delegate, initial.onMethod("begin"), "then initial")
-                        .interaction(initial, processor.onMethod("process"), "process it")
-                        .end().setCorrelation(cset)
-        )
+        val choreography = Choreography.builder()
+                .interaction(external, delegate.onMethod("delegate"), "start")
+                .interaction(delegate, initial.onMethod("begin"), "then initial")
+                .interaction(initial, processor.onMethod("process"), "process it")
+                .end().setCorrelation(cset)
+
         Initial().begin()
         assertEquals(3, traces.size)
-        assertEquals(CheckResult.None, checker.check(Trace(traces)))
+        assertEquals(CheckResult.None, choreography.start.satisfy(Trace(traces)))
     }
 
     @Test
@@ -106,21 +104,18 @@ class ApplyInstrumentationTests {
                 .add(correlation(secondClass.onMethod("second", SecondClass::second), "sid", { sessionId }).noExtensions())
                 .add(correlation(thirdClass.onMethod("third", ThirdClass::third), "sid", { sessionId }).noExtensions())
                 .finish()
-
-        val checker = OnlineCheckerFactory.createChecker(
-                Choreography.builder()
-                        .interaction(external, firstClass.onMethod("first"), "initial receive")
-                        .interaction(firstClass, secondClass.onMethod("second"), "second call")
-                        .interaction(secondClass, thirdClass.onMethod("third"), "third call")
-                        .returnFrom(thirdClass.onMethod("third"), "return from third call")
-                        .returnFrom(secondClass.onMethod("second"), "return from Second::second")
-                        .returnFrom(firstClass.onMethod("first"), "return from First::first")
-                        .end().setCorrelation(cset)
-        )
+        val choreography = Choreography.builder()
+                .interaction(external, firstClass.onMethod("first"), "initial receive")
+                .interaction(firstClass, secondClass.onMethod("second"), "second call")
+                .interaction(secondClass, thirdClass.onMethod("third"), "third call")
+                .returnFrom(thirdClass.onMethod("third"), "return from third call")
+                .returnFrom(secondClass.onMethod("second"), "return from Second::second")
+                .returnFrom(firstClass.onMethod("first"), "return from First::first")
+                .end().setCorrelation(cset)
 
         FirstClass().first()
         assertEquals(6, traces.size)
-        assertEquals(CheckResult.Full, checker.check(Trace(traces)))
+        assertEquals(CheckResult.Full, choreography.start.satisfy(Trace(traces)))
     }
 
     @Test
@@ -134,20 +129,18 @@ class ApplyInstrumentationTests {
                 .add(correlation(thirdClass.onMethod("third", ThirdClass::third), "sid", { sessionId }).noExtensions())
                 .finish()
 
-        val checker = OnlineCheckerFactory.createChecker(
-                Choreography.builder()
-                        .interaction(external, firstClass.onMethod("first"), "initial receive")
-                        .interaction(firstClass, secondClass.onMethod("second"), "second call")
-                        .interaction(secondClass, thirdClass.onMethod("third"), "third call")
-                        .returnFrom(thirdClass.onMethod("third"), "return from third call")
-                        .returnFrom(secondClass.onMethod("second"), "return from Second::second")
-                        .returnFrom(firstClass.onMethod("first"), "return from First::first")
-                        .end().setCorrelation(cset)
-        )
+        val choreography = Choreography.builder()
+                .interaction(external, firstClass.onMethod("first"), "initial receive")
+                .interaction(firstClass, secondClass.onMethod("second"), "second call")
+                .interaction(secondClass, thirdClass.onMethod("third"), "third call")
+                .returnFrom(thirdClass.onMethod("third"), "return from third call")
+                .returnFrom(secondClass.onMethod("second"), "return from Second::second")
+                .returnFrom(firstClass.onMethod("first"), "return from First::first")
+                .end().setCorrelation(cset)
 
         SecondClass().second()
         assertEquals(4, traces.size)
-        assertEquals(CheckResult.None, checker.check(Trace(traces)))
+        assertEquals(CheckResult.None, choreography.start.satisfy(Trace(traces)))
     }
 
     @Test
@@ -163,25 +156,23 @@ class ApplyInstrumentationTests {
                 .add(correlation(partialThird3.onMethod("third", PartialThird::third), "sid", { sessionId }).noExtensions())
                 .finish()
 
-        val checker = OnlineCheckerFactory.createChecker(
-                Choreography.builder()
-                        .interaction(external, partialFirst1.onMethod("first"), "initialize calls")
-                        .interaction(partialFirst1, partialFirst1.onMethod("second"), "call second method of first class")
-                        .interaction(partialFirst2, partialSecond2.onMethod("second"), "call second method of second class")
-                        .interaction(partialSecond2, partialSecond2.onMethod("third"), "call third method of second class")
-                        .interaction(partialSecond3, partialThird3.onMethod("third"), "call third method of third class")
-                        .returnFrom(partialThird3.onMethod("third"), "return from the third participant again")
-                        .end().setCorrelation(cset)
-        )
+        val choreography = Choreography.builder()
+                .interaction(external, partialFirst1.onMethod("first"), "initialize calls")
+                .interaction(partialFirst1, partialFirst1.onMethod("second"), "call second method of first class")
+                .interaction(partialFirst2, partialSecond2.onMethod("second"), "call second method of second class")
+                .interaction(partialSecond2, partialSecond2.onMethod("third"), "call third method of second class")
+                .interaction(partialSecond3, partialThird3.onMethod("third"), "call third method of third class")
+                .returnFrom(partialThird3.onMethod("third"), "return from the third participant again")
+                .end().setCorrelation(cset)
 
         PartialFirst().first()
         assertEquals(3, traces.size)
-        assertEquals(CheckResult.Partial, checker.check(Trace(traces)))
+        assertEquals(CheckResult.Partial, choreography.start.satisfy(Trace(traces)))
 
         // Now simulate the remaining invocations manually
         PartialSecond().third()
         PartialThird().third()
         assertEquals(6, traces.size)
-        assertEquals(CheckResult.Full, checker.check(Trace(traces)))
+        assertEquals(CheckResult.Full, choreography.start.satisfy(Trace(traces)))
     }
 }
