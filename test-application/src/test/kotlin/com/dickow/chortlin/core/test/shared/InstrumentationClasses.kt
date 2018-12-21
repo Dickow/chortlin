@@ -1,38 +1,38 @@
 package com.dickow.chortlin.core.test.shared
 
-import com.dickow.chortlin.shared.annotations.ChortlinOnInvoke
-import com.dickow.chortlin.shared.annotations.ChortlinOnReturn
+import com.dickow.chortlin.shared.annotations.TraceInvocation
+import com.dickow.chortlin.shared.annotations.TraceReturn
 
 class Initial {
-    @ChortlinOnInvoke
+    @TraceInvocation
     fun begin() {
         delegate()
     }
 
-    @ChortlinOnInvoke
+    @TraceInvocation
     fun delegate() {
         Second().process()
     }
 }
 
 class Second {
-    @ChortlinOnInvoke
+    @TraceInvocation
     fun process() {
     }
 }
 
 
 class FirstClass {
-    @ChortlinOnInvoke
-    @ChortlinOnReturn
+    @TraceInvocation
+    @TraceReturn
     fun first() {
         SecondClass().second()
     }
 }
 
 class SecondClass {
-    @ChortlinOnInvoke
-    @ChortlinOnReturn
+    @TraceInvocation
+    @TraceReturn
     fun second() {
         ThirdClass().third()
         return
@@ -40,8 +40,8 @@ class SecondClass {
 }
 
 class ThirdClass {
-    @ChortlinOnInvoke
-    @ChortlinOnReturn
+    @TraceInvocation
+    @TraceReturn
     fun third() {
         return
     }
@@ -49,27 +49,27 @@ class ThirdClass {
 
 
 class PartialFirst {
-    @ChortlinOnInvoke
+    @TraceInvocation
     fun first() {
         second()
     }
 
-    @ChortlinOnInvoke
+    @TraceInvocation
     fun second() {
         PartialSecond().second()
     }
 }
 
 class PartialSecond {
-    @ChortlinOnInvoke
+    @TraceInvocation
     fun second() {}
 
-    @ChortlinOnInvoke
+    @TraceInvocation
     fun third() {}
 }
 
 class PartialThird {
-    @ChortlinOnInvoke
-    @ChortlinOnReturn
+    @TraceInvocation
+    @TraceReturn
     fun third() {}
 }

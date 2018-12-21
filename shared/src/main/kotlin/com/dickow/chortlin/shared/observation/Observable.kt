@@ -2,7 +2,7 @@ package com.dickow.chortlin.shared.observation
 
 import java.lang.reflect.Method
 
-abstract class Observable(public val clazz: Class<*>, val method: Method) {
+abstract class Observable(val clazz: Class<*>, val method: Method) {
 
     override fun equals(other: Any?): Boolean {
         return if (other is Observable) {

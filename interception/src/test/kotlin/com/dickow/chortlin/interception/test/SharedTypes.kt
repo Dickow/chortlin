@@ -1,11 +1,11 @@
 package com.dickow.chortlin.interception.test
 
-import com.dickow.chortlin.shared.annotations.ChortlinOnInvoke
-import com.dickow.chortlin.shared.annotations.ChortlinOnReturn
+import com.dickow.chortlin.shared.annotations.TraceInvocation
+import com.dickow.chortlin.shared.annotations.TraceReturn
 
 class Login{
-    @ChortlinOnInvoke
-    @ChortlinOnReturn
+    @TraceInvocation
+    @TraceReturn
     fun authenticate(username: String, password: String) : Boolean{
         return false
     }
@@ -13,14 +13,14 @@ class Login{
 
 class MerchantService{
 
-    @ChortlinOnInvoke
-    @ChortlinOnReturn
+    @TraceInvocation
+    @TraceReturn
     fun buyItem(itemId: Int, buyerId: String) : String{
         return "Success"
     }
 
-    @ChortlinOnInvoke
-    @ChortlinOnReturn
+    @TraceInvocation
+    @TraceReturn
     fun sellItem(itemId: Int, price: Int){}
 }
 

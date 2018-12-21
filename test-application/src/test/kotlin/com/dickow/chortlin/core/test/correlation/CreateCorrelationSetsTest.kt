@@ -1,20 +1,18 @@
 package com.dickow.chortlin.core.test.correlation
 
-import com.dickow.chortlin.checker.checker.factory.CheckerFactory
+import com.dickow.chortlin.checker.checker.factory.OnlineCheckerFactory
 import com.dickow.chortlin.checker.choreography.Choreography
 import com.dickow.chortlin.checker.choreography.participant.ParticipantFactory.external
 import com.dickow.chortlin.checker.choreography.participant.ParticipantFactory.participant
 import com.dickow.chortlin.checker.correlation.CorrelationValue
 import com.dickow.chortlin.checker.correlation.factory.CorrelationFactory.correlation
 import com.dickow.chortlin.checker.correlation.factory.CorrelationFactory.defineCorrelation
-import com.dickow.chortlin.checker.receiver.ChortlinReceiverFactory
-import com.dickow.chortlin.core.test.networkinterception.SerializedInterceptionValuesTests
+import com.dickow.chortlin.core.test.instrumentation.OnlineInstrumentationTests
 import com.dickow.chortlin.core.test.shared.AuthResult
 import com.dickow.chortlin.core.test.shared.AuthenticatedService
 import com.dickow.chortlin.core.test.shared.Authentication
-import com.dickow.chortlin.core.test.shared.TestErrorCallback
 import com.dickow.chortlin.interception.configuration.InterceptionConfiguration
-import com.dickow.chortlin.shared.exceptions.ChortlinRuntimeException
+import com.dickow.chortlin.shared.exceptions.ChoreographyRuntimeException
 import com.dickow.chortlin.shared.exceptions.InvalidChoreographyException
 import com.dickow.chortlin.shared.observation.ObservableParticipant
 import kotlin.test.Test
@@ -48,13 +46,6 @@ class CreateCorrelationSetsTest {
                     .noExtensions())
             .finish()
 
-    init {
-        val receiver = ChortlinReceiverFactory.setupSynchronousReceiver(listOf(authenticationChoreography), TestErrorCallback())
-        val sender = SerializedInterceptionValuesTests.TestSender(receiver)
-        InterceptionConfiguration.setupInterception(sender)
-    }
-
-
     @Test
     fun `create correlation set for small choreography`() {
         // Try to apply the correlation function to an invocation
@@ -73,13 +64,16 @@ class CreateCorrelationSetsTest {
                         .finish())
 
         assertFailsWith(InvalidChoreographyException::class) {
-            CheckerFactory.createChecker(authenticationChoreography)
+            OnlineCheckerFactory.createOnlineChecker(listOf(authenticationChoreography))
         }
     }
 
     @Test
     fun `expect success when running multiple instances of the services with correlation sets`() {
         authenticationChoreography.setCorrelation(cset)
+        val checker = OnlineInstrumentationTests.InterceptingTestChecker(OnlineCheckerFactory.createOnlineChecker(listOf(authenticationChoreography)))
+        val sender = OnlineInstrumentationTests.TestSender(checker)
+        InterceptionConfiguration.setupInterception(sender)
 
         val authResult1 = authService.authenticate("jeppedickow", "1234!")
         val authResult2 = authService.authenticate("lars", "4321!")
@@ -92,11 +86,14 @@ class CreateCorrelationSetsTest {
     @Test
     fun `expect error when executing a session in the wrong order`() {
         authenticationChoreography.setCorrelation(cset)
+        val checker = OnlineInstrumentationTests.InterceptingTestChecker(OnlineCheckerFactory.createOnlineChecker(listOf(authenticationChoreography)))
+        val sender = OnlineInstrumentationTests.TestSender(checker)
+        InterceptionConfiguration.setupInterception(sender)
         val authResult1 = authService.authenticate("jeppedickow", "1234!")
         val authResult2 = authService.authenticate("lars", "4321!")
         itemService.buyItem("test", authResult1)
         itemService.buyItem("horse", authResult2)
-        assertFailsWith(ChortlinRuntimeException::class) { itemService.buyItem("bucket", AuthResult("lars")) }
+        assertFailsWith(ChoreographyRuntimeException::class) { itemService.buyItem("bucket", AuthResult("lars")) }
     }
 
     @Test
@@ -110,6 +107,9 @@ class CreateCorrelationSetsTest {
                         .add(correlation(buyService.onMethod("buyItem", AuthenticatedService::buyItem), "userId", buyerCorrelation)
                                 .noExtensions())
                         .finish())
-        assertFailsWith(ChortlinRuntimeException::class) { authService.authenticate("jeppedickow", "1234!") }
+        val checker = OnlineInstrumentationTests.InterceptingTestChecker(OnlineCheckerFactory.createOnlineChecker(listOf(authenticationChoreography)))
+        val sender = OnlineInstrumentationTests.TestSender(checker)
+        InterceptionConfiguration.setupInterception(sender)
+        assertFailsWith(ChoreographyRuntimeException::class) { authService.authenticate("jeppedickow", "1234!") }
     }
 }

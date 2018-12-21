@@ -1,31 +1,31 @@
 package com.dickow.chortlin.core.test.shared
 
-import com.dickow.chortlin.shared.annotations.ChortlinOnInvoke
-import com.dickow.chortlin.shared.annotations.ChortlinOnReturn
+import com.dickow.chortlin.shared.annotations.TraceInvocation
+import com.dickow.chortlin.shared.annotations.TraceReturn
 
 class OnlineFirstClass {
-    @ChortlinOnInvoke
-    @ChortlinOnReturn
+    @TraceInvocation
+    @TraceReturn
     fun method1() {}
-    @ChortlinOnInvoke
-    @ChortlinOnReturn
+    @TraceInvocation
+    @TraceReturn
     fun method2() {}
 }
 
 class OnlineSecondClass {
-    @ChortlinOnInvoke
-    @ChortlinOnReturn
+    @TraceInvocation
+    @TraceReturn
     fun method1() {}
-    @ChortlinOnInvoke
-    @ChortlinOnReturn
+    @TraceInvocation
+    @TraceReturn
     fun method2() {}
 }
 
 class OnlineThirdClass {
-    @ChortlinOnInvoke
-    @ChortlinOnReturn
+    @TraceInvocation
+    @TraceReturn
     fun method1() {}
-    @ChortlinOnInvoke
-    @ChortlinOnReturn
+    @TraceInvocation
+    @TraceReturn
     fun method2() {}
 }

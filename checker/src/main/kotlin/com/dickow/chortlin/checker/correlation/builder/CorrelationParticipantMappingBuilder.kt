@@ -1,7 +1,7 @@
 package com.dickow.chortlin.checker.correlation.builder
 
 import com.dickow.chortlin.checker.correlation.Correlation
-import com.dickow.chortlin.checker.correlation.CorrelationParticipantMapping
+import com.dickow.chortlin.checker.correlation.CorrelationDefinition
 import java.util.*
 
 class CorrelationParticipantMappingBuilder {
@@ -12,7 +12,7 @@ class CorrelationParticipantMappingBuilder {
         return this
     }
 
-    fun finish(): CorrelationParticipantMapping {
-        return CorrelationParticipantMapping(correlations)
+    fun finish(): CorrelationDefinition {
+        return CorrelationDefinition(correlations)
     }
 }

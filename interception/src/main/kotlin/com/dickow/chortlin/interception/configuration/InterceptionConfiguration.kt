@@ -1,13 +1,13 @@
 package com.dickow.chortlin.interception.configuration
 
-import com.dickow.chortlin.interception.defaults.ChortlinIntercept
+import com.dickow.chortlin.interception.defaults.DefaultIntercept
 import com.dickow.chortlin.interception.instrumentation.ByteBuddyInstrumentation
-import com.dickow.chortlin.interception.sending.ChortlinSender
+import com.dickow.chortlin.interception.sending.TraceSender
 
 object InterceptionConfiguration {
     @JvmStatic
-    fun setupInterception(sender : ChortlinSender){
+    fun setupInterception(sender : TraceSender){
         ByteBuddyInstrumentation.instrumentAnnotatedMethods()
-        InterceptionStrategy.strategy = ChortlinIntercept(sender)
+        InterceptionStrategy.strategy = DefaultIntercept(sender)
     }
 }
