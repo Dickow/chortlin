@@ -30,14 +30,14 @@ abstract class ASTNode(var previous: ASTNode?, var next: ASTNode?) : ASTBuilder,
         return next
     }
 
-    override fun <C> returnFrom(observableMethod: ObservableMethod<C>, label: String): ASTBuilder {
+    override fun returnFrom(observableMethod: ObservableMethod, label: String): ASTBuilder {
         val observableReceiver = ObservableParticipant(observableMethod.participant.clazz, observableMethod.jvmMethod)
         val next = ReturnFrom(observableReceiver, Label(label), this, null)
         this.next = next
         return next
     }
 
-    override fun <C> interaction(sender: Participant, observableMethod: ObservableMethod<C>, label: String): ASTBuilder {
+    override fun interaction(sender: Participant, observableMethod: ObservableMethod, label: String): ASTBuilder {
         val observableReceiver = ObservableParticipant(observableMethod.participant.clazz, observableMethod.jvmMethod)
         val next = Interaction(sender, observableReceiver, Label(label), this, null)
         this.next = next

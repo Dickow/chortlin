@@ -2,9 +2,11 @@ package com.dickow.chortlin.shared.trace
 
 import com.dickow.chortlin.shared.observation.Observation
 
-data class Return(private val observation: Observation, private val allArguments: Array<Any?>, val returnValue: Any?) : TraceElement() {
-    override fun getArguments(): Array<Any?> {
-        return allArguments
+data class Return(private val observation: Observation,
+                  private val argumentTree: Map<*, *>,
+                  val returnValue: Map<*, *>) : TraceElement() {
+    override fun getArgumentTree(): Map<*, *> {
+        return argumentTree
     }
 
     override fun getObservation(): Observation {
@@ -16,16 +18,11 @@ data class Return(private val observation: Observation, private val allArguments
         if (other !is Return) return false
 
         if (observation != other.observation) return false
-        if (!allArguments.contentEquals(other.allArguments)) return false
-        if (returnValue != other.returnValue) return false
 
         return true
     }
 
     override fun hashCode(): Int {
-        var result = observation.hashCode()
-        result = 31 * result + allArguments.contentHashCode()
-        result = 31 * result + returnValue.hashCode()
-        return result
+        return observation.hashCode()
     }
 }

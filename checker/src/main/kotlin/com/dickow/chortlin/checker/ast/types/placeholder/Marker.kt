@@ -30,12 +30,12 @@ class Marker : ASTNode(null, null), Placeholder {
         return Parallel(path(Choreography.builder()), null, null)
     }
 
-    override fun <C> returnFrom(observableMethod: ObservableMethod<C>, label: String): ASTBuilder {
+    override fun returnFrom(observableMethod: ObservableMethod, label: String): ASTBuilder {
         val observableReceiver = ObservableParticipant(observableMethod.participant.clazz, observableMethod.jvmMethod)
         return ReturnFrom(observableReceiver, Label(label), null, null)
     }
 
-    override fun <C> interaction(sender: Participant, observableMethod: ObservableMethod<C>, label: String): ASTBuilder {
+    override fun interaction(sender: Participant, observableMethod: ObservableMethod, label: String): ASTBuilder {
         val observableReceiver = ObservableParticipant(observableMethod.participant.clazz, observableMethod.jvmMethod)
         return Interaction(sender, observableReceiver, Label(label), null, null)
     }

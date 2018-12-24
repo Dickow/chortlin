@@ -25,7 +25,14 @@
             <scope>compile</scope>
         </dependency>
 
-        <!-- GSON -->
+        <!-- GOOGLE PROTOBUF -->
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java</artifactId>
+            <version>3.6.1</version>
+        </dependency>
+
+        <!-- GOOGLE GSON -->
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
@@ -61,6 +68,28 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>com.github.os72</groupId>
+                <artifactId>protoc-jar-maven-plugin</artifactId>
+                <version>3.6.0.2</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <outputTargets>
+                                <outputTarget>
+                                    <type>java</type>
+                                    <outputDirectory>src/main/java</outputDirectory>
+                                </outputTarget>
+                            </outputTargets>
+                            <includeStdTypes>false</includeStdTypes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <!-- KOTLIN COMPILER -->
             <plugin>
                 <artifactId>kotlin-maven-plugin</artifactId>

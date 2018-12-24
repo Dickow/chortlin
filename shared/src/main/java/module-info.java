@@ -1,6 +1,7 @@
 module chortlin.shared {
     requires kotlin.stdlib;
-    requires gson;
+    requires transitive protobuf.java;
+    requires transitive gson;
 
     exports com.dickow.chortlin.shared.exceptions;
     exports com.dickow.chortlin.shared.exceptions.factory;
@@ -9,7 +10,6 @@ module chortlin.shared {
     exports com.dickow.chortlin.shared.trace;
     exports com.dickow.chortlin.shared.annotations;
     exports com.dickow.chortlin.shared.annotations.util;
-
-    exports com.dickow.chortlin.shared.trace.dto;
-    opens com.dickow.chortlin.shared.trace.dto;
+    exports com.dickow.chortlin.shared.trace.protobuf;
+    exports com.dickow.chortlin.shared.transformation;
 }

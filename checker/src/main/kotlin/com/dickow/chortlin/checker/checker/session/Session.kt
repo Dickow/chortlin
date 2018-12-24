@@ -29,7 +29,7 @@ class Session(val sessionId: UUID, val choreography: Choreography, trace: TraceE
     }
 
     fun correlatesTo(trace: TraceElement): Boolean {
-        val key = choreography.getCorrelation(trace.getObservation())?.retrieveKey(trace.getArguments())
+        val key = choreography.getCorrelation(trace.getObservation())?.retrieveKey(trace.getArgumentTree())
         return if (key == null) {
             false
         } else {

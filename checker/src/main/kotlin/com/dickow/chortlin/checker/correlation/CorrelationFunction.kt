@@ -1,8 +1,10 @@
 package com.dickow.chortlin.checker.correlation
 
-import com.dickow.chortlin.shared.trace.TraceElement
+import com.dickow.chortlin.checker.correlation.path.Path
 
-abstract class CorrelationFunction {
-    abstract fun apply(args: Array<Any?>): CorrelationValue
-    abstract fun applicableTo(trace: TraceElement): Boolean
+class CorrelationFunction(private val key: String, private val path: Path) {
+    fun apply(arguments: Any?): CorrelationValue {
+        val value = path.apply(arguments)
+        return CorrelationValue(key, value)
+    }
 }

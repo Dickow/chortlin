@@ -15,8 +15,6 @@ import com.dickow.chortlin.interception.configuration.InterceptionConfiguration
 import com.dickow.chortlin.interception.sending.TraceSender
 import com.dickow.chortlin.shared.exceptions.ChoreographyRuntimeException
 import com.dickow.chortlin.shared.trace.TraceElement
-import com.dickow.chortlin.shared.trace.dto.InvocationDTO
-import com.dickow.chortlin.shared.trace.dto.ReturnDTO
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -55,7 +53,7 @@ class OnlineInstrumentationTests {
                 .end().setCorrelation(cset)
         val checker = InterceptingTestChecker(OnlineCheckerFactory.createOnlineChecker(listOf(choreography)))
         val sender = TestSender(checker)
-        InterceptionConfiguration.setupInterception(sender)
+        InterceptionConfiguration.setupCustomInterception(sender)
 
         OnlineInstrumentFirstClass().method1()
         OnlineInstrumentFirstClass().method2()
@@ -84,7 +82,7 @@ class OnlineInstrumentationTests {
                 .end().setCorrelation(cset)
         val checker = InterceptingTestChecker(OnlineCheckerFactory.createOnlineChecker(listOf(choreography)))
         val sender = TestSender(checker)
-        InterceptionConfiguration.setupInterception(sender)
+        InterceptionConfiguration.setupCustomInterception(sender)
 
         OnlineInstrumentFirstClass().method1()
         assertFailsWith(ChoreographyRuntimeException::class) { OnlineInstrumentSecondClass().method1() } // Out of order execution
@@ -132,7 +130,7 @@ class OnlineInstrumentationTests {
 
         val checker = InterceptingTestChecker(OnlineCheckerFactory.createOnlineChecker(listOf(choreography1, choreography2)))
         val sender = TestSender(checker)
-        InterceptionConfiguration.setupInterception(sender)
+        InterceptionConfiguration.setupCustomInterception(sender)
 
         val thread1 = GlobalScope.async {
             OnlineInstrumentFirstClass().method1()
@@ -191,7 +189,7 @@ class OnlineInstrumentationTests {
 
         val checker = InterceptingTestChecker(OnlineCheckerFactory.createOnlineChecker(listOf(choreography1, choreography2)))
         val sender = TestSender(checker)
-        InterceptionConfiguration.setupInterception(sender)
+        InterceptionConfiguration.setupCustomInterception(sender)
 
         val thread1 = GlobalScope.async {
             OnlineInstrumentFirstClass().method1()

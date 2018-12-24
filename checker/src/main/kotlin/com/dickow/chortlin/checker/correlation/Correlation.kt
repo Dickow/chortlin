@@ -7,24 +7,27 @@ import com.dickow.chortlin.shared.trace.TraceElement
 
 class Correlation(
         val observable: Observable,
-        private val correlationFunction: InputTypesFunction,
-        val addFunctions: List<CorrelationFunction>) {
+        private val correlationFunction: CorrelationFunction,
+        private val inputFunctions: List<InputTypesFunction>,
+        private val returnFunctions: List<ReturnTypesFunction>) {
 
-    fun retrieveKey(arguments: Array<Any?>): Any? {
+    fun retrieveKey(arguments: Any?): Any? {
         return correlationFunction.apply(arguments)
     }
 
     fun getAdditionKeys(trace: TraceElement): Set<CorrelationValue> {
-        val applicableFunctions = addFunctions.filter { func -> func.applicableTo(trace) }
         return when (trace) {
             is Invocation -> {
-                applicableFunctions.map { func -> func.apply(trace.getArguments()) }.toMutableSet()
+                inputFunctions.map { func -> func.apply(trace.getArgumentTree()) }.toMutableSet()
             }
             is Return -> {
-                val input = if (trace.returnValue == null) arrayOf(); else arrayOf(trace.returnValue)
-                applicableFunctions.map { func -> func.apply(input) }.toMutableSet()
+                returnFunctions.map { func -> func.apply(trace.returnValue) }.toMutableSet()
             }
             else -> return emptySet()
         }
+    }
+
+    fun hasInputFunctions(): Boolean {
+        return inputFunctions.isNotEmpty()
     }
 }

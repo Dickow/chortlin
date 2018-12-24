@@ -73,7 +73,7 @@ class CreateCorrelationSetsTest {
         authenticationChoreography.setCorrelation(cset)
         val checker = OnlineInstrumentationTests.InterceptingTestChecker(OnlineCheckerFactory.createOnlineChecker(listOf(authenticationChoreography)))
         val sender = OnlineInstrumentationTests.TestSender(checker)
-        InterceptionConfiguration.setupInterception(sender)
+        InterceptionConfiguration.setupCustomInterception(sender)
 
         val authResult1 = authService.authenticate("jeppedickow", "1234!")
         val authResult2 = authService.authenticate("lars", "4321!")
@@ -88,7 +88,7 @@ class CreateCorrelationSetsTest {
         authenticationChoreography.setCorrelation(cset)
         val checker = OnlineInstrumentationTests.InterceptingTestChecker(OnlineCheckerFactory.createOnlineChecker(listOf(authenticationChoreography)))
         val sender = OnlineInstrumentationTests.TestSender(checker)
-        InterceptionConfiguration.setupInterception(sender)
+        InterceptionConfiguration.setupCustomInterception(sender)
         val authResult1 = authService.authenticate("jeppedickow", "1234!")
         val authResult2 = authService.authenticate("lars", "4321!")
         itemService.buyItem("test", authResult1)
@@ -109,7 +109,7 @@ class CreateCorrelationSetsTest {
                         .finish())
         val checker = OnlineInstrumentationTests.InterceptingTestChecker(OnlineCheckerFactory.createOnlineChecker(listOf(authenticationChoreography)))
         val sender = OnlineInstrumentationTests.TestSender(checker)
-        InterceptionConfiguration.setupInterception(sender)
+        InterceptionConfiguration.setupCustomInterception(sender)
         assertFailsWith(ChoreographyRuntimeException::class) { authService.authenticate("jeppedickow", "1234!") }
     }
 }

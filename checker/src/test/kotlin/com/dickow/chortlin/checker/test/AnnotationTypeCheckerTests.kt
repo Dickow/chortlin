@@ -3,6 +3,7 @@ package com.dickow.chortlin.checker.test
 import com.dickow.chortlin.checker.ast.validation.ASTValidator
 import com.dickow.chortlin.checker.choreography.Choreography
 import com.dickow.chortlin.checker.choreography.participant.ParticipantFactory
+import com.dickow.chortlin.checker.correlation.builder.PathBuilder.Builder.root
 import com.dickow.chortlin.checker.correlation.factory.CorrelationFactory.correlation
 import com.dickow.chortlin.checker.correlation.factory.CorrelationFactory.defineCorrelation
 import com.dickow.chortlin.checker.test.shared.Annotated1
@@ -18,19 +19,19 @@ class AnnotationTypeCheckerTests {
     private val annotationClass2 = ParticipantFactory.participant(Annotated2::class.java)
 
     private val cdef = defineCorrelation()
-            .add(correlation(annotationClass1.onMethod("annotatedMethod", Annotated1::annotatedMethod),
-                    "in", { input: String -> input })
-                    .extendFromInput("in", { input: String -> input })
+            .add(correlation(annotationClass1.onMethod("annotatedMethod"),
+                    "in", root().build())
+                    .extendFromInput("in", root().build())
                     .done())
-            .add(correlation(annotationClass1.onMethod("nonAnnotatedMethod", Annotated1::nonAnnotatedMethod),
-                    "in", { input: String -> input }).done())
-            .add(correlation(annotationClass2.onMethod("invocationAnnotatedMethod", Annotated2::invocationAnnotatedMethod),
-                    "in", { input: String -> input })
-                    .extendFromInput("in", { input: String -> input })
+            .add(correlation(annotationClass1.onMethod("nonAnnotatedMethod"),
+                    "in", root().build()).done())
+            .add(correlation(annotationClass2.onMethod("invocationAnnotatedMethod"),
+                    "in", root().build())
+                    .extendFromInput("in", root().build())
                     .done())
-            .add(correlation(annotationClass2.onMethod("returnAnnotatedMethod", Annotated2::returnAnnotatedMethod),
-                    "in", { input: String -> input })
-                    .extendFromInput("in", { input: String -> input })
+            .add(correlation(annotationClass2.onMethod("returnAnnotatedMethod"),
+                    "in", root().build())
+                    .extendFromInput("in", root().build())
                     .done())
             .finish()
 

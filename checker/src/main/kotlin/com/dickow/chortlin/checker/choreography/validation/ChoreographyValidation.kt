@@ -26,7 +26,7 @@ class ChoreographyValidation(private val choreography: Choreography) : ASTVisito
         throw InvalidChoreographyException("Unexpected choice node encountered")
     }
 
-    private fun validFirstNode(correlation: Correlation) = correlation.addFunctions.isNotEmpty()
+    private fun validFirstNode(correlation: Correlation) = correlation.hasInputFunctions()
     private fun isFirstNode(astNode: ASTNode) = astNode.previous == null
 
     private fun checkNode(astNode: ASTNode, participant: ObservableParticipant) {

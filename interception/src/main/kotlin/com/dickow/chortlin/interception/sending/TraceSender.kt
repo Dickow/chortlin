@@ -1,9 +1,8 @@
 package com.dickow.chortlin.interception.sending
 
-import com.dickow.chortlin.shared.trace.dto.InvocationDTO
-import com.dickow.chortlin.shared.trace.dto.ReturnDTO
+import com.dickow.chortlin.shared.trace.protobuf.DtoDefinitions
 
 interface TraceSender {
-    fun send(invocationDTO: InvocationDTO)
-    fun send(returnDTO: ReturnDTO)
+    fun send(invocationDTO: DtoDefinitions.InvocationDTO)
+    fun send(returnDTO: DtoDefinitions.ReturnDTO)
 }
