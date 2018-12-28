@@ -1,11 +1,15 @@
 package com.dickow.chortlin.checker.choreography.participant
 
-@Suppress("UNUSED_PARAMETER")
 object ParticipantFactory {
 
     @JvmStatic
-    fun <C> participant(clazz: Class<C>): InternalParticipant<C> {
-        return InternalParticipant(clazz)
+    fun participant(classCanonicalName: String): InternalParticipant {
+        return InternalParticipant(classCanonicalName)
+    }
+
+    @JvmStatic
+    fun participant(clazz: Class<*>) : InternalParticipant {
+        return InternalParticipant(clazz.canonicalName)
     }
 
     @JvmStatic

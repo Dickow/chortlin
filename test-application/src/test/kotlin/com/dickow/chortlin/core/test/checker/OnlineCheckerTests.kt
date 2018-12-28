@@ -15,7 +15,6 @@ import com.dickow.chortlin.core.test.shared.OnlineThirdClass
 import com.dickow.chortlin.core.test.shared.builder.TestObservableBuilder.buildInvocation
 import com.dickow.chortlin.core.test.shared.builder.TestObservableBuilder.buildReturn
 import com.dickow.chortlin.shared.exceptions.ChoreographyRuntimeException
-import com.dickow.chortlin.shared.observation.ObservableFactory.observed
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -56,18 +55,18 @@ class OnlineCheckerTests {
             .setCorrelation(cdef)
 
     private val expectedTraceSequence = listOf(
-            buildInvocation(observed(OnlineFirstClass::class.java, "method1"), allArguments),
-            buildInvocation(observed(OnlineFirstClass::class.java, "method2"), allArguments),
-            buildInvocation(observed(OnlineSecondClass::class.java, "method1"), allArguments),
-            buildInvocation(observed(OnlineSecondClass::class.java, "method2"), allArguments),
-            buildInvocation(observed(OnlineThirdClass::class.java, "method1"), allArguments),
-            buildInvocation(observed(OnlineThirdClass::class.java, "method2"), allArguments),
-            buildReturn(observed(OnlineThirdClass::class.java, "method2"), allArguments, returnValue),
-            buildReturn(observed(OnlineThirdClass::class.java, "method1"), allArguments, returnValue),
-            buildReturn(observed(OnlineSecondClass::class.java, "method2"), allArguments, returnValue),
-            buildReturn(observed(OnlineSecondClass::class.java, "method1"), allArguments, returnValue),
-            buildReturn(observed(OnlineFirstClass::class.java, "method2"), allArguments, returnValue),
-            buildReturn(observed(OnlineFirstClass::class.java, "method1"), allArguments, returnValue)
+            buildInvocation(OnlineFirstClass::class.java, "method1", allArguments),
+            buildInvocation(OnlineFirstClass::class.java, "method2", allArguments),
+            buildInvocation(OnlineSecondClass::class.java, "method1", allArguments),
+            buildInvocation(OnlineSecondClass::class.java, "method2", allArguments),
+            buildInvocation(OnlineThirdClass::class.java, "method1", allArguments),
+            buildInvocation(OnlineThirdClass::class.java, "method2", allArguments),
+            buildReturn(OnlineThirdClass::class.java, "method2", allArguments, returnValue),
+            buildReturn(OnlineThirdClass::class.java, "method1", allArguments, returnValue),
+            buildReturn(OnlineSecondClass::class.java, "method2", allArguments, returnValue),
+            buildReturn(OnlineSecondClass::class.java, "method1", allArguments, returnValue),
+            buildReturn(OnlineFirstClass::class.java, "method2", allArguments, returnValue),
+            buildReturn(OnlineFirstClass::class.java, "method1", allArguments, returnValue)
     )
 
     @Test
@@ -82,15 +81,15 @@ class OnlineCheckerTests {
     fun `ensure that out of order execution is rejected`() {
         val onlineChecker = OnlineChecker(InMemorySessionManager(listOf(choreography)))
         assertEquals(CheckResult.Partial,
-                onlineChecker.check(buildInvocation(observed(OnlineFirstClass::class.java, "method1"), allArguments)))
+                onlineChecker.check(buildInvocation(OnlineFirstClass::class.java, "method1", allArguments)))
         assertEquals(CheckResult.Partial,
-                onlineChecker.check(buildInvocation(observed(OnlineFirstClass::class.java, "method2"), allArguments)))
+                onlineChecker.check(buildInvocation(OnlineFirstClass::class.java, "method2", allArguments)))
         assertEquals(CheckResult.Partial,
-                onlineChecker.check(buildInvocation(observed(OnlineSecondClass::class.java, "method1"), allArguments)))
+                onlineChecker.check(buildInvocation(OnlineSecondClass::class.java, "method1", allArguments)))
 
         // Apply the out of order execution
         assertFailsWith(ChoreographyRuntimeException::class) {
-            onlineChecker.check(buildInvocation(observed(OnlineThirdClass::class.java, "method2"), allArguments))
+            onlineChecker.check(buildInvocation(OnlineThirdClass::class.java, "method2", allArguments))
         }
     }
 
@@ -107,13 +106,13 @@ class OnlineCheckerTests {
     @Test
     fun `check that a new instance can start when one has failed`() {
         val onlineChecker = OnlineChecker(InMemorySessionManager(listOf(choreography)))
-        onlineChecker.check(buildInvocation(observed(OnlineFirstClass::class.java, "method1"), allArguments))
-        onlineChecker.check(buildInvocation(observed(OnlineFirstClass::class.java, "method2"), allArguments))
-        onlineChecker.check(buildInvocation(observed(OnlineSecondClass::class.java, "method1"), allArguments))
+        onlineChecker.check(buildInvocation(OnlineFirstClass::class.java, "method1", allArguments))
+        onlineChecker.check(buildInvocation(OnlineFirstClass::class.java, "method2", allArguments))
+        onlineChecker.check(buildInvocation(OnlineSecondClass::class.java, "method1", allArguments))
 
         // Apply the out of order execution
         assertFailsWith(ChoreographyRuntimeException::class) {
-            onlineChecker.check(buildInvocation(observed(OnlineThirdClass::class.java, "method2"), allArguments))
+            onlineChecker.check(buildInvocation(OnlineThirdClass::class.java, "method2", allArguments))
         }
 
         // Then check that a new instance can run
@@ -151,18 +150,18 @@ class OnlineCheckerTests {
                 .end().setCorrelation(cset2)
         val checker = OnlineChecker(InMemorySessionManager(listOf(choreography1, choreography2)))
         assertEquals(CheckResult.Partial,
-                checker.check(buildInvocation(observed(OnlineFirstClass::class.java, "method1"), allArguments))) // Choreography 1
+                checker.check(buildInvocation(OnlineFirstClass::class.java, "method1", allArguments))) // Choreography 1
         assertEquals(CheckResult.Partial,
-                checker.check(buildInvocation(observed(OnlineSecondClass::class.java, "method2"), allArguments))) // Choreography 2
+                checker.check(buildInvocation(OnlineSecondClass::class.java, "method2", allArguments))) // Choreography 2
         assertEquals(CheckResult.Partial,
-                checker.check(buildInvocation(observed(OnlineFirstClass::class.java, "method2"), allArguments))) // Choreography 1
+                checker.check(buildInvocation(OnlineFirstClass::class.java, "method2", allArguments))) // Choreography 1
         assertEquals(CheckResult.Partial,
-                checker.check(buildInvocation(observed(OnlineSecondClass::class.java, "method1"), allArguments))) // Choreography 1
+                checker.check(buildInvocation(OnlineSecondClass::class.java, "method1", allArguments))) // Choreography 1
         assertEquals(CheckResult.Partial,
-                checker.check(buildInvocation(observed(OnlineThirdClass::class.java, "method1"), allArguments))) // Choreography 2
+                checker.check(buildInvocation(OnlineThirdClass::class.java, "method1", allArguments))) // Choreography 2
         assertEquals(CheckResult.Full,
-                checker.check(buildReturn(observed(OnlineSecondClass::class.java, "method1"), allArguments, returnValue))) // Choreography 1
+                checker.check(buildReturn(OnlineSecondClass::class.java, "method1", allArguments, returnValue))) // Choreography 1
         assertEquals(CheckResult.Full,
-                checker.check(buildInvocation(observed(OnlineThirdClass::class.java, "method2"), allArguments))) // Choreography 2
+                checker.check(buildInvocation(OnlineThirdClass::class.java, "method2", allArguments))) // Choreography 2
     }
 }

@@ -3,7 +3,7 @@ package com.dickow.chortlin.checker.ast.types
 import com.dickow.chortlin.checker.ast.ASTVisitor
 import com.dickow.chortlin.checker.checker.result.CheckResult
 import com.dickow.chortlin.checker.choreography.Choreography
-import com.dickow.chortlin.shared.trace.Trace
+import com.dickow.chortlin.checker.trace.Trace
 
 
 class Choice(val possiblePaths: List<Choreography>, previous: ASTNode?) : ASTNode(previous, null) {

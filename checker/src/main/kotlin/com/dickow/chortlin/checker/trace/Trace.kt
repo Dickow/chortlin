@@ -1,4 +1,4 @@
-package com.dickow.chortlin.shared.trace
+package com.dickow.chortlin.checker.trace
 
 data class Trace(private val traces: List<TraceElement>) {
     private var workingTraces = constructWorkingList()

@@ -3,8 +3,8 @@ package com.dickow.chortlin.checker.checker.session
 import com.dickow.chortlin.checker.choreography.Choreography
 import com.dickow.chortlin.checker.correlation.CorrelationValue
 import com.dickow.chortlin.shared.observation.Observable
-import com.dickow.chortlin.shared.trace.Trace
-import com.dickow.chortlin.shared.trace.TraceElement
+import com.dickow.chortlin.checker.trace.Trace
+import com.dickow.chortlin.checker.trace.TraceElement
 import java.util.*
 
 class Session(val sessionId: UUID, val choreography: Choreography, trace: TraceElement) {

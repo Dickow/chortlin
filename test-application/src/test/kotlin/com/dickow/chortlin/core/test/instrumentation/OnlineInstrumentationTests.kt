@@ -9,13 +9,13 @@ import com.dickow.chortlin.checker.choreography.participant.ParticipantFactory.p
 import com.dickow.chortlin.checker.correlation.builder.PathBuilder.Builder.root
 import com.dickow.chortlin.checker.correlation.factory.CorrelationFactory.correlation
 import com.dickow.chortlin.checker.correlation.factory.CorrelationFactory.defineCorrelation
+import com.dickow.chortlin.checker.trace.TraceElement
 import com.dickow.chortlin.core.test.shared.OnlineInstrumentFirstClass
 import com.dickow.chortlin.core.test.shared.OnlineInstrumentSecondClass
 import com.dickow.chortlin.core.test.shared.OnlineInstrumentThirdClass
 import com.dickow.chortlin.interception.configuration.InterceptionConfiguration
 import com.dickow.chortlin.interception.sending.TraceSender
 import com.dickow.chortlin.shared.exceptions.ChoreographyRuntimeException
-import com.dickow.chortlin.shared.trace.TraceElement
 import com.dickow.chortlin.shared.trace.protobuf.DtoDefinitions
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async

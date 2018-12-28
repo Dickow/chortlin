@@ -1,20 +1,24 @@
 package com.dickow.chortlin.core.test.shared.builder
 
-import com.dickow.chortlin.shared.observation.Observable
-import com.dickow.chortlin.shared.trace.Invocation
-import com.dickow.chortlin.shared.trace.Return
-import com.dickow.chortlin.shared.transformation.TraceBuilder
+import com.dickow.chortlin.checker.trace.Invocation
+import com.dickow.chortlin.checker.trace.Return
+import com.dickow.chortlin.checker.trace.TraceFactory
+import com.dickow.chortlin.interception.dto.TraceDTOFactory
+import com.dickow.chortlin.interception.observation.Observation
 
 object TestObservableBuilder {
-    private val traceBuilder = TraceBuilder()
+    private val traceBuilder = TraceFactory()
+    private val traceDTOFactory = TraceDTOFactory()
 
     @JvmStatic
-    fun buildInvocation(observable: Observable, arguments: Array<Any?>): Invocation {
-        return traceBuilder.buildInvocation(traceBuilder.buildInvocationDTO(observable, arguments))
+    fun buildInvocation(clazz: Class<*>, methodName: String, arguments: Array<out Any?>): Invocation {
+        val method = clazz.methods.single { m -> m.name == methodName }
+        return traceBuilder.buildInvocation(traceDTOFactory.buildInvocationDTO(Observation(clazz, method), arguments))
     }
 
     @JvmStatic
-    fun buildReturn(observable: Observable, arguments: Array<Any?>, returnValue: Any?): Return {
-        return traceBuilder.buildReturn(traceBuilder.buildReturnDTO(observable, arguments, returnValue))
+    fun buildReturn(clazz: Class<*>, methodName: String, arguments: Array<out Any?>, returnValue: Any?): Return {
+        val method = clazz.methods.single { m -> m.name == methodName }
+        return traceBuilder.buildReturn(traceDTOFactory.buildReturnDTO(Observation(clazz, method), arguments, returnValue))
     }
 }

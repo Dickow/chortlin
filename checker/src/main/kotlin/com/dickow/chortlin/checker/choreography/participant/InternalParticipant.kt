@@ -2,19 +2,19 @@ package com.dickow.chortlin.checker.choreography.participant
 
 import com.dickow.chortlin.checker.choreography.method.MethodFactory
 
-class InternalParticipant<C>(val clazz: Class<C>) : Participant {
+class InternalParticipant(val identifier: String) : Participant {
 
     fun onMethod(methodName: String) = MethodFactory.method(this, methodName)
 
     override fun equals(other: Any?): Boolean {
-        return if (other is InternalParticipant<*>) {
-            this.clazz == other.clazz
+        return if (other is InternalParticipant) {
+            this.identifier == other.identifier
         } else {
             false
         }
     }
 
     override fun hashCode(): Int {
-        return clazz.hashCode()
+        return identifier.hashCode()
     }
 }

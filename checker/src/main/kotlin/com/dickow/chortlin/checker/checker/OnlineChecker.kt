@@ -3,13 +3,13 @@ package com.dickow.chortlin.checker.checker
 import com.dickow.chortlin.checker.checker.result.CheckResult
 import com.dickow.chortlin.checker.checker.session.Session
 import com.dickow.chortlin.checker.checker.session.SessionManager
+import com.dickow.chortlin.checker.trace.TraceElement
+import com.dickow.chortlin.checker.trace.TraceFactory
 import com.dickow.chortlin.shared.exceptions.ChoreographyRuntimeException
-import com.dickow.chortlin.shared.trace.TraceElement
 import com.dickow.chortlin.shared.trace.protobuf.DtoDefinitions
-import com.dickow.chortlin.shared.transformation.TraceBuilder
 
 class OnlineChecker(private val sessionManager: SessionManager) : ChoreographyChecker {
-    private val traceBuilder = TraceBuilder()
+    private val traceBuilder = TraceFactory()
     private val checkLock = Object()
 
     override fun check(traceDTO: DtoDefinitions.InvocationDTO): CheckResult {

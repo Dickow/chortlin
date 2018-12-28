@@ -1,7 +1,7 @@
 package com.dickow.chortlin.core.test.shared
 
-import com.dickow.chortlin.shared.annotations.TraceInvocation
-import com.dickow.chortlin.shared.annotations.TraceReturn
+import com.dickow.chortlin.interception.annotations.TraceInvocation
+import com.dickow.chortlin.interception.annotations.TraceReturn
 
 class OnlineFirstClass {
     @TraceInvocation

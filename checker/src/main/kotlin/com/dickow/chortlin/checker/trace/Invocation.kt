@@ -1,4 +1,4 @@
-package com.dickow.chortlin.shared.trace
+package com.dickow.chortlin.checker.trace
 
 import com.dickow.chortlin.shared.observation.Observable
 

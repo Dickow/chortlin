@@ -7,8 +7,8 @@ import com.dickow.chortlin.checker.ast.types.placeholder.Placeholder
 import com.dickow.chortlin.checker.checker.SatisfactionRelationship
 import com.dickow.chortlin.checker.choreography.Choreography
 import com.dickow.chortlin.checker.choreography.method.ObservableMethod
+import com.dickow.chortlin.checker.choreography.participant.ObservableParticipant
 import com.dickow.chortlin.checker.choreography.participant.Participant
-import com.dickow.chortlin.shared.observation.ObservableParticipant
 
 abstract class ASTNode(var previous: ASTNode?, var next: ASTNode?) : ASTBuilder, SatisfactionRelationship {
 
@@ -31,14 +31,14 @@ abstract class ASTNode(var previous: ASTNode?, var next: ASTNode?) : ASTBuilder,
     }
 
     override fun returnFrom(observableMethod: ObservableMethod, label: String): ASTBuilder {
-        val observableReceiver = ObservableParticipant(observableMethod.participant.clazz, observableMethod.jvmMethod)
+        val observableReceiver = ObservableParticipant(observableMethod.participant.identifier, observableMethod.method)
         val next = ReturnFrom(observableReceiver, Label(label), this, null)
         this.next = next
         return next
     }
 
     override fun interaction(sender: Participant, observableMethod: ObservableMethod, label: String): ASTBuilder {
-        val observableReceiver = ObservableParticipant(observableMethod.participant.clazz, observableMethod.jvmMethod)
+        val observableReceiver = ObservableParticipant(observableMethod.participant.identifier, observableMethod.method)
         val next = Interaction(sender, observableReceiver, Label(label), this, null)
         this.next = next
         return next

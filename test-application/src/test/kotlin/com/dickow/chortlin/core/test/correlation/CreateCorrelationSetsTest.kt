@@ -2,6 +2,7 @@ package com.dickow.chortlin.core.test.correlation
 
 import com.dickow.chortlin.checker.checker.factory.OnlineCheckerFactory
 import com.dickow.chortlin.checker.choreography.Choreography
+import com.dickow.chortlin.checker.choreography.participant.ObservableParticipant
 import com.dickow.chortlin.checker.choreography.participant.ParticipantFactory.external
 import com.dickow.chortlin.checker.choreography.participant.ParticipantFactory.participant
 import com.dickow.chortlin.checker.correlation.CorrelationValue
@@ -15,7 +16,6 @@ import com.dickow.chortlin.core.test.shared.Authentication
 import com.dickow.chortlin.interception.configuration.InterceptionConfiguration
 import com.dickow.chortlin.shared.exceptions.ChoreographyRuntimeException
 import com.dickow.chortlin.shared.exceptions.InvalidChoreographyException
-import com.dickow.chortlin.shared.observation.ObservableParticipant
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -49,7 +49,7 @@ class CreateCorrelationSetsTest {
     @Test
     fun `create correlation set for small choreography`() {
         // Try to apply the correlation function to an invocation
-        val observableAuth = ObservableParticipant(auth.clazz, auth.onMethod("authenticate").jvmMethod)
+        val observableAuth = ObservableParticipant(auth.identifier,"authenticate")
         val key = cset.get(observableAuth)?.retrieveKey(arrayOf("jeppedickow", "1234!"))
         assertEquals(CorrelationValue("uName", "jeppedickow"), key)
     }

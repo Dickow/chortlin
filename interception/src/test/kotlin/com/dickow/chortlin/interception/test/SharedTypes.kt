@@ -1,7 +1,6 @@
 package com.dickow.chortlin.interception.test
 
-import com.dickow.chortlin.shared.annotations.TraceInvocation
-import com.dickow.chortlin.shared.annotations.TraceReturn
+import com.dickow.chortlin.interception.annotations.*
 
 class Login{
     @TraceInvocation

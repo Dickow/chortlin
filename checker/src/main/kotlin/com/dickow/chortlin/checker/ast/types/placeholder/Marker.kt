@@ -7,10 +7,10 @@ import com.dickow.chortlin.checker.ast.types.*
 import com.dickow.chortlin.checker.checker.result.CheckResult
 import com.dickow.chortlin.checker.choreography.Choreography
 import com.dickow.chortlin.checker.choreography.method.ObservableMethod
+import com.dickow.chortlin.checker.choreography.participant.ObservableParticipant
 import com.dickow.chortlin.checker.choreography.participant.Participant
 import com.dickow.chortlin.shared.exceptions.InvalidASTException
-import com.dickow.chortlin.shared.observation.ObservableParticipant
-import com.dickow.chortlin.shared.trace.Trace
+import com.dickow.chortlin.checker.trace.Trace
 
 class Marker : ASTNode(null, null), Placeholder {
     override fun satisfy(trace: Trace): CheckResult {
@@ -31,12 +31,12 @@ class Marker : ASTNode(null, null), Placeholder {
     }
 
     override fun returnFrom(observableMethod: ObservableMethod, label: String): ASTBuilder {
-        val observableReceiver = ObservableParticipant(observableMethod.participant.clazz, observableMethod.jvmMethod)
+        val observableReceiver = ObservableParticipant(observableMethod.participant.identifier, observableMethod.method)
         return ReturnFrom(observableReceiver, Label(label), null, null)
     }
 
     override fun interaction(sender: Participant, observableMethod: ObservableMethod, label: String): ASTBuilder {
-        val observableReceiver = ObservableParticipant(observableMethod.participant.clazz, observableMethod.jvmMethod)
+        val observableReceiver = ObservableParticipant(observableMethod.participant.identifier, observableMethod.method)
         return Interaction(sender, observableReceiver, Label(label), null, null)
     }
 

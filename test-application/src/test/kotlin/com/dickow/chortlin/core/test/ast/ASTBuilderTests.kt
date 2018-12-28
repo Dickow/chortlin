@@ -5,11 +5,11 @@ import com.dickow.chortlin.checker.ast.types.End
 import com.dickow.chortlin.checker.ast.types.Interaction
 import com.dickow.chortlin.checker.choreography.Choreography
 import com.dickow.chortlin.checker.choreography.participant.ExternalParticipant
+import com.dickow.chortlin.checker.choreography.participant.ObservableParticipant
 import com.dickow.chortlin.checker.choreography.participant.ParticipantFactory
 import com.dickow.chortlin.checker.choreography.participant.ParticipantFactory.participant
 import com.dickow.chortlin.core.test.shared.A
 import com.dickow.chortlin.core.test.shared.B
-import com.dickow.chortlin.shared.observation.ObservableParticipant
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
@@ -29,7 +29,7 @@ class ASTBuilderTests {
 
         val interaction1 = Interaction(
                 ExternalParticipant("external"),
-                ObservableParticipant(a.clazz, a.onMethod("receive").jvmMethod),
+                ObservableParticipant(a.identifier,"receive"),
                 Label("receive"),
                 null,
                 null
@@ -37,7 +37,7 @@ class ASTBuilderTests {
 
         val interaction2 = Interaction(
                 a,
-                ObservableParticipant(a.clazz, a.onMethod("b").jvmMethod),
+                ObservableParticipant(a.identifier,"b"),
                 Label("call A#b"),
                 interaction1,
                 null
@@ -45,7 +45,7 @@ class ASTBuilderTests {
 
         val interaction3 = Interaction(
                 a,
-                ObservableParticipant(b.clazz, b.onMethod("b").jvmMethod),
+                ObservableParticipant(b.identifier, "b"),
                 Label("Invoke B#b"),
                 interaction2,
                 null
@@ -68,7 +68,7 @@ class ASTBuilderTests {
 
         val interaction = Interaction(
                 ExternalParticipant("external"),
-                ObservableParticipant(a.clazz, a.onMethod("receive").jvmMethod),
+                ObservableParticipant(a.identifier, "receive"),
                 Label("receive"),
                 null,
                 null

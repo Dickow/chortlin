@@ -1,9 +1,9 @@
 package com.dickow.chortlin.checker.correlation
 
+import com.dickow.chortlin.checker.trace.Invocation
+import com.dickow.chortlin.checker.trace.Return
+import com.dickow.chortlin.checker.trace.TraceElement
 import com.dickow.chortlin.shared.observation.Observable
-import com.dickow.chortlin.shared.trace.Invocation
-import com.dickow.chortlin.shared.trace.Return
-import com.dickow.chortlin.shared.trace.TraceElement
 
 class Correlation(
         val observable: Observable,

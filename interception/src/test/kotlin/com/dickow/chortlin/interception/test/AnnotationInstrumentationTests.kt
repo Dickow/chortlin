@@ -2,10 +2,9 @@ package com.dickow.chortlin.interception.test
 
 import com.dickow.chortlin.interception.InterceptStrategy
 import com.dickow.chortlin.interception.configuration.InterceptionStrategy
+import com.dickow.chortlin.interception.dto.TraceDTOFactory
 import com.dickow.chortlin.interception.instrumentation.ByteBuddyInstrumentation
-import com.dickow.chortlin.shared.observation.Observable
-import com.dickow.chortlin.shared.trace.TraceElement
-import com.dickow.chortlin.shared.transformation.TraceBuilder
+import com.dickow.chortlin.interception.observation.Observation
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.*
@@ -13,8 +12,8 @@ import kotlin.test.assertEquals
 
 class AnnotationInstrumentationTests {
 
-    private val builder = TraceBuilder()
-    private val traces = LinkedList<TraceElement>()
+    private val builder = TraceDTOFactory()
+    private val traces = LinkedList<Any>()
 
     init {
         ByteBuddyInstrumentation.instrumentAnnotatedMethods()
@@ -24,13 +23,13 @@ class AnnotationInstrumentationTests {
     internal fun setUp() {
         traces.clear()
         InterceptionStrategy.strategy = object : InterceptStrategy {
-            override fun interceptInvocation(observable: Observable, arguments: Array<out Any?>) {
-                val trace = builder.buildInvocation(builder.buildInvocationDTO(observable, arguments))
+            override fun interceptInvocation(observable: Observation, arguments: Array<out Any?>) {
+                val trace = builder.buildInvocationDTO(observable, arguments)
                 traces.add(trace)
             }
 
-            override fun interceptReturn(observable: Observable, arguments: Array<out Any?>, returnValue: Any?) {
-                val trace = builder.buildReturn(builder.buildReturnDTO(observable, arguments, returnValue))
+            override fun interceptReturn(observable: Observation, arguments: Array<out Any?>, returnValue: Any?) {
+                val trace = builder.buildReturnDTO(observable, arguments, returnValue)
                 traces.add(trace)
             }
         }

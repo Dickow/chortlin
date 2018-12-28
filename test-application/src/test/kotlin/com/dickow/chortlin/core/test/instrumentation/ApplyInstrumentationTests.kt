@@ -11,26 +11,27 @@ import com.dickow.chortlin.core.test.shared.*
 import com.dickow.chortlin.interception.InterceptStrategy
 import com.dickow.chortlin.interception.configuration.InterceptionStrategy
 import com.dickow.chortlin.interception.instrumentation.ByteBuddyInstrumentation
-import com.dickow.chortlin.shared.observation.Observable
-import com.dickow.chortlin.shared.trace.Trace
-import com.dickow.chortlin.shared.trace.TraceElement
-import com.dickow.chortlin.shared.transformation.TraceBuilder
+import com.dickow.chortlin.checker.trace.Trace
+import com.dickow.chortlin.checker.trace.TraceElement
+import com.dickow.chortlin.core.test.shared.builder.TestObservableBuilder
+import com.dickow.chortlin.interception.observation.Observation
 import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class ApplyInstrumentationTests {
-    private val builder = TraceBuilder()
+    private val builder = TestObservableBuilder
+
     val traces: MutableList<TraceElement> = LinkedList()
 
     private val interceptStrategy: InterceptStrategy = object : InterceptStrategy {
-        override fun interceptInvocation(observable: Observable, arguments: Array<out Any?>) {
-            val trace = builder.buildInvocation(builder.buildInvocationDTO(observable, arguments))
+        override fun interceptInvocation(observation: Observation, arguments: Array<out Any?>) {
+            val trace = builder.buildInvocation(observation.clazz, observation.method, arguments)
             traces.add(trace)
         }
 
-        override fun interceptReturn(observable: Observable, arguments: Array<out Any?>, returnValue: Any?) {
-            val trace = builder.buildReturn(builder.buildReturnDTO(observable, arguments, returnValue))
+        override fun interceptReturn(observation: Observation, arguments: Array<out Any?>, returnValue: Any?) {
+            val trace = builder.buildReturn(observation.clazz, observation.method, arguments, returnValue)
             traces.add(trace)
         }
     }

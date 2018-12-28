@@ -1,26 +1,27 @@
 package com.dickow.chortlin.checker.correlation.builder
 
 import com.dickow.chortlin.checker.choreography.method.ObservableMethod
+import com.dickow.chortlin.checker.choreography.participant.ObservableParticipant
 import com.dickow.chortlin.checker.correlation.Correlation
 import com.dickow.chortlin.checker.correlation.CorrelationFunction
 import com.dickow.chortlin.checker.correlation.InputTypesFunction
 import com.dickow.chortlin.checker.correlation.ReturnTypesFunction
 import com.dickow.chortlin.checker.correlation.path.Path
-import com.dickow.chortlin.shared.observation.ObservableParticipant
 import java.util.*
 
 class CorrelationBuilder(private val observableMethod: ObservableMethod,
-                         private val correlationFunction: CorrelationFunction) {
+                         private val correlationFunction: CorrelationFunction)
+{
     private val inputFunctions: MutableList<InputTypesFunction> = LinkedList()
     private val returnFunctions: MutableList<ReturnTypesFunction> = LinkedList()
 
     fun done(): Correlation {
-        val observableParticipant = ObservableParticipant(observableMethod.participant.clazz, observableMethod.jvmMethod)
+        val observableParticipant = ObservableParticipant(observableMethod.participant.identifier, observableMethod.method)
         return Correlation(observableParticipant, correlationFunction, inputFunctions, returnFunctions)
     }
 
     fun noExtensions(): Correlation {
-        val observableParticipant = ObservableParticipant(observableMethod.participant.clazz, observableMethod.jvmMethod)
+        val observableParticipant = ObservableParticipant(observableMethod.participant.identifier, observableMethod.method)
         return Correlation(observableParticipant, correlationFunction, emptyList(), emptyList())
     }
 

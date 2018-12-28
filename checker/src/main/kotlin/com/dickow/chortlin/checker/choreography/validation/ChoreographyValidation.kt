@@ -3,9 +3,9 @@ package com.dickow.chortlin.checker.choreography.validation
 import com.dickow.chortlin.checker.ast.ASTVisitor
 import com.dickow.chortlin.checker.ast.types.*
 import com.dickow.chortlin.checker.choreography.Choreography
+import com.dickow.chortlin.checker.choreography.participant.ObservableParticipant
 import com.dickow.chortlin.checker.correlation.Correlation
 import com.dickow.chortlin.shared.exceptions.InvalidChoreographyException
-import com.dickow.chortlin.shared.observation.ObservableParticipant
 
 class ChoreographyValidation(private val choreography: Choreography) : ASTVisitor {
     override fun visitEnd(astNode: End) {}

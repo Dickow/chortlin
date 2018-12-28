@@ -1,8 +1,8 @@
 package com.dickow.chortlin.checker.checker.session
 
 import com.dickow.chortlin.checker.choreography.Choreography
+import com.dickow.chortlin.checker.trace.TraceElement
 import com.dickow.chortlin.shared.exceptions.ChoreographyRuntimeException
-import com.dickow.chortlin.shared.trace.TraceElement
 import java.util.*
 
 

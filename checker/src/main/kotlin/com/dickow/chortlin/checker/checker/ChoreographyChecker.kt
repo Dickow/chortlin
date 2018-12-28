@@ -1,7 +1,7 @@
 package com.dickow.chortlin.checker.checker
 
 import com.dickow.chortlin.checker.checker.result.CheckResult
-import com.dickow.chortlin.shared.trace.TraceElement
+import com.dickow.chortlin.checker.trace.TraceElement
 import com.dickow.chortlin.shared.trace.protobuf.DtoDefinitions
 
 interface ChoreographyChecker {

@@ -1,12 +1,11 @@
 package com.dickow.chortlin.interception.instrumentation.advice
 
 import com.dickow.chortlin.interception.configuration.InterceptionStrategy
-import com.dickow.chortlin.shared.observation.Observation
+import com.dickow.chortlin.interception.observation.Observation
 import net.bytebuddy.asm.Advice
 import net.bytebuddy.implementation.bytecode.assign.Assigner
 import java.lang.reflect.Method
 
-@Suppress("UNUSED_PARAMETER")
 object AfterAdvisor {
     @JvmStatic
     @Advice.OnMethodExit

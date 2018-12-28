@@ -1,9 +1,9 @@
 package com.dickow.chortlin.interception.instrumentation
 
+import com.dickow.chortlin.interception.annotations.TraceInvocation
+import com.dickow.chortlin.interception.annotations.TraceReturn
 import com.dickow.chortlin.interception.instrumentation.advice.AfterAdvisor
 import com.dickow.chortlin.interception.instrumentation.advice.BeforeAdvisor
-import com.dickow.chortlin.shared.annotations.TraceInvocation
-import com.dickow.chortlin.shared.annotations.TraceReturn
 import net.bytebuddy.agent.ByteBuddyAgent
 import net.bytebuddy.agent.builder.AgentBuilder
 import net.bytebuddy.asm.Advice
