@@ -2,21 +2,19 @@ package com.dickow.chortlin.test.application.instrumentation
 
 import com.dickow.chortlin.checker.checker.ChoreographyChecker
 import com.dickow.chortlin.checker.checker.factory.OnlineCheckerFactory
-import com.dickow.chortlin.checker.checker.result.CheckResult
 import com.dickow.chortlin.checker.choreography.Choreography
 import com.dickow.chortlin.checker.choreography.participant.ParticipantFactory.external
 import com.dickow.chortlin.checker.choreography.participant.ParticipantFactory.participant
 import com.dickow.chortlin.checker.correlation.builder.PathBuilder.Builder.root
 import com.dickow.chortlin.checker.correlation.factory.CorrelationFactory.correlation
 import com.dickow.chortlin.checker.correlation.factory.CorrelationFactory.defineCorrelation
-import com.dickow.chortlin.checker.trace.TraceElement
-import com.dickow.chortlin.test.application.shared.OnlineInstrumentFirstClass
-import com.dickow.chortlin.test.application.shared.OnlineInstrumentSecondClass
-import com.dickow.chortlin.test.application.shared.OnlineInstrumentThirdClass
 import com.dickow.chortlin.interception.configuration.InterceptionConfiguration
 import com.dickow.chortlin.interception.sending.TraceSender
 import com.dickow.chortlin.shared.exceptions.ChoreographyRuntimeException
 import com.dickow.chortlin.shared.trace.protobuf.DtoDefinitions
+import com.dickow.chortlin.test.application.shared.OnlineInstrumentFirstClass
+import com.dickow.chortlin.test.application.shared.OnlineInstrumentSecondClass
+import com.dickow.chortlin.test.application.shared.OnlineInstrumentThirdClass
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -51,7 +49,7 @@ class OnlineInstrumentationTests {
                 .interaction(onlineFirstClass, onlineSecondClass.onMethod("method1"), "#3")
                 .returnFrom(onlineSecondClass.onMethod("method1"), "return #3")
                 .end().setCorrelation(cset)
-        val checker = InterceptingTestChecker(OnlineCheckerFactory.createOnlineChecker(listOf(choreography)))
+        val checker = OnlineCheckerFactory.createOnlineChecker(listOf(choreography))
         val sender = TestSender(checker)
         InterceptionConfiguration.setupCustomInterception(sender)
 
@@ -79,7 +77,7 @@ class OnlineInstrumentationTests {
                 .interaction(onlineFirstClass, onlineSecondClass.onMethod("method1"), "#3")
                 .returnFrom(onlineSecondClass.onMethod("method1"), "return #3")
                 .end().setCorrelation(cset)
-        val checker = InterceptingTestChecker(OnlineCheckerFactory.createOnlineChecker(listOf(choreography)))
+        val checker = OnlineCheckerFactory.createOnlineChecker(listOf(choreography))
         val sender = TestSender(checker)
         InterceptionConfiguration.setupCustomInterception(sender)
 
@@ -125,7 +123,7 @@ class OnlineInstrumentationTests {
                 .interaction(onlineThirdClass, onlineThirdClass.onMethod("method2"), "#3")
                 .end().setCorrelation(cset2)
 
-        val checker = InterceptingTestChecker(OnlineCheckerFactory.createOnlineChecker(listOf(choreography1, choreography2)))
+        val checker = OnlineCheckerFactory.createOnlineChecker(listOf(choreography1, choreography2))
         val sender = TestSender(checker)
         InterceptionConfiguration.setupCustomInterception(sender)
 
@@ -182,7 +180,7 @@ class OnlineInstrumentationTests {
                 .interaction(onlineThirdClass, onlineThirdClass.onMethod("method2"), "#3")
                 .end().setCorrelation(cset2)
 
-        val checker = InterceptingTestChecker(OnlineCheckerFactory.createOnlineChecker(listOf(choreography1, choreography2)))
+        val checker = OnlineCheckerFactory.createOnlineChecker(listOf(choreography1, choreography2))
         val sender = TestSender(checker)
         InterceptionConfiguration.setupCustomInterception(sender)
 
@@ -209,27 +207,6 @@ class OnlineInstrumentationTests {
             thread2.await()
         }
         assertTrue(atomicBoolean.get(), "Expected exception of type ${ChoreographyRuntimeException::class}")
-    }
-
-    class InterceptingTestChecker(private val checker : ChoreographyChecker) : ChoreographyChecker {
-        override fun check(trace: TraceElement): CheckResult {
-            val result = checker.check(trace)
-            if (result == CheckResult.None) throw ChoreographyRuntimeException("NO MATCH FOUND")
-            else return result
-        }
-
-        override fun check(traceDTO: DtoDefinitions.InvocationDTO): CheckResult {
-            val result = checker.check(traceDTO)
-            if (result == CheckResult.None) throw ChoreographyRuntimeException("NO MATCH FOUND")
-            else return result
-        }
-
-        override fun check(traceDTO: DtoDefinitions.ReturnDTO): CheckResult {
-            val result = checker.check(traceDTO)
-            if (result == CheckResult.None) throw ChoreographyRuntimeException("NO MATCH FOUND")
-            else return result
-        }
-
     }
 
     class TestSender(private val checker: ChoreographyChecker) : TraceSender {

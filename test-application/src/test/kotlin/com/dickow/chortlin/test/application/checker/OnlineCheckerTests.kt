@@ -1,7 +1,7 @@
 package com.dickow.chortlin.test.application.checker
 
 import com.dickow.chortlin.checker.checker.OnlineChecker
-import com.dickow.chortlin.checker.checker.result.CheckResult
+import com.dickow.chortlin.checker.checker.result.ChoreographyStatus
 import com.dickow.chortlin.checker.checker.session.InMemorySessionManager
 import com.dickow.chortlin.checker.choreography.Choreography
 import com.dickow.chortlin.checker.choreography.participant.ParticipantFactory.external
@@ -73,18 +73,18 @@ class OnlineCheckerTests {
     fun `check correctness of online checker when simulating execution`() {
         val onlineChecker = OnlineChecker(InMemorySessionManager(listOf(choreography)))
         val allExceptLastTrace = expectedTraceSequence.subList(0, expectedTraceSequence.size - 1)
-        allExceptLastTrace.forEach { trace -> assertEquals(CheckResult.Partial, onlineChecker.check(trace)) }
-        assertEquals(CheckResult.Full, onlineChecker.check(expectedTraceSequence.last()))
+        allExceptLastTrace.forEach { trace -> assertEquals(ChoreographyStatus.IN_PROGRESS, onlineChecker.check(trace)) }
+        assertEquals(ChoreographyStatus.FINISHED, onlineChecker.check(expectedTraceSequence.last()))
     }
 
     @Test
     fun `ensure that out of order execution is rejected`() {
         val onlineChecker = OnlineChecker(InMemorySessionManager(listOf(choreography)))
-        assertEquals(CheckResult.Partial,
+        assertEquals(ChoreographyStatus.IN_PROGRESS,
                 onlineChecker.check(buildInvocation(OnlineFirstClass::class.java, "method1", allArguments)))
-        assertEquals(CheckResult.Partial,
+        assertEquals(ChoreographyStatus.IN_PROGRESS,
                 onlineChecker.check(buildInvocation(OnlineFirstClass::class.java, "method2", allArguments)))
-        assertEquals(CheckResult.Partial,
+        assertEquals(ChoreographyStatus.IN_PROGRESS,
                 onlineChecker.check(buildInvocation(OnlineSecondClass::class.java, "method1", allArguments)))
 
         // Apply the out of order execution
@@ -99,8 +99,8 @@ class OnlineCheckerTests {
         expectedTraceSequence.forEach { traceElement -> onlineChecker.check(traceElement) }
 
         val allExceptLastTrace = expectedTraceSequence.subList(0, expectedTraceSequence.size - 1)
-        allExceptLastTrace.forEach { trace -> assertEquals(CheckResult.Partial, onlineChecker.check(trace)) }
-        assertEquals(CheckResult.Full, onlineChecker.check(expectedTraceSequence.last()))
+        allExceptLastTrace.forEach { trace -> assertEquals(ChoreographyStatus.IN_PROGRESS, onlineChecker.check(trace)) }
+        assertEquals(ChoreographyStatus.FINISHED, onlineChecker.check(expectedTraceSequence.last()))
     }
 
     @Test
@@ -117,8 +117,8 @@ class OnlineCheckerTests {
 
         // Then check that a new instance can run
         val allExceptLastTrace = expectedTraceSequence.subList(0, expectedTraceSequence.size - 1)
-        allExceptLastTrace.forEach { trace -> assertEquals(CheckResult.Partial, onlineChecker.check(trace)) }
-        assertEquals(CheckResult.Full, onlineChecker.check(expectedTraceSequence.last()))
+        allExceptLastTrace.forEach { trace -> assertEquals(ChoreographyStatus.IN_PROGRESS, onlineChecker.check(trace)) }
+        assertEquals(ChoreographyStatus.FINISHED, onlineChecker.check(expectedTraceSequence.last()))
     }
 
     @Test
@@ -149,19 +149,19 @@ class OnlineCheckerTests {
                 .interaction(onlineThird, onlineThird.onMethod("method2"), "#3")
                 .end().setCorrelation(cset2)
         val checker = OnlineChecker(InMemorySessionManager(listOf(choreography1, choreography2)))
-        assertEquals(CheckResult.Partial,
+        assertEquals(ChoreographyStatus.IN_PROGRESS,
                 checker.check(buildInvocation(OnlineFirstClass::class.java, "method1", allArguments))) // Choreography 1
-        assertEquals(CheckResult.Partial,
+        assertEquals(ChoreographyStatus.IN_PROGRESS,
                 checker.check(buildInvocation(OnlineSecondClass::class.java, "method2", allArguments))) // Choreography 2
-        assertEquals(CheckResult.Partial,
+        assertEquals(ChoreographyStatus.IN_PROGRESS,
                 checker.check(buildInvocation(OnlineFirstClass::class.java, "method2", allArguments))) // Choreography 1
-        assertEquals(CheckResult.Partial,
+        assertEquals(ChoreographyStatus.IN_PROGRESS,
                 checker.check(buildInvocation(OnlineSecondClass::class.java, "method1", allArguments))) // Choreography 1
-        assertEquals(CheckResult.Partial,
+        assertEquals(ChoreographyStatus.IN_PROGRESS,
                 checker.check(buildInvocation(OnlineThirdClass::class.java, "method1", allArguments))) // Choreography 2
-        assertEquals(CheckResult.Full,
+        assertEquals(ChoreographyStatus.FINISHED,
                 checker.check(buildReturn(OnlineSecondClass::class.java, "method1", allArguments, returnValue))) // Choreography 1
-        assertEquals(CheckResult.Full,
+        assertEquals(ChoreographyStatus.FINISHED,
                 checker.check(buildInvocation(OnlineThirdClass::class.java, "method2", allArguments))) // Choreography 2
     }
 }

@@ -31,9 +31,9 @@ class CreateCorrelationSetsTest {
     private val authService = Authentication()
     private val itemService = AuthenticatedService()
 
-    private val authCorrelation = root().node("0").build()
+    private val authCorrelation = root().node("arg0").build()
     private val authExtendCorrelation = root().node("userId").build()
-    private val buyerCorrelation = root().node("1").node("userId").build()
+    private val buyerCorrelation = root().node("arg1").node("userId").build()
     private val authenticationChoreography = Choreography.builder()
             .interaction(client, auth.onMethod("authenticate"), "Authenticate client")
             .returnFrom(auth.onMethod("authenticate"), "Client is authenticated")
@@ -53,7 +53,7 @@ class CreateCorrelationSetsTest {
     fun `create correlation set for small choreography`() {
         // Try to apply the correlation function to an invocation
         val observableAuth = ObservableParticipant(auth.identifier,"authenticate")
-        val arguments = RootValue(ObjectValue(mapOf(Pair("0", StringValue("jeppedickow")), Pair("1", StringValue("1234!")))))
+        val arguments = RootValue(ObjectValue(mapOf(Pair("arg0", StringValue("jeppedickow")), Pair("arg1", StringValue("1234!")))))
         val key = cset.get(observableAuth)?.retrieveKey(arguments)
         assertEquals(CorrelationValue("uName", StringValue("jeppedickow")), key)
     }
@@ -75,7 +75,7 @@ class CreateCorrelationSetsTest {
     @Test
     fun `expect success when running multiple instances of the services with correlation sets`() {
         authenticationChoreography.setCorrelation(cset)
-        val checker = OnlineInstrumentationTests.InterceptingTestChecker(OnlineCheckerFactory.createOnlineChecker(listOf(authenticationChoreography)))
+        val checker = OnlineCheckerFactory.createOnlineChecker(listOf(authenticationChoreography))
         val sender = OnlineInstrumentationTests.TestSender(checker)
         InterceptionConfiguration.setupCustomInterception(sender)
 
@@ -90,7 +90,7 @@ class CreateCorrelationSetsTest {
     @Test
     fun `expect error when executing a session in the wrong order`() {
         authenticationChoreography.setCorrelation(cset)
-        val checker = OnlineInstrumentationTests.InterceptingTestChecker(OnlineCheckerFactory.createOnlineChecker(listOf(authenticationChoreography)))
+        val checker = OnlineCheckerFactory.createOnlineChecker(listOf(authenticationChoreography))
         val sender = OnlineInstrumentationTests.TestSender(checker)
         InterceptionConfiguration.setupCustomInterception(sender)
         val authResult1 = authService.authenticate("jeppedickow", "1234!")
@@ -111,7 +111,7 @@ class CreateCorrelationSetsTest {
                         .add(correlation(buyService.onMethod("buyItem"), "userId", buyerCorrelation)
                                 .noExtensions())
                         .finish())
-        val checker = OnlineInstrumentationTests.InterceptingTestChecker(OnlineCheckerFactory.createOnlineChecker(listOf(authenticationChoreography)))
+        val checker = OnlineCheckerFactory.createOnlineChecker(listOf(authenticationChoreography))
         val sender = OnlineInstrumentationTests.TestSender(checker)
         InterceptionConfiguration.setupCustomInterception(sender)
         assertFailsWith(ChoreographyRuntimeException::class) { authService.authenticate("jeppedickow", "1234!") }

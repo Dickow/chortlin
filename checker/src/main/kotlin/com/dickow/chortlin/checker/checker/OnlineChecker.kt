@@ -1,6 +1,7 @@
 package com.dickow.chortlin.checker.checker
 
 import com.dickow.chortlin.checker.checker.result.CheckResult
+import com.dickow.chortlin.checker.checker.result.ChoreographyStatus
 import com.dickow.chortlin.checker.checker.session.Session
 import com.dickow.chortlin.checker.checker.session.SessionManager
 import com.dickow.chortlin.checker.trace.TraceElement
@@ -12,17 +13,17 @@ class OnlineChecker(private val sessionManager: SessionManager) : ChoreographyCh
     private val traceBuilder = TraceFactory()
     private val checkLock = Object()
 
-    override fun check(traceDTO: DtoDefinitions.InvocationDTO): CheckResult {
+    override fun check(traceDTO: DtoDefinitions.InvocationDTO): ChoreographyStatus {
         val transformed = traceBuilder.buildInvocation(traceDTO)
         return this.check(transformed)
     }
 
-    override fun check(traceDTO: DtoDefinitions.ReturnDTO): CheckResult {
+    override fun check(traceDTO: DtoDefinitions.ReturnDTO): ChoreographyStatus {
         val transformed = traceBuilder.buildReturn(traceDTO)
         return this.check(transformed)
     }
 
-    override fun check(trace: TraceElement): CheckResult {
+    override fun check(trace: TraceElement): ChoreographyStatus {
         synchronized(checkLock) {
             val session = sessionManager.getSession(trace)
             return when (session) {
@@ -35,18 +36,17 @@ class OnlineChecker(private val sessionManager: SessionManager) : ChoreographyCh
         }
     }
 
-    private fun checkTraceAgainstSession(session: Session, trace: TraceElement): CheckResult {
+    private fun checkTraceAgainstSession(session: Session, trace: TraceElement): ChoreographyStatus {
         val result = check(session, trace)
-        when (result) {
+        return when (result) {
             CheckResult.None -> {
                 sessionManager.clearSession(session)
                 throw ChoreographyRuntimeException("Unexpected trace encountered: $trace ${System.lineSeparator()}"+
                 "The following traces were observed prior: ${session.observedTraces()}")
             }
-            CheckResult.Full -> sessionManager.clearSession(session)
-            CheckResult.Partial -> session.extendKeys(trace)
+            CheckResult.Full -> {sessionManager.clearSession(session); ChoreographyStatus.FINISHED}
+            CheckResult.Partial -> {session.extendKeys(trace); ChoreographyStatus.IN_PROGRESS}
         }
-        return result
     }
 
     private fun check(session: Session, trace: TraceElement): CheckResult {

@@ -1,5 +1,6 @@
 package com.dickow.chortlin.interception.dto
 
+import com.dickow.chortlin.interception.annotations.Named
 import com.dickow.chortlin.interception.observation.Observation
 import com.dickow.chortlin.shared.trace.protobuf.DtoDefinitions
 import com.google.protobuf.*
@@ -14,7 +15,7 @@ class TraceDTOFactory {
         val methodName = observed.method
 
         builder.observed = DtoDefinitions.ObservedDTO.newBuilder().setParticipant(classCanonicalName).setMethod(methodName).build()
-        val mappedArguments = arguments.mapIndexed{index, argument -> buildArgument(index, argument) }
+        val mappedArguments = arguments.mapIndexed{index, argument -> buildArgument(resolveArgumentName(index, observed.jvmMethod), argument) }
         builder.addAllArguments(mappedArguments)
         return builder.build()
     }
@@ -25,14 +26,14 @@ class TraceDTOFactory {
         val methodName = observed.method
 
         builder.observed = DtoDefinitions.ObservedDTO.newBuilder().setParticipant(classCanonicalName).setMethod(methodName).build()
-        val mappedArguments = arguments.mapIndexed{index, argument -> buildArgument(index, argument) }
+        val mappedArguments = arguments.mapIndexed{index, argument -> buildArgument(resolveArgumentName(index, observed.jvmMethod), argument) }
         builder.addAllArguments(mappedArguments)
         builder.returnValue = buildValue(returnValue).build()
         return builder.build()
     }
 
-    private fun buildArgument(index: Int, argument: Any?): DtoDefinitions.ArgumentDTO? {
-        val argumentBuilder = DtoDefinitions.ArgumentDTO.newBuilder().setIdentifier(index.toString())
+    private fun buildArgument(argumentName: String, argument: Any?): DtoDefinitions.ArgumentDTO? {
+        val argumentBuilder = DtoDefinitions.ArgumentDTO.newBuilder().setIdentifier(argumentName)
         argumentBuilder.value = buildValue(argument).build()
         return argumentBuilder.build()
     }
@@ -64,15 +65,15 @@ class TraceDTOFactory {
         return retrievedValue
     }
 
-    private fun getArgumentName(index: Int, method: Method): String {
-        return if (method.parameters.any()) {
-            if (method.parameters[0].isNamePresent) {
-                method.parameters[index].name
-            } else {
-                index.toString()
+    private fun resolveArgumentName(index: Int, method: Method): String {
+        val param = method.parameters[index]
+        return when {
+            param.isNamePresent -> param.name
+            param.isAnnotationPresent(Named::class.java) -> {
+                val nameAnnotation = param.getDeclaredAnnotation(Named::class.java)
+                nameAnnotation.name
             }
-        } else {
-            index.toString()
+            else -> param.name
         }
     }
 }
