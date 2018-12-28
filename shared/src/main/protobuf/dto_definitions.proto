@@ -1,6 +1,12 @@
 syntax = "proto3";
+import "google/protobuf/struct.proto";
 
 option java_package = "com.dickow.chortlin.shared.trace.protobuf";
+
+message ArgumentDTO {
+    string identifier = 1;
+    google.protobuf.Value value = 2;
+}
 
 message ObservedDTO {
     string participant = 1;
@@ -9,12 +15,12 @@ message ObservedDTO {
 
 message InvocationDTO {
     ObservedDTO observed = 1;
-    string argumentTree = 2;
+    repeated ArgumentDTO arguments = 2;
 }
 
 message ReturnDTO {
     ObservedDTO observed = 1;
-    string argumentTree = 2;
-    string returnValue = 3;
+    repeated ArgumentDTO arguments = 2;
+    google.protobuf.Value returnValue = 3;
 }
 

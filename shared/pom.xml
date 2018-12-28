@@ -85,7 +85,7 @@
                                     <outputDirectory>src/main/java</outputDirectory>
                                 </outputTarget>
                             </outputTargets>
-                            <includeStdTypes>false</includeStdTypes>
+                            <includeStdTypes>true</includeStdTypes>
                         </configuration>
                     </execution>
                 </executions>
