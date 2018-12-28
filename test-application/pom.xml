@@ -166,6 +166,9 @@
                     <includes>
                         <include>**/*Test*.*</include>
                     </includes>
+                    <argLine>
+                        --add-opens chortlin.test.application/com.dickow.chortlin.test.application.shared=chortlin.interception
+                    </argLine>
                 </configuration>
             </plugin>
             <!-- PACKAGING PLUGIN -->

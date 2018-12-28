@@ -1,4 +1,4 @@
-module chortlin.core {
+module chortlin.test.application {
     requires transitive kotlin.stdlib;
     requires net.bytebuddy.agent;
     requires net.bytebuddy;

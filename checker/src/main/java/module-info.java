@@ -20,4 +20,5 @@ module chortlin.checker {
     exports com.dickow.chortlin.checker.ast.types;
     exports com.dickow.chortlin.checker.correlation.path;
     exports com.dickow.chortlin.checker.trace;
+    exports com.dickow.chortlin.checker.trace.value;
 }

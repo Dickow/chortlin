@@ -3,6 +3,7 @@ package com.dickow.chortlin.checker.correlation
 import com.dickow.chortlin.checker.trace.Invocation
 import com.dickow.chortlin.checker.trace.Return
 import com.dickow.chortlin.checker.trace.TraceElement
+import com.dickow.chortlin.checker.trace.value.Value
 import com.dickow.chortlin.shared.observation.Observable
 
 class Correlation(
@@ -11,7 +12,7 @@ class Correlation(
         private val inputFunctions: List<InputTypesFunction>,
         private val returnFunctions: List<ReturnTypesFunction>) {
 
-    fun retrieveKey(arguments: Any?): Any? {
+    fun retrieveKey(arguments: Value): CorrelationValue {
         return correlationFunction.apply(arguments)
     }
 

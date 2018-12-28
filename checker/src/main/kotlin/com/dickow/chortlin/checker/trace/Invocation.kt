@@ -1,10 +1,11 @@
 package com.dickow.chortlin.checker.trace
 
+import com.dickow.chortlin.checker.trace.value.RootValue
 import com.dickow.chortlin.shared.observation.Observable
 
 
-data class Invocation(private val observation: Observable, private val argumentTree: Map<*, *>) : TraceElement() {
-    override fun getArgumentTree(): Map<*, *> {
+data class Invocation(private val observation: Observable, private val argumentTree: RootValue) : TraceElement() {
+    override fun getArgumentTree(): RootValue {
         return argumentTree
     }
 
