@@ -38,13 +38,6 @@
             <scope>compile</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.jetbrains.kotlinx</groupId>
-            <artifactId>kotlinx-coroutines-core</artifactId>
-            <version>${kotlin.coroutines.version}</version>
-            <scope>compile</scope>
-        </dependency>
-
         <!-- Byte Buddy -->
         <dependency>
             <groupId>net.bytebuddy</groupId>

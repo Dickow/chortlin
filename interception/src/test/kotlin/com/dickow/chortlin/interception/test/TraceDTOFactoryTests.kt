@@ -7,7 +7,6 @@ import com.google.protobuf.Value
 import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 class TraceDTOFactoryTests {

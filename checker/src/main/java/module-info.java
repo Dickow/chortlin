@@ -1,9 +1,7 @@
 module chortlin.checker {
-    requires transitive kotlin.stdlib;
-    requires kotlinx.coroutines.core;
+    requires kotlin.stdlib;
 
     requires transitive chortlin.shared;
-    requires gson;
 
     exports com.dickow.chortlin.checker.correlation;
     exports com.dickow.chortlin.checker.correlation.factory;
