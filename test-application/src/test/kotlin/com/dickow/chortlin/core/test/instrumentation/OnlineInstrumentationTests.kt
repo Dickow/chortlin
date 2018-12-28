@@ -6,6 +6,7 @@ import com.dickow.chortlin.checker.checker.result.CheckResult
 import com.dickow.chortlin.checker.choreography.Choreography
 import com.dickow.chortlin.checker.choreography.participant.ParticipantFactory.external
 import com.dickow.chortlin.checker.choreography.participant.ParticipantFactory.participant
+import com.dickow.chortlin.checker.correlation.builder.PathBuilder.Builder.root
 import com.dickow.chortlin.checker.correlation.factory.CorrelationFactory.correlation
 import com.dickow.chortlin.checker.correlation.factory.CorrelationFactory.defineCorrelation
 import com.dickow.chortlin.core.test.shared.OnlineInstrumentFirstClass
@@ -15,11 +16,11 @@ import com.dickow.chortlin.interception.configuration.InterceptionConfiguration
 import com.dickow.chortlin.interception.sending.TraceSender
 import com.dickow.chortlin.shared.exceptions.ChoreographyRuntimeException
 import com.dickow.chortlin.shared.trace.TraceElement
+import com.dickow.chortlin.shared.trace.protobuf.DtoDefinitions
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
-import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
@@ -33,16 +34,15 @@ class OnlineInstrumentationTests {
 
     @Test
     fun `check online checker on simple choreography with manual execution`() {
-        val sessionId = UUID.randomUUID()
         val cset = defineCorrelation()
-                .add(correlation(onlineFirstClass.onMethod("method1", OnlineInstrumentFirstClass::method1),
-                        "sid", { sessionId })
-                        .extendFromInput("sid") { sessionId }.done())
-                .add(correlation(onlineFirstClass.onMethod("method2", OnlineInstrumentFirstClass::method2),
-                        "sid", { sessionId })
+                .add(correlation(onlineFirstClass.onMethod("method1"),
+                        "sid", root().build())
+                        .extendFromInput("sid", root().build()).done())
+                .add(correlation(onlineFirstClass.onMethod("method2"),
+                        "sid", root().build())
                         .noExtensions())
-                .add(correlation(onlineSecondClass.onMethod("method1", OnlineInstrumentSecondClass::method1),
-                        "sid", { sessionId })
+                .add(correlation(onlineSecondClass.onMethod("method1"),
+                        "sid", root().build())
                         .noExtensions())
                 .finish()
         val choreography = Choreography.builder()
@@ -62,16 +62,15 @@ class OnlineInstrumentationTests {
 
     @Test
     fun `check that online checker fails fast if traces do not conform`() {
-        val sessionId = UUID.randomUUID()
         val cset = defineCorrelation()
-                .add(correlation(onlineFirstClass.onMethod("method1", OnlineInstrumentFirstClass::method1),
-                        "sid", { sessionId })
-                        .extendFromInput("sid") { sessionId }.done())
-                .add(correlation(onlineFirstClass.onMethod("method2", OnlineInstrumentFirstClass::method2),
-                        "sid", { sessionId })
+                .add(correlation(onlineFirstClass.onMethod("method1"),
+                        "sid", root().build())
+                        .extendFromInput("sid", root().build()).done())
+                .add(correlation(onlineFirstClass.onMethod("method2"),
+                        "sid", root().build())
                         .noExtensions())
-                .add(correlation(onlineSecondClass.onMethod("method1", OnlineInstrumentSecondClass::method1),
-                        "sid", { sessionId })
+                .add(correlation(onlineSecondClass.onMethod("method1"),
+                        "sid", root().build())
                         .noExtensions())
                 .finish()
         val choreography = Choreography.builder()
@@ -91,28 +90,26 @@ class OnlineInstrumentationTests {
 
     @Test
     fun `check that concurrently running choreographies work`() {
-        val sessionId1 = UUID.randomUUID()
-        val sessionId2 = UUID.randomUUID()
         val cset1 = defineCorrelation()
-                .add(correlation(onlineFirstClass.onMethod("method1", OnlineInstrumentFirstClass::method1),
-                        "sid", { sessionId1 })
-                        .extendFromInput("sid") { sessionId1 }.done())
-                .add(correlation(onlineFirstClass.onMethod("method2", OnlineInstrumentFirstClass::method2),
-                        "sid", { sessionId1 })
+                .add(correlation(onlineFirstClass.onMethod("method1"),
+                        "sid", root().build())
+                        .extendFromInput("sid", root().build()).done())
+                .add(correlation(onlineFirstClass.onMethod("method2"),
+                        "sid", root().build())
                         .noExtensions())
-                .add(correlation(onlineSecondClass.onMethod("method1", OnlineInstrumentSecondClass::method1),
-                        "sid", { sessionId1 })
+                .add(correlation(onlineSecondClass.onMethod("method1"),
+                        "sid", root().build())
                         .noExtensions())
                 .finish()
         val cset2 = defineCorrelation()
-                .add(correlation(onlineSecondClass.onMethod("method2", OnlineInstrumentSecondClass::method2),
-                        "sid", { sessionId2 })
-                        .extendFromInput("sid") { sessionId2 }.done())
-                .add(correlation(onlineThirdClass.onMethod("method1", OnlineInstrumentThirdClass::method1),
-                        "sid", { sessionId2 })
+                .add(correlation(onlineSecondClass.onMethod("method2"),
+                        "sid", root().build())
+                        .extendFromInput("sid", root().build()).done())
+                .add(correlation(onlineThirdClass.onMethod("method1"),
+                        "sid", root().build())
                         .noExtensions())
-                .add(correlation(onlineThirdClass.onMethod("method2", OnlineInstrumentThirdClass::method2),
-                        "sid", { sessionId2 })
+                .add(correlation(onlineThirdClass.onMethod("method2"),
+                        "sid", root().build())
                         .noExtensions())
                 .finish()
         val choreography1 = Choreography.builder()
@@ -149,28 +146,26 @@ class OnlineInstrumentationTests {
 
     @Test
     fun `check that concurrently running choreographies work and throw exception with wrong execution`() {
-        val sessionId1 = UUID.randomUUID()
-        val sessionId2 = UUID.randomUUID()
         val cset1 = defineCorrelation()
-                .add(correlation(onlineFirstClass.onMethod("method1", OnlineInstrumentFirstClass::method1),
-                        "sid", { sessionId1 })
-                        .extendFromInput("sid") { sessionId1 }.done())
-                .add(correlation(onlineFirstClass.onMethod("method2", OnlineInstrumentFirstClass::method2),
-                        "sid", { sessionId1 })
+                .add(correlation(onlineFirstClass.onMethod("method1"),
+                        "sid", root().build())
+                        .extendFromInput("sid", root().build()).done())
+                .add(correlation(onlineFirstClass.onMethod("method2"),
+                        "sid", root().build())
                         .noExtensions())
-                .add(correlation(onlineSecondClass.onMethod("method1", OnlineInstrumentSecondClass::method1),
-                        "sid", { sessionId1 })
+                .add(correlation(onlineSecondClass.onMethod("method1"),
+                        "sid", root().build())
                         .noExtensions())
                 .finish()
         val cset2 = defineCorrelation()
-                .add(correlation(onlineSecondClass.onMethod("method2", OnlineInstrumentSecondClass::method2),
-                        "sid", { sessionId2 })
-                        .extendFromInput("sid") { sessionId2 }.done())
-                .add(correlation(onlineThirdClass.onMethod("method1", OnlineInstrumentThirdClass::method1),
-                        "sid", { sessionId2 })
+                .add(correlation(onlineSecondClass.onMethod("method2"),
+                        "sid", root().build())
+                        .extendFromInput("sid", root().build()).done())
+                .add(correlation(onlineThirdClass.onMethod("method1"),
+                        "sid", root().build())
                         .noExtensions())
-                .add(correlation(onlineThirdClass.onMethod("method2", OnlineInstrumentThirdClass::method2),
-                        "sid", { sessionId2 })
+                .add(correlation(onlineThirdClass.onMethod("method2"),
+                        "sid", root().build())
                         .noExtensions())
                 .finish()
 
@@ -223,13 +218,13 @@ class OnlineInstrumentationTests {
             else return result
         }
 
-        override fun check(traceDTO: InvocationDTO): CheckResult {
+        override fun check(traceDTO: DtoDefinitions.InvocationDTO): CheckResult {
             val result = checker.check(traceDTO)
             if (result == CheckResult.None) throw ChoreographyRuntimeException("NO MATCH FOUND")
             else return result
         }
 
-        override fun check(traceDTO: ReturnDTO): CheckResult {
+        override fun check(traceDTO: DtoDefinitions.ReturnDTO): CheckResult {
             val result = checker.check(traceDTO)
             if (result == CheckResult.None) throw ChoreographyRuntimeException("NO MATCH FOUND")
             else return result
@@ -238,11 +233,11 @@ class OnlineInstrumentationTests {
     }
 
     class TestSender(private val checker: ChoreographyChecker) : TraceSender {
-        override fun send(invocationDTO: InvocationDTO) {
+        override fun send(invocationDTO: DtoDefinitions.InvocationDTO) {
             checker.check(invocationDTO)
         }
 
-        override fun send(returnDTO: ReturnDTO) {
+        override fun send(returnDTO: DtoDefinitions.ReturnDTO) {
             checker.check(returnDTO)
         }
 

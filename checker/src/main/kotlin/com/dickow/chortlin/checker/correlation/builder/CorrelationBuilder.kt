@@ -29,7 +29,8 @@ class CorrelationBuilder(private val observableMethod: ObservableMethod,
         return this
     }
 
-    fun extendFromReturn(key: String, path: Path) {
+    fun extendFromReturn(key: String, path: Path): CorrelationBuilder {
         returnFunctions.add(ReturnTypesFunction(key, path))
+        return this
     }
 }

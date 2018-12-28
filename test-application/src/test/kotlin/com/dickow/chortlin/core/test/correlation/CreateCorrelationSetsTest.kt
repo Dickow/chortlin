@@ -5,6 +5,7 @@ import com.dickow.chortlin.checker.choreography.Choreography
 import com.dickow.chortlin.checker.choreography.participant.ParticipantFactory.external
 import com.dickow.chortlin.checker.choreography.participant.ParticipantFactory.participant
 import com.dickow.chortlin.checker.correlation.CorrelationValue
+import com.dickow.chortlin.checker.correlation.builder.PathBuilder.Builder.root
 import com.dickow.chortlin.checker.correlation.factory.CorrelationFactory.correlation
 import com.dickow.chortlin.checker.correlation.factory.CorrelationFactory.defineCorrelation
 import com.dickow.chortlin.core.test.instrumentation.OnlineInstrumentationTests
@@ -27,9 +28,9 @@ class CreateCorrelationSetsTest {
     private val authService = Authentication()
     private val itemService = AuthenticatedService()
 
-    private val authCorrelation = { username: String, _: String -> username }
-    private val authExtendCorrelation = { authResult: AuthResult -> authResult.userId }
-    private val buyerCorrelation = { _: String, authResult: AuthResult -> authResult.userId }
+    private val authCorrelation = root().node("0").build()
+    private val authExtendCorrelation = root().node("0").node("userId").build()
+    private val buyerCorrelation = root().node("0").node("userId").build()
     private val authenticationChoreography = Choreography.builder()
             .interaction(client, auth.onMethod("authenticate"), "Authenticate client")
             .returnFrom(auth.onMethod("authenticate"), "Client is authenticated")
@@ -38,11 +39,10 @@ class CreateCorrelationSetsTest {
             .end()
 
     private val cset = defineCorrelation()
-            .add(correlation(auth.onMethod("authenticate", Authentication::authenticate), "uName", authCorrelation)
+            .add(correlation(auth.onMethod("authenticate"), "uName", authCorrelation)
                     .extendFromInput("uName", authCorrelation)
-                    .extendFromReturn("userId", authExtendCorrelation)
-                    .done())
-            .add(correlation(buyService.onMethod("buyItem", AuthenticatedService::buyItem), "userId", buyerCorrelation)
+                    .extendFromReturn("userId", authExtendCorrelation).done())
+            .add(correlation(buyService.onMethod("buyItem"), "userId", buyerCorrelation)
                     .noExtensions())
             .finish()
 
@@ -58,7 +58,7 @@ class CreateCorrelationSetsTest {
     fun `expect error when creating checker for choreography with lacking correlation set`() {
         authenticationChoreography
                 .setCorrelation(defineCorrelation()
-                        .add(correlation(auth.onMethod("authenticate", Authentication::authenticate), "uName", authCorrelation)
+                        .add(correlation(auth.onMethod("authenticate"), "uName", authCorrelation)
                                 .extendFromInput("uName", authCorrelation)
                                 .extendFromReturn("userId", authExtendCorrelation).done())
                         .finish())
@@ -100,11 +100,11 @@ class CreateCorrelationSetsTest {
     fun `expect an error when correlation function uses wrong correlation key`() {
         authenticationChoreography
                 .setCorrelation(defineCorrelation()
-                        .add(correlation(auth.onMethod("authenticate", Authentication::authenticate), "uName", authCorrelation)
+                        .add(correlation(auth.onMethod("authenticate"), "uName", authCorrelation)
                                 .extendFromInput("user", authCorrelation) // Adding the value under another identifier
                                 .extendFromReturn("userId", authExtendCorrelation)
                                 .done())
-                        .add(correlation(buyService.onMethod("buyItem", AuthenticatedService::buyItem), "userId", buyerCorrelation)
+                        .add(correlation(buyService.onMethod("buyItem"), "userId", buyerCorrelation)
                                 .noExtensions())
                         .finish())
         val checker = OnlineInstrumentationTests.InterceptingTestChecker(OnlineCheckerFactory.createOnlineChecker(listOf(authenticationChoreography)))

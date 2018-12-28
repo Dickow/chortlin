@@ -1,15 +1,15 @@
 package com.dickow.chortlin.shared.trace
 
-import com.dickow.chortlin.shared.observation.Observation
+import com.dickow.chortlin.shared.observation.Observable
 
-data class Return(private val observation: Observation,
+data class Return(private val observation: Observable,
                   private val argumentTree: Map<*, *>,
                   val returnValue: Map<*, *>) : TraceElement() {
     override fun getArgumentTree(): Map<*, *> {
         return argumentTree
     }
 
-    override fun getObservation(): Observation {
+    override fun getObservation(): Observable {
         return observation
     }
 

@@ -3,17 +3,16 @@ package com.dickow.chortlin.core.test.networkinterception
 import com.dickow.chortlin.core.test.shared.AuthResult
 import com.dickow.chortlin.core.test.shared.AuthenticatedService
 import com.dickow.chortlin.core.test.shared.Authentication
+import com.dickow.chortlin.core.test.shared.builder.TestObservableBuilder.buildInvocation
 import com.dickow.chortlin.core.test.shared.objects.Receipt
 import com.dickow.chortlin.interception.defaults.DefaultIntercept
 import com.dickow.chortlin.interception.sending.TraceSender
 import com.dickow.chortlin.shared.observation.ObservableFactory
-import com.dickow.chortlin.shared.trace.Invocation
-import com.dickow.chortlin.shared.trace.Return
-import com.dickow.chortlin.shared.trace.dto.InvocationDTO
-import com.dickow.chortlin.shared.trace.dto.ReturnDTO
+import com.dickow.chortlin.shared.trace.protobuf.DtoDefinitions
 import org.junit.jupiter.api.BeforeEach
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class SerializedInterceptionValuesTests {
     private val sender = TestSender()
@@ -28,42 +27,39 @@ class SerializedInterceptionValuesTests {
     @Test
     fun `observe simple trace and send it across the serialisation`(){
         val observed = ObservableFactory.observed(Authentication::class.java, "authenticate")
-        val trace = Invocation(observed, arrayOf("jeppeDickow", "password"))
+        val trace = buildInvocation(observed, arrayOf("jeppeDickow", "password"))
         sender.invocationDTOCallback = {invocationDTO ->
-            assertEquals(trace.getObservation().clazz.canonicalName, invocationDTO.classCanonicalName)
-            assertEquals(trace.getObservation().method.name, invocationDTO.methodName)
-            assertEquals(trace.getArguments()[0], invocationDTO.arguments[0].value!!.replace("\"", ""))
-            assertEquals(trace.getArguments()[1], invocationDTO.arguments[1].value!!.replace("\"", ""))
+            assertEquals(trace.getObservation().clazz.canonicalName, invocationDTO.observed.participant)
+            assertEquals(trace.getObservation().method.name, invocationDTO.observed.method)
+            assertTrue(invocationDTO.argumentTree.contains("jeppeDickow"))
+            assertTrue(invocationDTO.argumentTree.contains("password"))
         }
-        interceptor.intercept(trace)
+        interceptor.interceptInvocation(observed, arrayOf("jeppeDickow", "password"))
     }
 
     @Test
     fun `send invocation with dto object as input`(){
         val observed = ObservableFactory.observed(AuthenticatedService::class.java, "sellItem")
-        val trace = Invocation(observed, arrayOf("Coffee machine", 900, AuthResult("999")))
-        interceptor.intercept(trace)
+        interceptor.interceptInvocation(observed, arrayOf("Coffee machine", 900, AuthResult("999")))
     }
 
     @Test
     fun `send return with dto as output object`(){
         val observed = ObservableFactory.observed(AuthenticatedService::class.java, "sellItem")
-        val trace = Return(
-                observed,
+        interceptor.interceptReturn(observed,
                 arrayOf("Coffee machine", 900, AuthResult("999")),
                 Receipt(1, 900, "Coffee Machine", "999"))
-        interceptor.intercept(trace)
     }
 
     class TestSender : TraceSender {
-        var invocationDTOCallback : (InvocationDTO) -> Unit = {}
-        var returnDTOCallback : (ReturnDTO) -> Unit = {}
+        var invocationDTOCallback: (DtoDefinitions.InvocationDTO) -> Unit = {}
+        var returnDTOCallback: (DtoDefinitions.ReturnDTO) -> Unit = {}
 
-        override fun send(invocationDTO: InvocationDTO) {
+        override fun send(invocationDTO: DtoDefinitions.InvocationDTO) {
             invocationDTOCallback(invocationDTO)
         }
 
-        override fun send(returnDTO: ReturnDTO) {
+        override fun send(returnDTO: DtoDefinitions.ReturnDTO) {
             returnDTOCallback(returnDTO)
         }
     }

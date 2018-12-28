@@ -1,14 +1,14 @@
 package com.dickow.chortlin.shared.trace
 
-import com.dickow.chortlin.shared.observation.Observation
+import com.dickow.chortlin.shared.observation.Observable
 
 
-data class Invocation(private val observation: Observation, private val argumentTree: Map<*, *>) : TraceElement() {
+data class Invocation(private val observation: Observable, private val argumentTree: Map<*, *>) : TraceElement() {
     override fun getArgumentTree(): Map<*, *> {
         return argumentTree
     }
 
-    override fun getObservation(): Observation {
+    override fun getObservation(): Observable {
         return observation
     }
 

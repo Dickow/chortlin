@@ -7,6 +7,7 @@ import com.dickow.chortlin.shared.trace.Invocation
 import com.dickow.chortlin.shared.trace.Return
 import com.dickow.chortlin.shared.trace.protobuf.DtoDefinitions
 import com.google.gson.Gson
+import java.lang.reflect.Method
 
 class TraceBuilder {
     private val gson = Gson()
@@ -17,7 +18,9 @@ class TraceBuilder {
         val methodName = observed.method.name
 
         builder.observed = builder.observedBuilder.setParticipant(classCanonicalName).setMethod(methodName).build()
-        val argumentTree = mapOf(Pair("root", arguments.mapIndexed { index, any -> Pair(index, any) }.toMap()))
+        val argumentTree = mapOf(Pair("root", arguments.mapIndexed { index, any ->
+            Pair(getArgumentName(index, observed.method), any)
+        }.toMap()))
         builder.argumentTree = gson.toJson(argumentTree)
         return builder.build()
     }
@@ -27,7 +30,9 @@ class TraceBuilder {
         val classCanonicalName = observed.clazz.canonicalName
         val methodName = observed.method.name
         builder.observed = builder.observedBuilder.setParticipant(classCanonicalName).setMethod(methodName).build()
-        val argumentTree = mapOf(Pair("root", arguments.mapIndexed { index, any -> Pair(index, any) }.toMap()))
+        val argumentTree = mapOf(Pair("root", arguments.mapIndexed { index, any ->
+            Pair(getArgumentName(index, observed.method), any)
+        }.toMap()))
         builder.argumentTree = gson.toJson(argumentTree)
         builder.returnValue = gson.toJson(mapOf(Pair("root", gson.toJson(returnValue))))
         return builder.build()
@@ -53,6 +58,18 @@ class TraceBuilder {
             return Return(observed, argumentTree, returnValue)
         } else {
             throw ChoreographyRuntimeException("Unable to find class ${returnDTO.observed.participant}")
+        }
+    }
+
+    private fun getArgumentName(index: Int, method: Method): String {
+        return if (method.parameters.any()) {
+            if (method.parameters[0].isNamePresent) {
+                method.parameters[index].name
+            } else {
+                index.toString()
+            }
+        } else {
+            index.toString()
         }
     }
 }

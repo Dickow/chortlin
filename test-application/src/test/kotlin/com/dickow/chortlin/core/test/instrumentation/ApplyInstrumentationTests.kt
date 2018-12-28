@@ -4,23 +4,33 @@ import com.dickow.chortlin.checker.checker.result.CheckResult
 import com.dickow.chortlin.checker.choreography.Choreography
 import com.dickow.chortlin.checker.choreography.participant.ParticipantFactory.external
 import com.dickow.chortlin.checker.choreography.participant.ParticipantFactory.participant
+import com.dickow.chortlin.checker.correlation.builder.PathBuilder.Builder.root
 import com.dickow.chortlin.checker.correlation.factory.CorrelationFactory.correlation
 import com.dickow.chortlin.checker.correlation.factory.CorrelationFactory.defineCorrelation
 import com.dickow.chortlin.core.test.shared.*
 import com.dickow.chortlin.interception.InterceptStrategy
 import com.dickow.chortlin.interception.configuration.InterceptionStrategy
 import com.dickow.chortlin.interception.instrumentation.ByteBuddyInstrumentation
+import com.dickow.chortlin.shared.observation.Observable
 import com.dickow.chortlin.shared.trace.Trace
 import com.dickow.chortlin.shared.trace.TraceElement
+import com.dickow.chortlin.shared.transformation.TraceBuilder
 import java.util.*
 import kotlin.test.Test
 import kotlin.test.assertEquals
 
 class ApplyInstrumentationTests {
+    private val builder = TraceBuilder()
     val traces: MutableList<TraceElement> = LinkedList()
-    private val interceptStrategy: InterceptStrategy = object : InterceptStrategy {
 
-        override fun intercept(trace: TraceElement) {
+    private val interceptStrategy: InterceptStrategy = object : InterceptStrategy {
+        override fun interceptInvocation(observable: Observable, arguments: Array<out Any?>) {
+            val trace = builder.buildInvocation(builder.buildInvocationDTO(observable, arguments))
+            traces.add(trace)
+        }
+
+        override fun interceptReturn(observable: Observable, arguments: Array<out Any?>, returnValue: Any?) {
+            val trace = builder.buildReturn(builder.buildReturnDTO(observable, arguments, returnValue))
             traces.add(trace)
         }
     }
@@ -52,13 +62,12 @@ class ApplyInstrumentationTests {
     fun `apply instrumentation to simple in memory communication`() {
         traces.clear()
         InterceptionStrategy.strategy = interceptStrategy
-        val sessionId = UUID.randomUUID()
         val cset = defineCorrelation()
-                .add(correlation(initial.onMethod("begin", Initial::begin), "sid", { sessionId })
-                        .extendFromInput("sid") { sessionId }
+                .add(correlation(initial.onMethod("begin"), "sid", root().build())
+                        .extendFromInput("sid", root().build())
                         .done())
-                .add(correlation(delegate.onMethod("delegate", Initial::delegate), "sid", { sessionId }).noExtensions())
-                .add(correlation(processor.onMethod("process", Second::process), "sid", { sessionId }).noExtensions())
+                .add(correlation(delegate.onMethod("delegate"), "sid", root().build()).noExtensions())
+                .add(correlation(processor.onMethod("process"), "sid", root().build()).noExtensions())
                 .finish()
 
         val choreography = Choreography.builder()
@@ -76,11 +85,11 @@ class ApplyInstrumentationTests {
     fun `validate that instrumentation catches an error in the invocation`() {
         traces.clear()
         InterceptionStrategy.strategy = interceptStrategy
-        val sessionId = UUID.randomUUID()
         val cset = defineCorrelation()
-                .add(correlation(delegate.onMethod("delegate", Initial::delegate), "sid", { sessionId }).extendFromInput("sid") { sessionId }.done())
-                .add(correlation(initial.onMethod("begin", Initial::begin), "sid", { sessionId }).noExtensions())
-                .add(correlation(processor.onMethod("process", Second::process), "sid", { sessionId }).noExtensions())
+                .add(correlation(delegate.onMethod("delegate"), "sid", root().build())
+                        .extendFromInput("sid", root().build()).done())
+                .add(correlation(initial.onMethod("begin"), "sid", root().build()).noExtensions())
+                .add(correlation(processor.onMethod("process"), "sid", root().build()).noExtensions())
                 .finish()
 
         val choreography = Choreography.builder()
@@ -98,11 +107,11 @@ class ApplyInstrumentationTests {
     fun `validate instrumentation when returns are used correctly`() {
         traces.clear()
         InterceptionStrategy.strategy = interceptStrategy
-        val sessionId = UUID.randomUUID()
         val cset = defineCorrelation()
-                .add(correlation(firstClass.onMethod("first", FirstClass::first), "sid", { sessionId }).extendFromInput("sid") { sessionId }.done())
-                .add(correlation(secondClass.onMethod("second", SecondClass::second), "sid", { sessionId }).noExtensions())
-                .add(correlation(thirdClass.onMethod("third", ThirdClass::third), "sid", { sessionId }).noExtensions())
+                .add(correlation(firstClass.onMethod("first"), "sid", root().build())
+                        .extendFromInput("sid", root().build()).done())
+                .add(correlation(secondClass.onMethod("second"), "sid", root().build()).noExtensions())
+                .add(correlation(thirdClass.onMethod("third"), "sid", root().build()).noExtensions())
                 .finish()
         val choreography = Choreography.builder()
                 .interaction(external, firstClass.onMethod("first"), "initial receive")
@@ -122,11 +131,11 @@ class ApplyInstrumentationTests {
     fun `check that checker invalidates gathered traces for wrong call sequence`() {
         traces.clear()
         InterceptionStrategy.strategy = interceptStrategy
-        val sessionId = UUID.randomUUID()
         val cset = defineCorrelation()
-                .add(correlation(firstClass.onMethod("first", FirstClass::first), "sid", { sessionId }).extendFromInput("sid") { sessionId }.done())
-                .add(correlation(secondClass.onMethod("second", SecondClass::second), "sid", { sessionId }).noExtensions())
-                .add(correlation(thirdClass.onMethod("third", ThirdClass::third), "sid", { sessionId }).noExtensions())
+                .add(correlation(firstClass.onMethod("first"), "sid", root().build())
+                        .extendFromInput("sid", root().build()).done())
+                .add(correlation(secondClass.onMethod("second"), "sid", root().build()).noExtensions())
+                .add(correlation(thirdClass.onMethod("third"), "sid", root().build()).noExtensions())
                 .finish()
 
         val choreography = Choreography.builder()
@@ -149,11 +158,12 @@ class ApplyInstrumentationTests {
         InterceptionStrategy.strategy = interceptStrategy
         val sessionId = UUID.randomUUID()
         val cset = defineCorrelation()
-                .add(correlation(partialFirst1.onMethod("first", PartialFirst::first), "sid", { sessionId }).extendFromInput("sid") { sessionId }.done())
-                .add(correlation(partialFirst1.onMethod("second", PartialFirst::second), "sid", { sessionId }).noExtensions())
-                .add(correlation(partialSecond2.onMethod("second", PartialSecond::second), "sid", { sessionId }).noExtensions())
-                .add(correlation(partialSecond2.onMethod("third", PartialSecond::third), "sid", { sessionId }).noExtensions())
-                .add(correlation(partialThird3.onMethod("third", PartialThird::third), "sid", { sessionId }).noExtensions())
+                .add(correlation(partialFirst1.onMethod("first"), "sid", root().build())
+                        .extendFromInput("sid", root().build()).done())
+                .add(correlation(partialFirst1.onMethod("second"), "sid", root().build()).noExtensions())
+                .add(correlation(partialSecond2.onMethod("second"), "sid", root().build()).noExtensions())
+                .add(correlation(partialSecond2.onMethod("third"), "sid", root().build()).noExtensions())
+                .add(correlation(partialThird3.onMethod("third"), "sid", root().build()).noExtensions())
                 .finish()
 
         val choreography = Choreography.builder()

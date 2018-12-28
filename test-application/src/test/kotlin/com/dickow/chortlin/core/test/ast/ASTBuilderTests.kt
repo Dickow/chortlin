@@ -23,8 +23,8 @@ class ASTBuilderTests {
     fun `build simple receive then interaction choreography`() {
         val choreography = Choreography.builder()
                 .interaction(external, a.onMethod("receive"), "receive")
-                .interaction(a, a.onMethod("b", A::b), "call A#b")
-                .interaction(a, b.onMethod("b", B::b), "Invoke B#b")
+                .interaction(a, a.onMethod("b"), "call A#b")
+                .interaction(a, b.onMethod("b"), "Invoke B#b")
                 .end()
 
         val interaction1 = Interaction(
