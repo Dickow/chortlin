@@ -99,6 +99,7 @@
                 <version>3.8.0</version>
                 <configuration>
                     <release>${java.version}</release>
+                    <source>${project.basedir}/src/main/java</source>
                 </configuration>
                 <executions>
                     <execution>
@@ -150,6 +151,7 @@
                 <configuration>
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
+                        <descriptorRef>src</descriptorRef>
                     </descriptorRefs>
                 </configuration>
             </plugin>

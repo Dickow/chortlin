@@ -48,6 +48,7 @@ class TraceDTOFactory {
             is Array<*> -> Value.newBuilder().setListValue(
                     ListValue.newBuilder().addAllValues(argument.map { arrayItem -> buildValue(arrayItem).build() }))
             is Boolean -> Value.newBuilder().setBoolValue(argument)
+            is Enum<*> -> Value.newBuilder().setStringValue(argument.name)
             else -> {
                 Value.newBuilder()
                         .setStructValue(Struct.newBuilder().putAllFields(

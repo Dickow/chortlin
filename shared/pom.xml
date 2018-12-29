@@ -35,6 +35,7 @@
 
     <build>
         <plugins>
+            <!-- PROTOBUFFER COMPILER -->
             <plugin>
                 <groupId>com.github.os72</groupId>
                 <artifactId>protoc-jar-maven-plugin</artifactId>
@@ -111,6 +112,7 @@
                         <goals>
                             <goal>compile</goal>
                         </goals>
+                        <configuration><source>src/main/java</source></configuration>
                     </execution>
                     <execution>
                         <id>testCompile</id>

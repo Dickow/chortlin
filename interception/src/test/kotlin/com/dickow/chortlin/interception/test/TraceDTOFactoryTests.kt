@@ -18,6 +18,7 @@ class TraceDTOFactoryTests {
     private val listObservable = createObservation(PlaceholderTestClass::class.java, "listMethod")
     private val arrayObservable = createObservation(PlaceholderTestClass::class.java, "arrayMethod")
     private val objectObservable = createObservation(PlaceholderTestClass::class.java, "objectMethod")
+    private val genericObservable = createObservation(PlaceholderTestClass::class.java, "genericObjectMethod")
 
     private val factory = TraceDTOFactory()
 
@@ -86,6 +87,24 @@ class TraceDTOFactoryTests {
         assertEquals("object", trace.getArguments(0).identifier)
     }
 
+    @Test
+    fun `construct value for generic object`(){
+        val valueForTest = GenericObject(ValueObject())
+        val expectedFields = listOf("obj")
+        val trace = factory.buildInvocationDTO(genericObservable, arrayOf(valueForTest))
+        assertTrue { trace.getArguments(0).value.hasStructValue() }
+        val hasAllField = trace.getArguments(0).value.structValue.fieldsMap.keys.containsAll(expectedFields)
+        assertTrue { hasAllField }
+        assertEquals("arg0", trace.getArguments(0).identifier)
+    }
+
+    @Test
+    fun `construct value for enum`(){
+        val valueForTest = EnumValues.ENUM2
+        val trace = factory.buildInvocationDTO(genericObservable, arrayOf(valueForTest))
+        assertEquals(valueForTest.name, trace.getArguments(0).value.stringValue)
+    }
+
     private fun createObservation(clazz:Class<*>, method:String) : Observation {
         return Observation(clazz, clazz.methods.single { m -> m.name == method })
     }
@@ -99,7 +118,11 @@ class PlaceholderTestClass {
     fun objectMethod(@Named("object") obj: ValueObject){}
     fun listMethod(list:List<String>){}
     fun arrayMethod(array:Array<String>){}
+    fun genericObjectMethod(obj: GenericObject<ValueObject>){}
+    fun enumMethod(enum: EnumValues){}
 }
+
+class GenericObject<T>(val obj: T?)
 
 class ValueObject {
     var name = "Hello"
@@ -112,4 +135,10 @@ class ValueObject {
 class NestedObject {
     val field1 = "FIELD 1"
     val field2 = true
+}
+
+enum class EnumValues {
+    ENUM1,
+    ENUM2,
+    ENUM3
 }

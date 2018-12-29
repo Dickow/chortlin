@@ -80,7 +80,6 @@
     </dependencies>
 
     <build>
-        <testSourceDirectory>src/test/kotlin</testSourceDirectory>
         <plugins>
             <!-- KOTLIN COMPILER -->
             <plugin>
@@ -110,6 +109,11 @@
                         <goals>
                             <goal>test-compile</goal>
                         </goals>
+                        <configuration>
+                            <sourceDirs>
+                                <source>src/test/kotlin</source>
+                            </sourceDirs>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -136,6 +140,7 @@
                         <goals>
                             <goal>compile</goal>
                         </goals>
+                        <configuration><source>src/main/java</source></configuration>
                     </execution>
                     <execution>
                         <id>testCompile</id>
@@ -171,6 +176,7 @@
                 <configuration>
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
+                        <descriptorRef>src</descriptorRef>
                     </descriptorRefs>
                 </configuration>
             </plugin>

@@ -15,4 +15,8 @@ abstract class Observable(val canonicalClassName: String, val method: String) {
         result = 31 * result + method.hashCode()
         return result
     }
+
+    override fun toString(): String {
+        return "$canonicalClassName::$method"
+    }
 }
