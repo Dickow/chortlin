@@ -9,7 +9,7 @@ import java.util.*
 class InMemorySessionManager(private val choreographies: List<Choreography>) : SessionManager {
     private val ongoingSessions: MutableMap<UUID, Session> = Hashtable()
 
-    override fun clearSession(session: Session) {
+    override fun endSession(session: Session) {
         ongoingSessions.remove(session.sessionId)
     }
 
