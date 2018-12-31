@@ -41,8 +41,8 @@ class Session(val sessionId: UUID, val choreography: Choreography, trace: TraceE
         this.traces.add(trace)
     }
 
-    fun hasParticipant(participant: Observable): Boolean {
-        return choreography.contains(participant)
+    fun containsObservable(observable: Observable): Boolean {
+        return choreography.contains(observable)
     }
 
     fun extendKeys(trace: TraceElement) {

@@ -7,10 +7,10 @@ import java.util.*
 
 
 class InMemorySessionManager(private val choreographies: List<Choreography>) : SessionManager {
-    private val ongoingSessions: MutableMap<UUID, Session> = Hashtable()
+    private val activeSessions: MutableMap<UUID, Session> = Hashtable()
 
     override fun endSession(session: Session) {
-        ongoingSessions.remove(session.sessionId)
+        activeSessions.remove(session.sessionId)
     }
 
     override fun beginSession(trace: TraceElement): Session {
@@ -18,7 +18,7 @@ class InMemorySessionManager(private val choreographies: List<Choreography>) : S
         if (choreography != null) {
             val sessionId = UUID.randomUUID()
             val session = Session(sessionId, choreography, trace)
-            ongoingSessions[sessionId] = session
+            activeSessions[sessionId] = session
             return session
         } else {
             throw ChoreographyRuntimeException("Unable to find a possible choreography instance for trace: $trace")
@@ -26,8 +26,8 @@ class InMemorySessionManager(private val choreographies: List<Choreography>) : S
     }
 
     override fun getSession(trace: TraceElement): Session? {
-        return ongoingSessions.values.find { session ->
-            session.correlatesTo(trace) && session.hasParticipant(trace.getObservation())
+        return activeSessions.values.find { session ->
+            session.correlatesTo(trace) && session.containsObservable(trace.getObservation())
         }
     }
 }
