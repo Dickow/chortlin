@@ -2,7 +2,7 @@ package com.dickow.chortlin.interception.test
 
 import com.dickow.chortlin.interception.InterceptStrategy
 import com.dickow.chortlin.interception.configuration.InterceptionStrategy
-import com.dickow.chortlin.interception.dto.TraceDTOFactory
+import com.dickow.chortlin.interception.sending.dto.TraceDTOFactory
 import com.dickow.chortlin.interception.instrumentation.ByteBuddyInstrumentation
 import com.dickow.chortlin.interception.observation.Observation
 import org.junit.jupiter.api.BeforeEach

@@ -1,4 +1,4 @@
-package com.dickow.chortlin.interception.dto
+package com.dickow.chortlin.interception.sending.dto
 
 import com.dickow.chortlin.interception.annotations.Named
 import com.dickow.chortlin.interception.observation.Observation

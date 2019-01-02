@@ -6,19 +6,18 @@ import com.dickow.chortlin.checker.ast.Label
 import com.dickow.chortlin.checker.ast.types.*
 import com.dickow.chortlin.checker.checker.result.CheckResult
 import com.dickow.chortlin.checker.choreography.Choreography
-import com.dickow.chortlin.checker.choreography.method.ObservableMethod
 import com.dickow.chortlin.checker.choreography.participant.ObservableParticipant
 import com.dickow.chortlin.checker.choreography.participant.Participant
 import com.dickow.chortlin.shared.exceptions.InvalidASTException
 import com.dickow.chortlin.checker.trace.Trace
 
-class Marker : ASTNode(null, null), Placeholder {
+class EmptyAST : ASTNode(null, null), Placeholder {
     override fun satisfy(trace: Trace): CheckResult {
         throw InvalidASTException("You have not configured anything for your choreography, please configure something before creating the checker.")
     }
 
     override fun accept(visitor: ASTVisitor) {
-        throw InvalidASTException("Attempting to call visit on a Marker, this is not valid. " +
+        throw InvalidASTException("Attempting to call visit on a Empty AST, this is not valid. " +
                 "You probably asked for a builder and forgot to configure the choreography.")
     }
 
@@ -26,18 +25,12 @@ class Marker : ASTNode(null, null), Placeholder {
         return Choreography(Choice(possiblePaths.map { it(Choreography.builder()) }, null))
     }
 
-    override fun parallel(path: (ASTBuilder) -> Choreography): ASTBuilder {
-        return Parallel(path(Choreography.builder()), null, null)
+    override fun returnFrom(receiver: ObservableParticipant, label: String): ASTBuilder {
+        return ReturnFrom(receiver, Label(label), null, null)
     }
 
-    override fun returnFrom(observableMethod: ObservableMethod, label: String): ASTBuilder {
-        val observableReceiver = ObservableParticipant(observableMethod.participant.identifier, observableMethod.method)
-        return ReturnFrom(observableReceiver, Label(label), null, null)
-    }
-
-    override fun interaction(sender: Participant, observableMethod: ObservableMethod, label: String): ASTBuilder {
-        val observableReceiver = ObservableParticipant(observableMethod.participant.identifier, observableMethod.method)
-        return Interaction(sender, observableReceiver, Label(label), null, null)
+    override fun interaction(sender: Participant, receiver: ObservableParticipant, label: String): ASTBuilder {
+        return Interaction(sender, receiver, Label(label), null, null)
     }
 
     override fun end(): Choreography {

@@ -3,7 +3,7 @@ package com.dickow.chortlin.test.application.shared.builder
 import com.dickow.chortlin.checker.trace.Invocation
 import com.dickow.chortlin.checker.trace.Return
 import com.dickow.chortlin.checker.trace.TraceFactory
-import com.dickow.chortlin.interception.dto.TraceDTOFactory
+import com.dickow.chortlin.interception.sending.dto.TraceDTOFactory
 import com.dickow.chortlin.interception.observation.Observation
 
 object TestObservableBuilder {

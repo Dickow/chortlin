@@ -21,9 +21,6 @@ class ParticipantRetriever : ASTVisitor {
         astNode.next?.accept(this)
     }
 
-    override fun visitParallel(astNode: Parallel) {
-    }
-
     override fun visitChoice(astNode: Choice) {
     }
 

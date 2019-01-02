@@ -1,10 +1,8 @@
 package com.dickow.chortlin.checker.choreography.participant
 
-import com.dickow.chortlin.checker.choreography.method.MethodFactory
-
 class InternalParticipant(val identifier: String) : Participant {
 
-    fun onMethod(methodName: String) = MethodFactory.method(this, methodName)
+    fun onMethod(methodName: String) = ObservableParticipant(this.identifier, methodName)
 
     override fun equals(other: Any?): Boolean {
         return if (other is InternalParticipant) {

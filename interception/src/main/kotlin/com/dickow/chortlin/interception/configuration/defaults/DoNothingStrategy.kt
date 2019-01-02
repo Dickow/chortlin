@@ -1,4 +1,4 @@
-package com.dickow.chortlin.interception.defaults
+package com.dickow.chortlin.interception.configuration.defaults
 
 import com.dickow.chortlin.interception.InterceptStrategy
 import com.dickow.chortlin.interception.observation.Observation

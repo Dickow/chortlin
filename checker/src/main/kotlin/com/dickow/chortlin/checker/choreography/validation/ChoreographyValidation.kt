@@ -18,10 +18,6 @@ class ChoreographyValidation(private val choreography: Choreography) : ASTVisito
         checkNode(astNode, astNode.participant)
     }
 
-    override fun visitParallel(astNode: Parallel) {
-        throw InvalidChoreographyException("Unexpected parallel node encountered")
-    }
-
     override fun visitChoice(astNode: Choice) {
         throw InvalidChoreographyException("Unexpected choice node encountered")
     }

@@ -1,7 +1,7 @@
 package com.dickow.chortlin.interception.test
 
 import com.dickow.chortlin.interception.annotations.Named
-import com.dickow.chortlin.interception.dto.TraceDTOFactory
+import com.dickow.chortlin.interception.sending.dto.TraceDTOFactory
 import com.dickow.chortlin.interception.observation.Observation
 import com.google.protobuf.Value
 import java.util.*

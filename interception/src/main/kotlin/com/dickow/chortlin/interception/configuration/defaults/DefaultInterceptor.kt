@@ -1,7 +1,7 @@
-package com.dickow.chortlin.interception.defaults
+package com.dickow.chortlin.interception.configuration.defaults
 
 import com.dickow.chortlin.interception.InterceptStrategy
-import com.dickow.chortlin.interception.dto.TraceDTOFactory
+import com.dickow.chortlin.interception.sending.dto.TraceDTOFactory
 import com.dickow.chortlin.interception.observation.Observation
 import com.dickow.chortlin.interception.sending.TraceSender
 

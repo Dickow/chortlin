@@ -12,11 +12,6 @@ class ASTValidator : ASTVisitor {
         astNode.possiblePaths.forEach { node -> node.runVisitor(this) }
     }
 
-    override fun visitParallel(astNode: Parallel) {
-        astNode.parallelChoreography.runVisitor(this)
-        nextNode(astNode)
-    }
-
     override fun visitEnd(astNode: End) {
         if (astNode.next != null) {
             throw InvalidASTException("Found an end node with subsequent activities, this is not allowed. " +

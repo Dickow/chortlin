@@ -1,7 +1,7 @@
 package com.dickow.chortlin.interception.configuration
 
-import com.dickow.chortlin.interception.defaults.DefaultInterceptor
-import com.dickow.chortlin.interception.defaults.HttpSender
+import com.dickow.chortlin.interception.configuration.defaults.DefaultInterceptor
+import com.dickow.chortlin.interception.configuration.defaults.HttpSender
 import com.dickow.chortlin.interception.instrumentation.ByteBuddyInstrumentation
 import com.dickow.chortlin.interception.sending.TraceSender
 
