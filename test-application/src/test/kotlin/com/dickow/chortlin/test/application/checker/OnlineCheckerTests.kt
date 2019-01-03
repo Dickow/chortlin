@@ -6,15 +6,15 @@ import com.dickow.chortlin.checker.checker.session.InMemorySessionManager
 import com.dickow.chortlin.checker.choreography.Choreography
 import com.dickow.chortlin.checker.choreography.participant.ParticipantFactory.external
 import com.dickow.chortlin.checker.choreography.participant.ParticipantFactory.participant
-import com.dickow.chortlin.checker.correlation.builder.PathBuilder.Builder.root
 import com.dickow.chortlin.checker.correlation.factory.CorrelationFactory.correlation
 import com.dickow.chortlin.checker.correlation.factory.CorrelationFactory.defineCorrelation
+import com.dickow.chortlin.checker.correlation.factory.PathBuilderFactory.root
+import com.dickow.chortlin.shared.exceptions.ChoreographyRuntimeException
 import com.dickow.chortlin.test.application.shared.OnlineFirstClass
 import com.dickow.chortlin.test.application.shared.OnlineSecondClass
 import com.dickow.chortlin.test.application.shared.OnlineThirdClass
 import com.dickow.chortlin.test.application.shared.builder.TestObservableBuilder.buildInvocation
 import com.dickow.chortlin.test.application.shared.builder.TestObservableBuilder.buildReturn
-import com.dickow.chortlin.shared.exceptions.ChoreographyRuntimeException
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith

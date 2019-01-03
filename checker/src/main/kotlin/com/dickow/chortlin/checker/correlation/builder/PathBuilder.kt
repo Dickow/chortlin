@@ -24,11 +24,4 @@ class PathBuilder {
         }
         return path[0]
     }
-
-    companion object Builder {
-        @JvmStatic
-        fun root(): PathBuilder {
-            return PathBuilder()
-        }
-    }
 }

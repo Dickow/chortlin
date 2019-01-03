@@ -5,9 +5,9 @@ import com.dickow.chortlin.checker.checker.factory.OnlineCheckerFactory
 import com.dickow.chortlin.checker.choreography.Choreography
 import com.dickow.chortlin.checker.choreography.participant.ParticipantFactory.external
 import com.dickow.chortlin.checker.choreography.participant.ParticipantFactory.participant
-import com.dickow.chortlin.checker.correlation.builder.PathBuilder.Builder.root
 import com.dickow.chortlin.checker.correlation.factory.CorrelationFactory.correlation
 import com.dickow.chortlin.checker.correlation.factory.CorrelationFactory.defineCorrelation
+import com.dickow.chortlin.checker.correlation.factory.PathBuilderFactory.root
 import com.dickow.chortlin.interception.configuration.InterceptionConfiguration
 import com.dickow.chortlin.interception.sending.TraceSender
 import com.dickow.chortlin.shared.exceptions.ChoreographyRuntimeException
