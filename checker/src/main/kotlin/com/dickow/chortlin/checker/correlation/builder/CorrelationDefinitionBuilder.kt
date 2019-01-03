@@ -4,10 +4,10 @@ import com.dickow.chortlin.checker.correlation.Correlation
 import com.dickow.chortlin.checker.correlation.CorrelationDefinition
 import java.util.*
 
-class CorrelationParticipantMappingBuilder {
+class CorrelationDefinitionBuilder {
     private val correlations: MutableList<Correlation> = LinkedList()
 
-    fun add(correlation: Correlation): CorrelationParticipantMappingBuilder {
+    fun add(correlation: Correlation): CorrelationDefinitionBuilder {
         this.correlations.add(correlation)
         return this
     }
