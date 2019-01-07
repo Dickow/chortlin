@@ -21,7 +21,7 @@ object TypeFactory {
     }
 
     @JvmStatic
-    fun choice(branches: List<Choreography>): Choreography {
+    fun choice(vararg branches: Choreography): Choreography {
         val astNodes = branches.map { c -> c.start }
         return Choreography(Choice(astNodes, null))
     }

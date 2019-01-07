@@ -1,5 +1,6 @@
 package com.dickow.chortlin.test.application.checker
 
+import com.dickow.chortlin.checker.ast.types.factory.TypeFactory.choice
 import com.dickow.chortlin.checker.ast.types.factory.TypeFactory.interaction
 import com.dickow.chortlin.checker.checker.result.CheckResult
 import com.dickow.chortlin.checker.choreography.participant.ParticipantFactory.external
@@ -83,7 +84,7 @@ class OfflineCheckerTests {
     }
 
     @Test
-    fun `check that found message with return trace is accepted`() {
+    fun `check that interaction followed by return is accepted`() {
         val choreography =
                 interaction(external, a.onMethod("receive"), "receive")
                 .returnFrom(a.onMethod("receive"), "return")
@@ -116,4 +117,52 @@ class OfflineCheckerTests {
         assertEquals(CheckResult.None, choreography.start.satisfy(Trace(traces)))
     }
 
+    @Test
+    fun `check that beginning choice satisfies correct trace`() {
+        val choreography = choice(
+                interaction(external, a.onMethod("receive"), "receive")
+                        .returnFrom(a.onMethod("receive"), "return")
+                        .end(),
+                interaction(external, b.onMethod("b"), "b receive")
+                        .end()
+        )
+        val traces1 = listOf(
+                buildInvocation(A::class.java, "receive", allArguments),
+                buildReturn(A::class.java, "receive", allArguments, returnValue))
+        val traces2 = listOf(
+                buildInvocation(B::class.java, "b", allArguments))
+        assertEquals(CheckResult.Full, choreography.start.satisfy(Trace(traces1)))
+        assertEquals(CheckResult.Full, choreography.start.satisfy(Trace(traces2)))
+    }
+
+    @Test
+    fun `check that beginning choice invalidates wrong trace`() {
+        val choreography = choice(
+                interaction(external, a.onMethod("receive"), "receive")
+                        .returnFrom(a.onMethod("receive"), "return")
+                        .end(),
+                interaction(external, b.onMethod("b"), "b receive")
+                        .end()
+        )
+        val tracesInWrongOrder = listOf(
+                buildReturn(A::class.java, "receive", allArguments, returnValue),
+                buildInvocation(A::class.java, "receive", allArguments))
+        assertEquals(CheckResult.None, choreography.start.satisfy(Trace(tracesInWrongOrder)))
+    }
+
+    @Test
+    fun `check that choice with duplicate branches still matches correct trace`() {
+        val choreography = choice(
+                interaction(external, a.onMethod("receive"), "receive")
+                        .returnFrom(a.onMethod("receive"), "return")
+                        .end(),
+                interaction(external, a.onMethod("receive"), "receive")
+                        .returnFrom(a.onMethod("receive"), "return")
+                        .end()
+        )
+        val traces = listOf(
+                buildInvocation(A::class.java, "receive", allArguments),
+                buildReturn(A::class.java, "receive", allArguments, returnValue))
+        assertEquals(CheckResult.Full, choreography.start.satisfy(Trace(traces)))
+    }
 }

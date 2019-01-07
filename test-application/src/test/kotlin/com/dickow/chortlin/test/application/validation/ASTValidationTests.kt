@@ -1,5 +1,6 @@
 package com.dickow.chortlin.test.application.validation
 
+import com.dickow.chortlin.checker.ast.types.factory.TypeFactory.choice
 import com.dickow.chortlin.checker.ast.types.factory.TypeFactory.interaction
 import com.dickow.chortlin.checker.ast.types.factory.TypeFactory.returnFrom
 import com.dickow.chortlin.checker.ast.validation.ASTValidator
@@ -37,5 +38,20 @@ class ASTValidationTests {
         val choreography =
                 interaction(external, participant(A::class.java).onMethod("receive"), "invalid")
         assertFailsWith(ClassCastException::class) { choreography as Choreography }
+    }
+
+    @Test
+    fun `check that choice with no branches is invalid`() {
+        val choreography = choice()
+        assertFailsWith(InvalidASTException::class) { choreography.runVisitor(ASTValidator()) }
+    }
+
+    @Test
+    fun `ensure that valid choice is accepted by validation`() {
+        val choreography = choice(
+                interaction(external, participant(A::class.java).onMethod("receive"), "invalid")
+                        .end()
+        )
+        choreography.runVisitor(ASTValidator())
     }
 }

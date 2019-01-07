@@ -9,6 +9,10 @@ class ASTValidator : ASTVisitor {
     private val scope: ValidationScope<ASTNode> = ValidationScope()
 
     override fun visitChoice(astNode: Choice) {
+        if (astNode.possiblePaths.isEmpty()) {
+            throw InvalidASTException("Found a choice node with no branches. This is not allowed ${System.lineSeparator()}" +
+                    "The error occurred after the node: ${astNode.previous}")
+        }
         astNode.possiblePaths.forEach { node -> node.accept(this) }
     }
 
