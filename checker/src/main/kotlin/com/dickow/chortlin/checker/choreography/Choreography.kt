@@ -3,7 +3,7 @@ package com.dickow.chortlin.checker.choreography
 import com.dickow.chortlin.checker.ast.ASTBuilder
 import com.dickow.chortlin.checker.ast.ASTVisitor
 import com.dickow.chortlin.checker.ast.types.ASTNode
-import com.dickow.chortlin.checker.ast.types.placeholder.Marker
+import com.dickow.chortlin.checker.ast.types.placeholder.EmptyAST
 import com.dickow.chortlin.checker.checker.ParticipantRetriever
 import com.dickow.chortlin.checker.correlation.Correlation
 import com.dickow.chortlin.checker.correlation.CorrelationDefinition
@@ -22,7 +22,7 @@ data class Choreography(val start: ASTNode) {
     companion object {
         @JvmStatic
         fun builder(): ASTBuilder {
-            return Marker()
+            return EmptyAST()
         }
     }
 

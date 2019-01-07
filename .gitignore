@@ -12,6 +12,7 @@
 .idea/**/dictionaries
 .idea/**/shelf
 .idea/**/*.xml
+.idea/*.*
 
 # Generated files
 .idea/**/contentModel.xml
@@ -116,3 +117,6 @@ buildNumber.properties
 .mvn/wrapper/maven-wrapper.jar
 
 # End of https://www.gitignore.io/api/java,maven,intellij+iml
+
+# Ignore protobuf generated class
+**/protobuf/*.java

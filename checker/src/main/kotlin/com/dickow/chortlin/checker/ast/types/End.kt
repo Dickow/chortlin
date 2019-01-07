@@ -2,7 +2,7 @@ package com.dickow.chortlin.checker.ast.types
 
 import com.dickow.chortlin.checker.ast.ASTVisitor
 import com.dickow.chortlin.checker.checker.result.CheckResult
-import com.dickow.chortlin.shared.trace.Trace
+import com.dickow.chortlin.checker.trace.Trace
 
 class End(previous: ASTNode?) : ASTNode(previous, null) {
 

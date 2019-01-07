@@ -1,7 +1,7 @@
 package com.dickow.chortlin.interception.configuration
 
 import com.dickow.chortlin.interception.InterceptStrategy
-import com.dickow.chortlin.interception.defaults.DoNothingStrategy
+import com.dickow.chortlin.interception.configuration.defaults.DoNothingStrategy
 
 
 object InterceptionStrategy {

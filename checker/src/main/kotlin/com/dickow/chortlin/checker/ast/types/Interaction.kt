@@ -7,9 +7,9 @@ import com.dickow.chortlin.checker.checker.match.Matcher
 import com.dickow.chortlin.checker.checker.match.NoMoreTraceMatch
 import com.dickow.chortlin.checker.checker.match.SuccessfulMatch
 import com.dickow.chortlin.checker.checker.result.CheckResult
+import com.dickow.chortlin.checker.choreography.participant.ObservableParticipant
 import com.dickow.chortlin.checker.choreography.participant.Participant
-import com.dickow.chortlin.shared.observation.ObservableParticipant
-import com.dickow.chortlin.shared.trace.Trace
+import com.dickow.chortlin.checker.trace.Trace
 
 
 class Interaction(

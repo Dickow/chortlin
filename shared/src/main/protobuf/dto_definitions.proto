@@ -1,0 +1,26 @@
+syntax = "proto3";
+import "google/protobuf/struct.proto";
+
+option java_package = "com.dickow.chortlin.shared.trace.protobuf";
+
+message ArgumentDTO {
+    string identifier = 1;
+    google.protobuf.Value value = 2;
+}
+
+message ObservedDTO {
+    string participant = 1;
+    string method = 2;
+}
+
+message InvocationDTO {
+    ObservedDTO observed = 1;
+    repeated ArgumentDTO arguments = 2;
+}
+
+message ReturnDTO {
+    ObservedDTO observed = 1;
+    repeated ArgumentDTO arguments = 2;
+    google.protobuf.Value returnValue = 3;
+}
+

@@ -2,7 +2,7 @@ package com.dickow.chortlin.checker.checker
 
 import com.dickow.chortlin.checker.ast.ASTVisitor
 import com.dickow.chortlin.checker.ast.types.*
-import com.dickow.chortlin.shared.observation.ObservableParticipant
+import com.dickow.chortlin.checker.choreography.participant.ObservableParticipant
 import java.util.*
 
 class ParticipantRetriever : ASTVisitor {
@@ -19,9 +19,6 @@ class ParticipantRetriever : ASTVisitor {
     override fun visitReturnFrom(astNode: ReturnFrom) {
         participants.add(astNode.participant)
         astNode.next?.accept(this)
-    }
-
-    override fun visitParallel(astNode: Parallel) {
     }
 
     override fun visitChoice(astNode: Choice) {

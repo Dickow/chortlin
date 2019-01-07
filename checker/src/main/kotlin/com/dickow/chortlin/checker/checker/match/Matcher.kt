@@ -1,9 +1,9 @@
 package com.dickow.chortlin.checker.checker.match
 
+import com.dickow.chortlin.checker.trace.Invocation
+import com.dickow.chortlin.checker.trace.Return
 import com.dickow.chortlin.shared.observation.Observable
-import com.dickow.chortlin.shared.trace.Invocation
-import com.dickow.chortlin.shared.trace.Return
-import com.dickow.chortlin.shared.trace.TraceElementIndexed
+import com.dickow.chortlin.checker.trace.TraceElementIndexed
 
 class Matcher {
 

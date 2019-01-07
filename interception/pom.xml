@@ -38,13 +38,6 @@
             <scope>compile</scope>
         </dependency>
 
-        <dependency>
-            <groupId>org.jetbrains.kotlinx</groupId>
-            <artifactId>kotlinx-coroutines-core</artifactId>
-            <version>${kotlin.coroutines.version}</version>
-            <scope>compile</scope>
-        </dependency>
-
         <!-- Byte Buddy -->
         <dependency>
             <groupId>net.bytebuddy</groupId>
@@ -87,7 +80,6 @@
     </dependencies>
 
     <build>
-        <testSourceDirectory>src/test/kotlin</testSourceDirectory>
         <plugins>
             <!-- KOTLIN COMPILER -->
             <plugin>
@@ -117,6 +109,11 @@
                         <goals>
                             <goal>test-compile</goal>
                         </goals>
+                        <configuration>
+                            <sourceDirs>
+                                <source>src/test/kotlin</source>
+                            </sourceDirs>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
@@ -143,6 +140,7 @@
                         <goals>
                             <goal>compile</goal>
                         </goals>
+                        <configuration><source>src/main/java</source></configuration>
                     </execution>
                     <execution>
                         <id>testCompile</id>
@@ -178,6 +176,7 @@
                 <configuration>
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
+                        <descriptorRef>src</descriptorRef>
                     </descriptorRefs>
                 </configuration>
             </plugin>

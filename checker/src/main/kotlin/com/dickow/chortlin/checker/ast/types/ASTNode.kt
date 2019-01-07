@@ -6,9 +6,8 @@ import com.dickow.chortlin.checker.ast.Label
 import com.dickow.chortlin.checker.ast.types.placeholder.Placeholder
 import com.dickow.chortlin.checker.checker.SatisfactionRelationship
 import com.dickow.chortlin.checker.choreography.Choreography
-import com.dickow.chortlin.checker.choreography.method.ObservableMethod
+import com.dickow.chortlin.checker.choreography.participant.ObservableParticipant
 import com.dickow.chortlin.checker.choreography.participant.Participant
-import com.dickow.chortlin.shared.observation.ObservableParticipant
 
 abstract class ASTNode(var previous: ASTNode?, var next: ASTNode?) : ASTBuilder, SatisfactionRelationship {
 
@@ -22,24 +21,14 @@ abstract class ASTNode(var previous: ASTNode?, var next: ASTNode?) : ASTBuilder,
         return build()
     }
 
-    override fun parallel(path: (ASTBuilder) -> Choreography): ASTBuilder {
-        val parallelPath = path(Choreography.builder())
-        val next = Parallel(parallelPath, this, null)
-        parallelPath.start.previous = next
+    override fun returnFrom(receiver: ObservableParticipant, label: String): ASTBuilder {
+        val next = ReturnFrom(receiver, Label(label), this, null)
         this.next = next
         return next
     }
 
-    override fun <C> returnFrom(observableMethod: ObservableMethod<C>, label: String): ASTBuilder {
-        val observableReceiver = ObservableParticipant(observableMethod.participant.clazz, observableMethod.jvmMethod)
-        val next = ReturnFrom(observableReceiver, Label(label), this, null)
-        this.next = next
-        return next
-    }
-
-    override fun <C> interaction(sender: Participant, observableMethod: ObservableMethod<C>, label: String): ASTBuilder {
-        val observableReceiver = ObservableParticipant(observableMethod.participant.clazz, observableMethod.jvmMethod)
-        val next = Interaction(sender, observableReceiver, Label(label), this, null)
+    override fun interaction(sender: Participant, receiver: ObservableParticipant, label: String): ASTBuilder {
+        val next = Interaction(sender, receiver, Label(label), this, null)
         this.next = next
         return next
     }

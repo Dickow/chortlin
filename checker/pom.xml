@@ -31,12 +31,6 @@
             <version>${kotlin.version}</version>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>org.jetbrains.kotlinx</groupId>
-            <artifactId>kotlinx-coroutines-core</artifactId>
-            <version>${kotlin.coroutines.version}</version>
-            <scope>compile</scope>
-        </dependency>
 
         <!-- Test -->
         <dependency>
@@ -105,6 +99,7 @@
                 <version>3.8.0</version>
                 <configuration>
                     <release>${java.version}</release>
+                    <source>${project.basedir}/src/main/java</source>
                 </configuration>
                 <executions>
                     <execution>
@@ -156,6 +151,7 @@
                 <configuration>
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
+                        <descriptorRef>src</descriptorRef>
                     </descriptorRefs>
                 </configuration>
             </plugin>

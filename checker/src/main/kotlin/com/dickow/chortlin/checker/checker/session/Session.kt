@@ -3,8 +3,8 @@ package com.dickow.chortlin.checker.checker.session
 import com.dickow.chortlin.checker.choreography.Choreography
 import com.dickow.chortlin.checker.correlation.CorrelationValue
 import com.dickow.chortlin.shared.observation.Observable
-import com.dickow.chortlin.shared.trace.Trace
-import com.dickow.chortlin.shared.trace.TraceElement
+import com.dickow.chortlin.checker.trace.Trace
+import com.dickow.chortlin.checker.trace.TraceElement
 import java.util.*
 
 class Session(val sessionId: UUID, val choreography: Choreography, trace: TraceElement) {
@@ -29,7 +29,7 @@ class Session(val sessionId: UUID, val choreography: Choreography, trace: TraceE
     }
 
     fun correlatesTo(trace: TraceElement): Boolean {
-        val key = choreography.getCorrelation(trace.getObservation())?.retrieveKey(trace.getArguments())
+        val key = choreography.getCorrelation(trace.getObservation())?.retrieveKey(trace.getArgumentTree())
         return if (key == null) {
             false
         } else {
@@ -41,8 +41,8 @@ class Session(val sessionId: UUID, val choreography: Choreography, trace: TraceE
         this.traces.add(trace)
     }
 
-    fun hasParticipant(participant: Observable): Boolean {
-        return choreography.contains(participant)
+    fun containsObservable(observable: Observable): Boolean {
+        return choreography.contains(observable)
     }
 
     fun extendKeys(trace: TraceElement) {
