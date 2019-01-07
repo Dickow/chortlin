@@ -1,7 +1,7 @@
 package com.dickow.chortlin.test.application.correlation
 
+import com.dickow.chortlin.checker.ast.types.factory.TypeFactory.interaction
 import com.dickow.chortlin.checker.checker.factory.OnlineCheckerFactory
-import com.dickow.chortlin.checker.choreography.Choreography
 import com.dickow.chortlin.checker.choreography.participant.ObservableParticipant
 import com.dickow.chortlin.checker.choreography.participant.ParticipantFactory.external
 import com.dickow.chortlin.checker.choreography.participant.ParticipantFactory.participant
@@ -34,8 +34,8 @@ class CreateCorrelationSetsTest {
     private val authCorrelation = root().node("arg0").build()
     private val authExtendCorrelation = root().node("userId").build()
     private val buyerCorrelation = root().node("arg1").node("userId").build()
-    private val authenticationChoreography = Choreography.builder()
-            .interaction(client, auth.onMethod("authenticate"), "Authenticate client")
+    private val authenticationChoreography =
+            interaction(client, auth.onMethod("authenticate"), "Authenticate client")
             .returnFrom(auth.onMethod("authenticate"), "Client is authenticated")
             .interaction(client, buyService.onMethod("buyItem"), "Buy the item")
             .returnFrom(buyService.onMethod("buyItem"), "Successful buy")

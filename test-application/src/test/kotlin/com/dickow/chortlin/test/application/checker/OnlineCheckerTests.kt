@@ -1,9 +1,9 @@
 package com.dickow.chortlin.test.application.checker
 
+import com.dickow.chortlin.checker.ast.types.factory.TypeFactory.interaction
 import com.dickow.chortlin.checker.checker.OnlineChecker
 import com.dickow.chortlin.checker.checker.result.ChoreographyStatus
 import com.dickow.chortlin.checker.checker.session.InMemorySessionManager
-import com.dickow.chortlin.checker.choreography.Choreography
 import com.dickow.chortlin.checker.choreography.participant.ParticipantFactory.external
 import com.dickow.chortlin.checker.choreography.participant.ParticipantFactory.participant
 import com.dickow.chortlin.checker.correlation.factory.CorrelationFactory.correlation
@@ -38,8 +38,8 @@ class OnlineCheckerTests {
     private val allArguments = arrayOf<Any?>()
     private val returnValue = Any()
 
-    private val choreography = Choreography.builder()
-            .interaction(external, onlineFirst.onMethod("method1"), "#1")
+    private val choreography =
+            interaction(external, onlineFirst.onMethod("method1"), "#1")
             .interaction(onlineFirst, onlineFirst.onMethod("method2"), "#2")
             .interaction(onlineFirst, onlineSecond.onMethod("method1"), "#3")
             .interaction(onlineSecond, onlineSecond.onMethod("method2"), "#4")
@@ -136,15 +136,15 @@ class OnlineCheckerTests {
                 .add(correlation(onlineThird.onMethod("method2"), "sid", root().build()).noExtensions())
                 .finish()
 
-        val choreography1 = Choreography.builder()
-                .interaction(external, onlineFirst.onMethod("method1"), "#1")
+        val choreography1 =
+                interaction(external, onlineFirst.onMethod("method1"), "#1")
                 .interaction(onlineFirst, onlineFirst.onMethod("method2"), "#2")
                 .interaction(onlineFirst, onlineSecond.onMethod("method1"), "#3")
                 .returnFrom(onlineSecond.onMethod("method1"), "return #3")
                 .end().setCorrelation(cset1)
 
-        val choreography2 = Choreography.builder()
-                .interaction(external, onlineSecond.onMethod("method2"), "#1")
+        val choreography2 =
+                interaction(external, onlineSecond.onMethod("method2"), "#1")
                 .interaction(onlineSecond, onlineThird.onMethod("method1"), "#2")
                 .interaction(onlineThird, onlineThird.onMethod("method2"), "#3")
                 .end().setCorrelation(cset2)

@@ -9,7 +9,7 @@ class ASTValidator : ASTVisitor {
     private val scope: ValidationScope<ASTNode> = ValidationScope()
 
     override fun visitChoice(astNode: Choice) {
-        astNode.possiblePaths.forEach { node -> node.runVisitor(this) }
+        astNode.possiblePaths.forEach { node -> node.accept(this) }
     }
 
     override fun visitEnd(astNode: End) {
@@ -38,8 +38,9 @@ class ASTValidator : ASTVisitor {
     }
 
     private fun nextNode(astNode: ASTNode) {
-        if (astNode.next == null && astNode !is End) {
-            throw InvalidASTException("Encountered a path without an END at: $astNode")
+        if (astNode.next == null && (astNode !is End || astNode !is Choice)) {
+            throw InvalidASTException("Encountered a path without a proper definition at: $astNode ${System.lineSeparator()}" +
+                    "Have you added a correct end to your choreography?")
         } else {
             astNode.next?.accept(this)
         }

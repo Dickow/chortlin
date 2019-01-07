@@ -2,14 +2,18 @@ package com.dickow.chortlin.checker.ast.types
 
 import com.dickow.chortlin.checker.ast.ASTVisitor
 import com.dickow.chortlin.checker.checker.result.CheckResult
-import com.dickow.chortlin.checker.choreography.Choreography
 import com.dickow.chortlin.checker.trace.Trace
 
 
-class Choice(val possiblePaths: List<Choreography>, previous: ASTNode?) : ASTNode(previous, null) {
+class Choice(val possiblePaths: List<ASTNode>, previous: ASTNode?) : ASTNode(previous, null) {
 
     override fun satisfy(trace: Trace): CheckResult {
-        return CheckResult.None
+        val pathResults = possiblePaths.map { path -> path.satisfy(trace.copy()) }
+        return when {
+            pathResults.any { result -> result == CheckResult.Full } -> CheckResult.Full
+            pathResults.any { result -> result == CheckResult.Partial } -> CheckResult.Partial
+            else -> CheckResult.None
+        }
     }
 
     override fun accept(visitor: ASTVisitor) {
@@ -28,9 +32,5 @@ class Choice(val possiblePaths: List<Choreography>, previous: ASTNode?) : ASTNod
         var result = super.hashCode()
         result = 31 * result + possiblePaths.hashCode()
         return result
-    }
-
-    override fun toString(): String {
-        return "Choice(${possiblePaths.joinToString(", ") { c -> c.start.toString() }})"
     }
 }

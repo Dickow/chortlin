@@ -1,8 +1,8 @@
 package com.dickow.chortlin.test.application.instrumentation
 
+import com.dickow.chortlin.checker.ast.types.factory.TypeFactory.interaction
 import com.dickow.chortlin.checker.checker.ChoreographyChecker
 import com.dickow.chortlin.checker.checker.factory.OnlineCheckerFactory
-import com.dickow.chortlin.checker.choreography.Choreography
 import com.dickow.chortlin.checker.choreography.participant.ParticipantFactory.external
 import com.dickow.chortlin.checker.choreography.participant.ParticipantFactory.participant
 import com.dickow.chortlin.checker.correlation.factory.CorrelationFactory.correlation
@@ -43,8 +43,8 @@ class OnlineInstrumentationTests {
                         "sid", root().build())
                         .noExtensions())
                 .finish()
-        val choreography = Choreography.builder()
-                .interaction(external, onlineFirstClass.onMethod("method1"), "#1")
+        val choreography =
+                interaction(external, onlineFirstClass.onMethod("method1"), "#1")
                 .interaction(onlineFirstClass, onlineFirstClass.onMethod("method2"), "#2")
                 .interaction(onlineFirstClass, onlineSecondClass.onMethod("method1"), "#3")
                 .returnFrom(onlineSecondClass.onMethod("method1"), "return #3")
@@ -71,8 +71,8 @@ class OnlineInstrumentationTests {
                         "sid", root().build())
                         .noExtensions())
                 .finish()
-        val choreography = Choreography.builder()
-                .interaction(external, onlineFirstClass.onMethod("method1"), "#1")
+        val choreography =
+                interaction(external, onlineFirstClass.onMethod("method1"), "#1")
                 .interaction(onlineFirstClass, onlineFirstClass.onMethod("method2"), "#2")
                 .interaction(onlineFirstClass, onlineSecondClass.onMethod("method1"), "#3")
                 .returnFrom(onlineSecondClass.onMethod("method1"), "return #3")
@@ -110,15 +110,15 @@ class OnlineInstrumentationTests {
                         "sid", root().build())
                         .noExtensions())
                 .finish()
-        val choreography1 = Choreography.builder()
-                .interaction(external, onlineFirstClass.onMethod("method1"), "#1")
+        val choreography1 =
+                interaction(external, onlineFirstClass.onMethod("method1"), "#1")
                 .interaction(onlineFirstClass, onlineFirstClass.onMethod("method2"), "#2")
                 .interaction(onlineFirstClass, onlineSecondClass.onMethod("method1"), "#3")
                 .returnFrom(onlineSecondClass.onMethod("method1"), "return #3")
                 .end().setCorrelation(cset1)
 
-        val choreography2 = Choreography.builder()
-                .interaction(external, onlineSecondClass.onMethod("method2"), "#1")
+        val choreography2 =
+                interaction(external, onlineSecondClass.onMethod("method2"), "#1")
                 .interaction(onlineSecondClass, onlineThirdClass.onMethod("method1"), "#2")
                 .interaction(onlineThirdClass, onlineThirdClass.onMethod("method2"), "#3")
                 .end().setCorrelation(cset2)
@@ -167,15 +167,15 @@ class OnlineInstrumentationTests {
                         .noExtensions())
                 .finish()
 
-        val choreography1 = Choreography.builder()
-                .interaction(external, onlineFirstClass.onMethod("method1"), "#1")
+        val choreography1 =
+                interaction(external, onlineFirstClass.onMethod("method1"), "#1")
                 .interaction(onlineFirstClass, onlineFirstClass.onMethod("method2"), "#2")
                 .interaction(onlineFirstClass, onlineSecondClass.onMethod("method1"), "#3")
                 .returnFrom(onlineSecondClass.onMethod("method1"), "return #3")
                 .end().setCorrelation(cset1)
 
-        val choreography2 = Choreography.builder()
-                .interaction(external, onlineSecondClass.onMethod("method2"), "#1")
+        val choreography2 =
+                interaction(external, onlineSecondClass.onMethod("method2"), "#1")
                 .interaction(onlineSecondClass, onlineThirdClass.onMethod("method1"), "#2")
                 .interaction(onlineThirdClass, onlineThirdClass.onMethod("method2"), "#3")
                 .end().setCorrelation(cset2)

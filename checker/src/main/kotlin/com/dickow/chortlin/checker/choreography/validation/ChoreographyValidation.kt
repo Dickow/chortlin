@@ -19,7 +19,7 @@ class ChoreographyValidation(private val choreography: Choreography) : ASTVisito
     }
 
     override fun visitChoice(astNode: Choice) {
-        throw InvalidChoreographyException("Unexpected choice node encountered")
+        astNode.possiblePaths.forEach { node -> node.accept(this) }
     }
 
     private fun validFirstNode(correlation: Correlation) = correlation.hasInputFunctions()
