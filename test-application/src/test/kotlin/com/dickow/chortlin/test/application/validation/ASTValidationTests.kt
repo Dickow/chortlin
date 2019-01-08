@@ -2,7 +2,6 @@ package com.dickow.chortlin.test.application.validation
 
 import com.dickow.chortlin.checker.ast.types.factory.TypeFactory.choice
 import com.dickow.chortlin.checker.ast.types.factory.TypeFactory.interaction
-import com.dickow.chortlin.checker.ast.types.factory.TypeFactory.returnFrom
 import com.dickow.chortlin.checker.ast.validation.ASTValidator
 import com.dickow.chortlin.checker.choreography.Choreography
 import com.dickow.chortlin.checker.choreography.participant.ParticipantFactory.external
@@ -15,14 +14,6 @@ import kotlin.test.assertFailsWith
 class ASTValidationTests {
 
     private val external = external("External")
-
-    @Test
-    fun `check that validation fails for invalid ast end configuration`() {
-        val choreography =
-                returnFrom(participant(A::class.java).onMethod("receive"), "error")
-                .end()
-        assertFailsWith(InvalidASTException::class) { choreography.runVisitor(ASTValidator()) }
-    }
 
     @Test
     fun `check that validation accepts a valid ast`() {
