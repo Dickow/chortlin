@@ -2,7 +2,7 @@ package com.dickow.chortlin.checker.correlation
 
 import com.dickow.chortlin.checker.trace.Invocation
 import com.dickow.chortlin.checker.trace.Return
-import com.dickow.chortlin.checker.trace.TraceElement
+import com.dickow.chortlin.checker.trace.TraceEvent
 import com.dickow.chortlin.checker.trace.value.RootValue
 import com.dickow.chortlin.shared.observation.Observable
 
@@ -16,7 +16,7 @@ class Correlation(
         return correlationFunction.apply(arguments)
     }
 
-    fun getAdditionKeys(trace: TraceElement): Set<CorrelationValue> {
+    fun getAdditionKeys(trace: TraceEvent): Set<CorrelationValue> {
         return when (trace) {
             is Invocation -> {
                 inputFunctions.map { func -> func.apply(trace.getArgumentTree()) }.toMutableSet()

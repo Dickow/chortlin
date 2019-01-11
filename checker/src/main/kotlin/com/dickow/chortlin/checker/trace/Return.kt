@@ -5,7 +5,7 @@ import com.dickow.chortlin.shared.observation.Observable
 
 data class Return(private val observation: Observable,
                   private val argumentTree: RootValue,
-                  val returnValue: RootValue) : TraceElement() {
+                  val returnValue: RootValue) : TraceEvent() {
     override fun getArgumentTree(): RootValue {
         return argumentTree
     }

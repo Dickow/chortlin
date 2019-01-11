@@ -1,6 +1,6 @@
 package com.dickow.chortlin.checker.checker.match
 
-import com.dickow.chortlin.checker.trace.TraceElementIndexed
+import com.dickow.chortlin.checker.trace.TraceEventIndexed
 
 
-class SuccessfulMatch(val matchedElement: TraceElementIndexed) : MatchResult()
+class SuccessfulMatch(val matchedEvent: TraceEventIndexed) : MatchResult()

@@ -1,9 +1,9 @@
 package com.dickow.chortlin.checker.checker.session
 
-import com.dickow.chortlin.checker.trace.TraceElement
+import com.dickow.chortlin.checker.trace.TraceEvent
 
 interface SessionManager {
-    fun getSession(trace: TraceElement): Session?
+    fun getSession(trace: TraceEvent): Session?
     fun endSession(session: Session)
-    fun beginSession(trace: TraceElement): Session
+    fun beginSession(trace: TraceEvent): Session
 }

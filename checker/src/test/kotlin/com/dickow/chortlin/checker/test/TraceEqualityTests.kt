@@ -3,7 +3,7 @@ package com.dickow.chortlin.checker.test
 import com.dickow.chortlin.checker.choreography.participant.ObservableParticipant
 import com.dickow.chortlin.checker.trace.Invocation
 import com.dickow.chortlin.checker.trace.Return
-import com.dickow.chortlin.checker.trace.TraceElement
+import com.dickow.chortlin.checker.trace.TraceEvent
 import com.dickow.chortlin.checker.trace.value.RootValue
 import com.dickow.chortlin.checker.trace.value.StringValue
 import kotlin.test.Test
@@ -22,7 +22,7 @@ class TraceEqualityTests {
         val return2 = Return(p_m, strInputValue, strInputValue)
 
         assertEquals(invocation1, invocation2)
-        assertNotEquals<TraceElement>(invocation1, return1)
+        assertNotEquals<TraceEvent>(invocation1, return1)
         assertEquals(return1, return2)
         assertEquals(return1.hashCode(), return2.hashCode())
         assertEquals(invocation1.hashCode(), invocation2.hashCode())

@@ -2,13 +2,13 @@ package com.dickow.chortlin.checker.checker.session
 
 import com.dickow.chortlin.checker.choreography.Choreography
 import com.dickow.chortlin.checker.correlation.CorrelationValue
-import com.dickow.chortlin.shared.observation.Observable
 import com.dickow.chortlin.checker.trace.Trace
-import com.dickow.chortlin.checker.trace.TraceElement
+import com.dickow.chortlin.checker.trace.TraceEvent
+import com.dickow.chortlin.shared.observation.Observable
 import java.util.*
 
-class Session(val sessionId: UUID, val choreography: Choreography, trace: TraceElement) {
-    private val traces: MutableList<TraceElement> = LinkedList()
+class Session(val sessionId: UUID, val choreography: Choreography, trace: TraceEvent) {
+    private val traces: MutableList<TraceEvent> = LinkedList()
     private val correlationKeys: MutableSet<CorrelationValue> =
             choreography.getCorrelation(trace.getObservation())!!.getAdditionKeys(trace).toMutableSet()
 
@@ -28,7 +28,7 @@ class Session(val sessionId: UUID, val choreography: Choreography, trace: TraceE
         return Trace(traces)
     }
 
-    fun correlatesTo(trace: TraceElement): Boolean {
+    fun correlatesTo(trace: TraceEvent): Boolean {
         val key = choreography.getCorrelation(trace.getObservation())?.retrieveKey(trace.getArgumentTree())
         return if (key == null) {
             false
@@ -37,7 +37,7 @@ class Session(val sessionId: UUID, val choreography: Choreography, trace: TraceE
         }
     }
 
-    fun store(trace: TraceElement) {
+    fun store(trace: TraceEvent) {
         this.traces.add(trace)
     }
 
@@ -45,7 +45,7 @@ class Session(val sessionId: UUID, val choreography: Choreography, trace: TraceE
         return choreography.contains(observable)
     }
 
-    fun extendKeys(trace: TraceElement) {
+    fun extendKeys(trace: TraceEvent) {
         correlationKeys.addAll(choreography.getCorrelation(trace.getObservation())!!.getAdditionKeys(trace))
     }
 }

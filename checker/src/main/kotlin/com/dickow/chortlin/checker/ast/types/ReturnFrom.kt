@@ -22,7 +22,7 @@ class ReturnFrom(
         val matchResult = matcher.matchReturn(trace.getNotConsumed(), participant)
         return when (matchResult) {
             is SuccessfulMatch -> {
-                trace.consume(matchResult.matchedElement)
+                trace.consume(matchResult.matchedEvent)
                 next!!.satisfy(trace)
             }
             is InvalidTraceMatch -> CheckResult.None

@@ -8,7 +8,7 @@ import com.dickow.chortlin.checker.correlation.factory.CorrelationFactory.correl
 import com.dickow.chortlin.checker.correlation.factory.CorrelationFactory.defineCorrelation
 import com.dickow.chortlin.checker.correlation.factory.PathBuilderFactory.root
 import com.dickow.chortlin.checker.trace.Trace
-import com.dickow.chortlin.checker.trace.TraceElement
+import com.dickow.chortlin.checker.trace.TraceEvent
 import com.dickow.chortlin.interception.InterceptStrategy
 import com.dickow.chortlin.interception.configuration.InterceptionStrategy
 import com.dickow.chortlin.interception.instrumentation.ByteBuddyInstrumentation
@@ -22,7 +22,7 @@ import kotlin.test.assertEquals
 class ApplyInstrumentationTests {
     private val builder = TestObservableBuilder
 
-    val traces: MutableList<TraceElement> = LinkedList()
+    val traces: MutableList<TraceEvent> = LinkedList()
 
     private val interceptStrategy: InterceptStrategy = object : InterceptStrategy {
         override fun interceptInvocation(observation: Observation, arguments: Array<out Any?>) {

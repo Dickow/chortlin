@@ -4,7 +4,7 @@ import com.dickow.chortlin.checker.checker.result.CheckResult
 import com.dickow.chortlin.checker.checker.result.ChoreographyStatus
 import com.dickow.chortlin.checker.checker.session.Session
 import com.dickow.chortlin.checker.checker.session.SessionManager
-import com.dickow.chortlin.checker.trace.TraceElement
+import com.dickow.chortlin.checker.trace.TraceEvent
 import com.dickow.chortlin.checker.trace.TraceFactory
 import com.dickow.chortlin.shared.exceptions.ChoreographyRuntimeException
 import com.dickow.chortlin.shared.trace.protobuf.DtoDefinitions
@@ -23,7 +23,7 @@ class OnlineChecker(private val sessionManager: SessionManager) : ChoreographyCh
         return this.check(transformed)
     }
 
-    override fun check(trace: TraceElement): ChoreographyStatus {
+    override fun check(trace: TraceEvent): ChoreographyStatus {
         synchronized(checkLock) {
             val session = sessionManager.getSession(trace)
             return when (session) {
@@ -36,7 +36,7 @@ class OnlineChecker(private val sessionManager: SessionManager) : ChoreographyCh
         }
     }
 
-    private fun checkTraceAgainstSession(session: Session, trace: TraceElement): ChoreographyStatus {
+    private fun checkTraceAgainstSession(session: Session, trace: TraceEvent): ChoreographyStatus {
         val result = check(session, trace)
         return when (result) {
             CheckResult.None -> {
@@ -49,7 +49,7 @@ class OnlineChecker(private val sessionManager: SessionManager) : ChoreographyCh
         }
     }
 
-    private fun check(session: Session, trace: TraceElement): CheckResult {
+    private fun check(session: Session, trace: TraceEvent): CheckResult {
         session.store(trace)
         return session.choreography.start.satisfy(session.observedTraces())
     }
