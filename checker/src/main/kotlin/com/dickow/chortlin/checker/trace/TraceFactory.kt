@@ -9,8 +9,8 @@ class TraceFactory {
 
     fun buildInvocation(invocationDTO: DtoDefinitions.InvocationDTO): Invocation {
         val observed = ObservableParticipant(invocationDTO.observed.participant, invocationDTO.observed.method)
-        val root = RootValue(ObjectValue(invocationDTO.argumentsList.map { arg -> Pair(arg.identifier, toValue(arg.value)) }.toMap()))
-        return Invocation(observed, root)
+        val argTree = ObjectValue(invocationDTO.argumentsList.map { arg -> Pair(arg.identifier, toValue(arg.value)) }.toMap())
+        return Invocation(observed, argTree)
     }
 
     private fun toValue(value: com.google.protobuf.Value): Value {
@@ -29,8 +29,8 @@ class TraceFactory {
 
     fun buildReturn(returnDTO: DtoDefinitions.ReturnDTO): Return {
         val observed = ObservableParticipant(returnDTO.observed.participant, returnDTO.observed.method)
-        val root = RootValue(ObjectValue(returnDTO.argumentsList.map { arg -> Pair(arg.identifier, toValue(arg.value)) }.toMap()))
-        val returnValue = RootValue(toValue(returnDTO.returnValue))
-        return Return(observed, root, returnValue)
+        val argTree = ObjectValue(returnDTO.argumentsList.map { arg -> Pair(arg.identifier, toValue(arg.value)) }.toMap())
+        val returnValue = toValue(returnDTO.returnValue)
+        return Return(observed, argTree, returnValue)
     }
 }

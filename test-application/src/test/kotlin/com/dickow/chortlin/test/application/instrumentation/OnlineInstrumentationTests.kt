@@ -34,13 +34,13 @@ class OnlineInstrumentationTests {
     fun `check online checker on simple choreography with manual execution`() {
         val cset = defineCorrelation()
                 .add(correlation(onlineFirstClass.onMethod("method1"),
-                        "sid", root().build())
-                        .extendFromInput("sid", root().build()).done())
+                        "sid", root())
+                        .extendFromInput("sid", root()).done())
                 .add(correlation(onlineFirstClass.onMethod("method2"),
-                        "sid", root().build())
+                        "sid", root())
                         .noExtensions())
                 .add(correlation(onlineSecondClass.onMethod("method1"),
-                        "sid", root().build())
+                        "sid", root())
                         .noExtensions())
                 .finish()
         val choreography =
@@ -62,13 +62,13 @@ class OnlineInstrumentationTests {
     fun `check that online checker fails fast if traces do not conform`() {
         val cset = defineCorrelation()
                 .add(correlation(onlineFirstClass.onMethod("method1"),
-                        "sid", root().build())
-                        .extendFromInput("sid", root().build()).done())
+                        "sid", root())
+                        .extendFromInput("sid", root()).done())
                 .add(correlation(onlineFirstClass.onMethod("method2"),
-                        "sid", root().build())
+                        "sid", root())
                         .noExtensions())
                 .add(correlation(onlineSecondClass.onMethod("method1"),
-                        "sid", root().build())
+                        "sid", root())
                         .noExtensions())
                 .finish()
         val choreography =
@@ -90,24 +90,24 @@ class OnlineInstrumentationTests {
     fun `check that concurrently running choreographies work`() {
         val cset1 = defineCorrelation()
                 .add(correlation(onlineFirstClass.onMethod("method1"),
-                        "sid", root().build())
-                        .extendFromInput("sid", root().build()).done())
+                        "sid", root())
+                        .extendFromInput("sid", root()).done())
                 .add(correlation(onlineFirstClass.onMethod("method2"),
-                        "sid", root().build())
+                        "sid", root())
                         .noExtensions())
                 .add(correlation(onlineSecondClass.onMethod("method1"),
-                        "sid", root().build())
+                        "sid", root())
                         .noExtensions())
                 .finish()
         val cset2 = defineCorrelation()
                 .add(correlation(onlineSecondClass.onMethod("method2"),
-                        "sid", root().build())
-                        .extendFromInput("sid", root().build()).done())
+                        "sid", root())
+                        .extendFromInput("sid", root()).done())
                 .add(correlation(onlineThirdClass.onMethod("method1"),
-                        "sid", root().build())
+                        "sid", root())
                         .noExtensions())
                 .add(correlation(onlineThirdClass.onMethod("method2"),
-                        "sid", root().build())
+                        "sid", root())
                         .noExtensions())
                 .finish()
         val choreography1 =
@@ -146,24 +146,24 @@ class OnlineInstrumentationTests {
     fun `check that concurrently running choreographies work and throw exception with wrong execution`() {
         val cset1 = defineCorrelation()
                 .add(correlation(onlineFirstClass.onMethod("method1"),
-                        "sid", root().build())
-                        .extendFromInput("sid", root().build()).done())
+                        "sid", root())
+                        .extendFromInput("sid", root()).done())
                 .add(correlation(onlineFirstClass.onMethod("method2"),
-                        "sid", root().build())
+                        "sid", root())
                         .noExtensions())
                 .add(correlation(onlineSecondClass.onMethod("method1"),
-                        "sid", root().build())
+                        "sid", root())
                         .noExtensions())
                 .finish()
         val cset2 = defineCorrelation()
                 .add(correlation(onlineSecondClass.onMethod("method2"),
-                        "sid", root().build())
-                        .extendFromInput("sid", root().build()).done())
+                        "sid", root())
+                        .extendFromInput("sid", root()).done())
                 .add(correlation(onlineThirdClass.onMethod("method1"),
-                        "sid", root().build())
+                        "sid", root())
                         .noExtensions())
                 .add(correlation(onlineThirdClass.onMethod("method2"),
-                        "sid", root().build())
+                        "sid", root())
                         .noExtensions())
                 .finish()
 

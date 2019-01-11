@@ -7,10 +7,6 @@ import java.util.*
 class PathBuilder {
     private val path = LinkedList<Node>()
 
-    init {
-        path.add(Node("root"))
-    }
-
     fun node(key: String): PathBuilder {
         path.add(Node(key))
         return this

@@ -8,9 +8,8 @@ import com.dickow.chortlin.checker.choreography.participant.ParticipantFactory.p
 import com.dickow.chortlin.checker.correlation.CorrelationValue
 import com.dickow.chortlin.checker.correlation.factory.CorrelationFactory.correlation
 import com.dickow.chortlin.checker.correlation.factory.CorrelationFactory.defineCorrelation
-import com.dickow.chortlin.checker.correlation.factory.PathBuilderFactory.root
+import com.dickow.chortlin.checker.correlation.factory.PathBuilderFactory.node
 import com.dickow.chortlin.checker.trace.value.ObjectValue
-import com.dickow.chortlin.checker.trace.value.RootValue
 import com.dickow.chortlin.checker.trace.value.StringValue
 import com.dickow.chortlin.interception.configuration.InterceptionConfiguration
 import com.dickow.chortlin.shared.exceptions.ChoreographyRuntimeException
@@ -31,9 +30,9 @@ class CreateCorrelationSetsTest {
     private val authService = Authentication()
     private val itemService = AuthenticatedService()
 
-    private val authCorrelation = root().node("arg0").build()
-    private val authExtendCorrelation = root().node("userId").build()
-    private val buyerCorrelation = root().node("arg1").node("userId").build()
+    private val authCorrelation = node("arg0").build()
+    private val authExtendCorrelation = node("userId").build()
+    private val buyerCorrelation = node("arg1").node("userId").build()
     private val authenticationChoreography =
             interaction(client, auth.onMethod("authenticate"), "Authenticate client")
             .returnFrom(auth.onMethod("authenticate"), "Client is authenticated")
@@ -53,7 +52,7 @@ class CreateCorrelationSetsTest {
     fun `create correlation set for small choreography`() {
         // Try to apply the correlation function to an invocation
         val observableAuth = ObservableParticipant(auth.identifier,"authenticate")
-        val arguments = RootValue(ObjectValue(mapOf(Pair("arg0", StringValue("jeppedickow")), Pair("arg1", StringValue("1234!")))))
+        val arguments = ObjectValue(mapOf(Pair("arg0", StringValue("jeppedickow")), Pair("arg1", StringValue("1234!"))))
         val key = cset.get(observableAuth)?.retrieveKey(arguments)
         assertEquals(CorrelationValue("uName", StringValue("jeppedickow")), key)
     }

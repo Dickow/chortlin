@@ -1,12 +1,12 @@
 package com.dickow.chortlin.checker.trace
 
-import com.dickow.chortlin.checker.trace.value.RootValue
+import com.dickow.chortlin.checker.trace.value.Value
 import com.dickow.chortlin.shared.observation.Observable
 
 data class Return(private val observation: Observable,
-                  private val argumentTree: RootValue,
-                  val returnValue: RootValue) : TraceEvent() {
-    override fun getArgumentTree(): RootValue {
+                  private val argumentTree: Value,
+                  val returnValue: Value) : TraceEvent() {
+    override fun getArgumentTree(): Value {
         return argumentTree
     }
 

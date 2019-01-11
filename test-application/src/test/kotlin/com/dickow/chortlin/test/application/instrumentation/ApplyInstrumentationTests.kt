@@ -64,11 +64,11 @@ class ApplyInstrumentationTests {
         traces.clear()
         InterceptionStrategy.strategy = interceptStrategy
         val cset = defineCorrelation()
-                .add(correlation(initial.onMethod("begin"), "sid", root().build())
-                        .extendFromInput("sid", root().build())
+                .add(correlation(initial.onMethod("begin"), "sid", root())
+                        .extendFromInput("sid", root())
                         .done())
-                .add(correlation(delegate.onMethod("delegate"), "sid", root().build()).noExtensions())
-                .add(correlation(processor.onMethod("process"), "sid", root().build()).noExtensions())
+                .add(correlation(delegate.onMethod("delegate"), "sid", root()).noExtensions())
+                .add(correlation(processor.onMethod("process"), "sid", root()).noExtensions())
                 .finish()
 
         val choreography =
@@ -87,10 +87,10 @@ class ApplyInstrumentationTests {
         traces.clear()
         InterceptionStrategy.strategy = interceptStrategy
         val cset = defineCorrelation()
-                .add(correlation(delegate.onMethod("delegate"), "sid", root().build())
-                        .extendFromInput("sid", root().build()).done())
-                .add(correlation(initial.onMethod("begin"), "sid", root().build()).noExtensions())
-                .add(correlation(processor.onMethod("process"), "sid", root().build()).noExtensions())
+                .add(correlation(delegate.onMethod("delegate"), "sid", root())
+                        .extendFromInput("sid", root()).done())
+                .add(correlation(initial.onMethod("begin"), "sid", root()).noExtensions())
+                .add(correlation(processor.onMethod("process"), "sid", root()).noExtensions())
                 .finish()
 
         val choreography =
@@ -109,10 +109,10 @@ class ApplyInstrumentationTests {
         traces.clear()
         InterceptionStrategy.strategy = interceptStrategy
         val cset = defineCorrelation()
-                .add(correlation(firstClass.onMethod("first"), "sid", root().build())
-                        .extendFromInput("sid", root().build()).done())
-                .add(correlation(secondClass.onMethod("second"), "sid", root().build()).noExtensions())
-                .add(correlation(thirdClass.onMethod("third"), "sid", root().build()).noExtensions())
+                .add(correlation(firstClass.onMethod("first"), "sid", root())
+                        .extendFromInput("sid", root()).done())
+                .add(correlation(secondClass.onMethod("second"), "sid", root()).noExtensions())
+                .add(correlation(thirdClass.onMethod("third"), "sid", root()).noExtensions())
                 .finish()
         val choreography =
                 interaction(external, firstClass.onMethod("first"), "initial receive")
@@ -133,10 +133,10 @@ class ApplyInstrumentationTests {
         traces.clear()
         InterceptionStrategy.strategy = interceptStrategy
         val cset = defineCorrelation()
-                .add(correlation(firstClass.onMethod("first"), "sid", root().build())
-                        .extendFromInput("sid", root().build()).done())
-                .add(correlation(secondClass.onMethod("second"), "sid", root().build()).noExtensions())
-                .add(correlation(thirdClass.onMethod("third"), "sid", root().build()).noExtensions())
+                .add(correlation(firstClass.onMethod("first"), "sid", root())
+                        .extendFromInput("sid", root()).done())
+                .add(correlation(secondClass.onMethod("second"), "sid", root()).noExtensions())
+                .add(correlation(thirdClass.onMethod("third"), "sid", root()).noExtensions())
                 .finish()
 
         val choreography =
@@ -158,12 +158,12 @@ class ApplyInstrumentationTests {
         traces.clear()
         InterceptionStrategy.strategy = interceptStrategy
         val cset = defineCorrelation()
-                .add(correlation(partialFirst1.onMethod("first"), "sid", root().build())
-                        .extendFromInput("sid", root().build()).done())
-                .add(correlation(partialFirst1.onMethod("second"), "sid", root().build()).noExtensions())
-                .add(correlation(partialSecond2.onMethod("second"), "sid", root().build()).noExtensions())
-                .add(correlation(partialSecond2.onMethod("third"), "sid", root().build()).noExtensions())
-                .add(correlation(partialThird3.onMethod("third"), "sid", root().build()).noExtensions())
+                .add(correlation(partialFirst1.onMethod("first"), "sid", root())
+                        .extendFromInput("sid", root()).done())
+                .add(correlation(partialFirst1.onMethod("second"), "sid", root()).noExtensions())
+                .add(correlation(partialSecond2.onMethod("second"), "sid", root()).noExtensions())
+                .add(correlation(partialSecond2.onMethod("third"), "sid", root()).noExtensions())
+                .add(correlation(partialThird3.onMethod("third"), "sid", root()).noExtensions())
                 .finish()
 
         val choreography =

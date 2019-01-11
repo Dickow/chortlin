@@ -4,7 +4,6 @@ import com.dickow.chortlin.checker.choreography.participant.ObservableParticipan
 import com.dickow.chortlin.checker.trace.Invocation
 import com.dickow.chortlin.checker.trace.Return
 import com.dickow.chortlin.checker.trace.TraceEvent
-import com.dickow.chortlin.checker.trace.value.RootValue
 import com.dickow.chortlin.checker.trace.value.StringValue
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -15,7 +14,7 @@ class TraceEqualityTests {
     @Test
     fun `check equality of trace classes`() {
         val p_m = ObservableParticipant("p", "m")
-        val strInputValue = RootValue(StringValue("HELLO"))
+        val strInputValue = StringValue("HELLO")
         val invocation1 = Invocation(p_m, strInputValue)
         val invocation2 = Invocation(p_m, strInputValue)
         val return1 = Return(p_m, strInputValue, strInputValue)

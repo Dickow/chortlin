@@ -53,12 +53,12 @@ class ValueTests {
 
     @Test
     fun `test equality of root value`() {
-        val root1 = RootValue(ListValue(listOf(NumberValue(10), BooleanValue(true))))
-        val root2 = RootValue(ListValue(listOf(NumberValue(10), BooleanValue(true))))
-        val root3 = RootValue(ObjectValue(mapOf(Pair("key", NumberValue(20)))))
-        assertEquals(RootValue(StringValue("Hello")), RootValue(StringValue("Hello")))
+        val root1 = ListValue(listOf(NumberValue(10), BooleanValue(true)))
+        val root2 = ListValue(listOf(NumberValue(10), BooleanValue(true)))
+        val root3 = ObjectValue(mapOf(Pair("key", NumberValue(20))))
+        assertEquals(StringValue("Hello"), StringValue("Hello"))
         assertEquals(root1, root2)
-        assertNotEquals(root1, root3)
+        assertNotEquals<Value>(root1, root3)
     }
 
     @Test
