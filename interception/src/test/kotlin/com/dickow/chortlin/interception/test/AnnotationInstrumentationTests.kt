@@ -2,13 +2,16 @@ package com.dickow.chortlin.interception.test
 
 import com.dickow.chortlin.interception.InterceptStrategy
 import com.dickow.chortlin.interception.configuration.InterceptionStrategy
-import com.dickow.chortlin.interception.sending.dto.TraceDTOFactory
 import com.dickow.chortlin.interception.instrumentation.ByteBuddyInstrumentation
 import com.dickow.chortlin.interception.observation.Observation
+import com.dickow.chortlin.interception.sending.dto.TraceDTOFactory
+import com.dickow.chortlin.shared.trace.protobuf.DtoDefinitions
+import com.google.protobuf.Value
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.*
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class AnnotationInstrumentationTests {
 
@@ -47,6 +50,9 @@ class AnnotationInstrumentationTests {
         Login().authenticate("jeppe", "password")
         MerchantService().sellItem(100, 9001)
         assertEquals(4, traces.size)
+        assertTrue { traces[3] is DtoDefinitions.ReturnDTO }
+        val returnDTO = (traces[3] as DtoDefinitions.ReturnDTO)
+        assertTrue(returnDTO.hasReturnValue() && returnDTO.returnValue.kindCase == Value.KindCase.NULL_VALUE)
     }
 
     @Test
