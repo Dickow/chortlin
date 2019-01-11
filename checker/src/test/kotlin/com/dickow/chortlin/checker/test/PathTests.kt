@@ -1,6 +1,6 @@
 package com.dickow.chortlin.checker.test
 
-import com.dickow.chortlin.checker.correlation.builder.PathBuilder.Builder.root
+import com.dickow.chortlin.checker.correlation.factory.PathBuilderFactory.root
 import com.dickow.chortlin.checker.trace.value.ObjectValue
 import com.dickow.chortlin.checker.trace.value.RootValue
 import com.dickow.chortlin.checker.trace.value.StringValue

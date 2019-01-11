@@ -1,7 +1,10 @@
 package com.dickow.chortlin.checker.checker
 
 import com.dickow.chortlin.checker.ast.ASTVisitor
-import com.dickow.chortlin.checker.ast.types.*
+import com.dickow.chortlin.checker.ast.types.Choice
+import com.dickow.chortlin.checker.ast.types.End
+import com.dickow.chortlin.checker.ast.types.Interaction
+import com.dickow.chortlin.checker.ast.types.ReturnFrom
 import com.dickow.chortlin.checker.choreography.participant.ObservableParticipant
 import java.util.*
 
@@ -22,6 +25,7 @@ class ParticipantRetriever : ASTVisitor {
     }
 
     override fun visitChoice(astNode: Choice) {
+        astNode.possiblePaths.forEach { node -> node.accept(this) }
     }
 
     fun getParticipants(): Set<ObservableParticipant> {

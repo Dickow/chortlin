@@ -1,14 +1,14 @@
 package com.dickow.chortlin.test.application.instrumentation
 
+import com.dickow.chortlin.checker.ast.types.factory.TypeFactory.interaction
 import com.dickow.chortlin.checker.checker.result.CheckResult
-import com.dickow.chortlin.checker.choreography.Choreography
 import com.dickow.chortlin.checker.choreography.participant.ParticipantFactory.external
 import com.dickow.chortlin.checker.choreography.participant.ParticipantFactory.participant
 import com.dickow.chortlin.checker.correlation.factory.CorrelationFactory.correlation
 import com.dickow.chortlin.checker.correlation.factory.CorrelationFactory.defineCorrelation
 import com.dickow.chortlin.checker.correlation.factory.PathBuilderFactory.root
 import com.dickow.chortlin.checker.trace.Trace
-import com.dickow.chortlin.checker.trace.TraceElement
+import com.dickow.chortlin.checker.trace.TraceEvent
 import com.dickow.chortlin.interception.InterceptStrategy
 import com.dickow.chortlin.interception.configuration.InterceptionStrategy
 import com.dickow.chortlin.interception.instrumentation.ByteBuddyInstrumentation
@@ -22,7 +22,7 @@ import kotlin.test.assertEquals
 class ApplyInstrumentationTests {
     private val builder = TestObservableBuilder
 
-    val traces: MutableList<TraceElement> = LinkedList()
+    val traces: MutableList<TraceEvent> = LinkedList()
 
     private val interceptStrategy: InterceptStrategy = object : InterceptStrategy {
         override fun interceptInvocation(observation: Observation, arguments: Array<out Any?>) {
@@ -71,8 +71,8 @@ class ApplyInstrumentationTests {
                 .add(correlation(processor.onMethod("process"), "sid", root().build()).noExtensions())
                 .finish()
 
-        val choreography = Choreography.builder()
-                .interaction(external, initial.onMethod("begin"), "start")
+        val choreography =
+                interaction(external, initial.onMethod("begin"), "start")
                 .interaction(initial, delegate.onMethod("delegate"), "delegate")
                 .interaction(delegate, processor.onMethod("process"), "processing")
                 .end().setCorrelation(cset)
@@ -93,8 +93,8 @@ class ApplyInstrumentationTests {
                 .add(correlation(processor.onMethod("process"), "sid", root().build()).noExtensions())
                 .finish()
 
-        val choreography = Choreography.builder()
-                .interaction(external, delegate.onMethod("delegate"), "start")
+        val choreography =
+                interaction(external, delegate.onMethod("delegate"), "start")
                 .interaction(delegate, initial.onMethod("begin"), "then initial")
                 .interaction(initial, processor.onMethod("process"), "process it")
                 .end().setCorrelation(cset)
@@ -114,8 +114,8 @@ class ApplyInstrumentationTests {
                 .add(correlation(secondClass.onMethod("second"), "sid", root().build()).noExtensions())
                 .add(correlation(thirdClass.onMethod("third"), "sid", root().build()).noExtensions())
                 .finish()
-        val choreography = Choreography.builder()
-                .interaction(external, firstClass.onMethod("first"), "initial receive")
+        val choreography =
+                interaction(external, firstClass.onMethod("first"), "initial receive")
                 .interaction(firstClass, secondClass.onMethod("second"), "second call")
                 .interaction(secondClass, thirdClass.onMethod("third"), "third call")
                 .returnFrom(thirdClass.onMethod("third"), "return from third call")
@@ -139,8 +139,8 @@ class ApplyInstrumentationTests {
                 .add(correlation(thirdClass.onMethod("third"), "sid", root().build()).noExtensions())
                 .finish()
 
-        val choreography = Choreography.builder()
-                .interaction(external, firstClass.onMethod("first"), "initial receive")
+        val choreography =
+                interaction(external, firstClass.onMethod("first"), "initial receive")
                 .interaction(firstClass, secondClass.onMethod("second"), "second call")
                 .interaction(secondClass, thirdClass.onMethod("third"), "third call")
                 .returnFrom(thirdClass.onMethod("third"), "return from third call")
@@ -166,8 +166,8 @@ class ApplyInstrumentationTests {
                 .add(correlation(partialThird3.onMethod("third"), "sid", root().build()).noExtensions())
                 .finish()
 
-        val choreography = Choreography.builder()
-                .interaction(external, partialFirst1.onMethod("first"), "initialize calls")
+        val choreography =
+                interaction(external, partialFirst1.onMethod("first"), "initialize calls")
                 .interaction(partialFirst1, partialFirst1.onMethod("second"), "call second method of first class")
                 .interaction(partialFirst2, partialSecond2.onMethod("second"), "call second method of second class")
                 .interaction(partialSecond2, partialSecond2.onMethod("third"), "call third method of second class")

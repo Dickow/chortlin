@@ -3,7 +3,6 @@ package com.dickow.chortlin.checker.ast.types
 import com.dickow.chortlin.checker.ast.ASTBuilder
 import com.dickow.chortlin.checker.ast.ASTVisitor
 import com.dickow.chortlin.checker.ast.Label
-import com.dickow.chortlin.checker.ast.types.placeholder.Placeholder
 import com.dickow.chortlin.checker.checker.SatisfactionRelationship
 import com.dickow.chortlin.checker.choreography.Choreography
 import com.dickow.chortlin.checker.choreography.participant.ObservableParticipant
@@ -13,10 +12,8 @@ abstract class ASTNode(var previous: ASTNode?, var next: ASTNode?) : ASTBuilder,
 
     abstract fun accept(visitor: ASTVisitor)
 
-    override fun choice(vararg possiblePaths: (ASTBuilder) -> Choreography): Choreography {
-        val paths = possiblePaths.map { p -> p(Choreography.builder()) }
-        val next = Choice(paths, this)
-        paths.forEach { p -> p.start.previous = next }
+    override fun choice(branches: List<Choreography>): Choreography {
+        val next = Choice(branches.map { c -> c.start }, this)
         this.next = next
         return build()
     }
@@ -68,10 +65,6 @@ abstract class ASTNode(var previous: ASTNode?, var next: ASTNode?) : ASTBuilder,
     }
 
     private fun root(): ASTNode {
-        return if (previous is Placeholder) {
-            this
-        } else {
-            previous?.root() ?: this
-        }
+        return previous?.root() ?: this
     }
 }

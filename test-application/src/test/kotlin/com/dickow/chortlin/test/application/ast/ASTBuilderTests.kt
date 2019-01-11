@@ -3,6 +3,7 @@ package com.dickow.chortlin.test.application.ast
 import com.dickow.chortlin.checker.ast.Label
 import com.dickow.chortlin.checker.ast.types.End
 import com.dickow.chortlin.checker.ast.types.Interaction
+import com.dickow.chortlin.checker.ast.types.factory.TypeFactory.interaction
 import com.dickow.chortlin.checker.choreography.Choreography
 import com.dickow.chortlin.checker.choreography.participant.ExternalParticipant
 import com.dickow.chortlin.checker.choreography.participant.ObservableParticipant
@@ -21,8 +22,8 @@ class ASTBuilderTests {
 
     @Test
     fun `build simple receive then interaction choreography`() {
-        val choreography = Choreography.builder()
-                .interaction(external, a.onMethod("receive"), "receive")
+        val choreography =
+                interaction(external, a.onMethod("receive"), "receive")
                 .interaction(a, a.onMethod("b"), "call A#b")
                 .interaction(a, b.onMethod("b"), "Invoke B#b")
                 .end()
@@ -62,8 +63,8 @@ class ASTBuilderTests {
 
     @Test
     fun `build single found msg element ast`() {
-        val choreography = Choreography.builder()
-                .interaction(external, a.onMethod("receive"), "receive")
+        val choreography =
+                interaction(external, a.onMethod("receive"), "receive")
                 .end()
 
         val interaction = Interaction(

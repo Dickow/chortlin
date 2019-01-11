@@ -2,16 +2,16 @@ package com.dickow.chortlin.checker.checker.match
 
 import com.dickow.chortlin.checker.trace.Invocation
 import com.dickow.chortlin.checker.trace.Return
+import com.dickow.chortlin.checker.trace.TraceEventIndexed
 import com.dickow.chortlin.shared.observation.Observable
-import com.dickow.chortlin.checker.trace.TraceElementIndexed
 
 class Matcher {
 
-    fun matchReturn(traces: MutableList<TraceElementIndexed>, expected: Observable): MatchResult {
+    fun matchReturn(traces: MutableList<TraceEventIndexed>, expected: Observable): MatchResult {
         return when (traces.isNotEmpty()) {
             true -> {
                 val element = traces.first()
-                if (element.traceElement is Return && element.traceElement.getObservation() == expected) {
+                if (element.traceEvent is Return && element.traceEvent.getObservation() == expected) {
                     SuccessfulMatch(element)
                 } else {
                     InvalidTraceMatch()
@@ -21,11 +21,11 @@ class Matcher {
         }
     }
 
-    fun matchInvocation(traces: MutableList<TraceElementIndexed>, expected: Observable): MatchResult {
+    fun matchInvocation(traces: MutableList<TraceEventIndexed>, expected: Observable): MatchResult {
         return when (traces.isNotEmpty()) {
             true -> {
                 val element = traces.first()
-                if (element.traceElement is Invocation && element.traceElement.getObservation() == expected) {
+                if (element.traceEvent is Invocation && element.traceEvent.getObservation() == expected) {
                     SuccessfulMatch(element)
                 } else {
                     InvalidTraceMatch()

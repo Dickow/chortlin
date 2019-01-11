@@ -1,7 +1,7 @@
 package com.dickow.chortlin.checker.checker.session
 
 import com.dickow.chortlin.checker.choreography.Choreography
-import com.dickow.chortlin.checker.trace.TraceElement
+import com.dickow.chortlin.checker.trace.TraceEvent
 import com.dickow.chortlin.shared.exceptions.ChoreographyRuntimeException
 import java.util.*
 
@@ -13,7 +13,7 @@ class InMemorySessionManager(private val choreographies: List<Choreography>) : S
         activeSessions.remove(session.sessionId)
     }
 
-    override fun beginSession(trace: TraceElement): Session {
+    override fun beginSession(trace: TraceEvent): Session {
         val choreography = choreographies.firstOrNull { c -> c.contains(trace.getObservation()) }
         if (choreography != null) {
             val sessionId = UUID.randomUUID()
@@ -25,7 +25,7 @@ class InMemorySessionManager(private val choreographies: List<Choreography>) : S
         }
     }
 
-    override fun getSession(trace: TraceElement): Session? {
+    override fun getSession(trace: TraceEvent): Session? {
         return activeSessions.values.find { session ->
             session.correlatesTo(trace) && session.containsObservable(trace.getObservation())
         }

@@ -24,7 +24,7 @@ class Interaction(
         val matchResult = matcher.matchInvocation(trace.getNotConsumed(), receiver)
         return when (matchResult) {
             is SuccessfulMatch -> {
-                trace.consume(matchResult.matchedElement)
+                trace.consume(matchResult.matchedEvent)
                 next!!.satisfy(trace)
             }
             is InvalidTraceMatch -> CheckResult.None
