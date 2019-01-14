@@ -7,7 +7,7 @@ import com.dickow.chortlin.checker.trace.Trace
 class End(previous: ASTNode?) : ASTNode(previous, null) {
 
     override fun satisfy(trace: Trace): CheckResult {
-        val satisfied = trace.getNotConsumed().size == 0
+        val satisfied = trace.getNotConsumed().isEmpty()
         return if (satisfied) CheckResult.Full else CheckResult.None
     }
 

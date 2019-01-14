@@ -14,8 +14,8 @@ class Choice(val possiblePaths: List<ASTNode>, previous: ASTNode?) : ASTNode(pre
 
         val pathResults = possiblePaths.map { path -> path.satisfy(trace.copy()) }
         return when {
-            pathResults.any { result -> result == CheckResult.Full } -> CheckResult.Full
-            pathResults.any { result -> result == CheckResult.Partial } -> CheckResult.Partial
+            pathResults.contains(CheckResult.Full) -> CheckResult.Full
+            pathResults.contains(CheckResult.Partial) -> CheckResult.Partial
             else -> CheckResult.None
         }
     }
