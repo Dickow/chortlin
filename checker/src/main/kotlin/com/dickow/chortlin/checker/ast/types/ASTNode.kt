@@ -12,7 +12,7 @@ abstract class ASTNode(var previous: ASTNode?, var next: ASTNode?) : ASTBuilder,
 
     abstract fun accept(visitor: ASTVisitor)
 
-    override fun choice(branches: List<Choreography>): Choreography {
+    override fun choice(vararg branches: Choreography): Choreography {
         val next = Choice(branches.map { c -> c.start }, this)
         this.next = next
         return build()

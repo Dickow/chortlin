@@ -8,6 +8,7 @@ import com.dickow.chortlin.checker.correlation.Correlation
 import com.dickow.chortlin.shared.exceptions.InvalidChoreographyException
 
 class ChoreographyValidation(private val choreography: Choreography) : ASTVisitor {
+    private var hasHandledFirstNode = false
     override fun visitEnd(astNode: End) {}
 
     override fun visitInteraction(astNode: Interaction) {
@@ -23,16 +24,16 @@ class ChoreographyValidation(private val choreography: Choreography) : ASTVisito
     }
 
     private fun validFirstNode(correlation: Correlation) = correlation.hasInputFunctions()
-    private fun isFirstNode(astNode: ASTNode) = astNode.previous == null
 
     private fun checkNode(astNode: ASTNode, participant: ObservableParticipant) {
         val correlation = choreography.getCorrelation(participant)
         if (correlation == null) {
             throw InvalidChoreographyException("Encountered the node: $astNode without a correlation defined.")
         } else {
-            if (isFirstNode(astNode) && !validFirstNode(correlation)) {
+            if (!hasHandledFirstNode && !validFirstNode(correlation)) {
                 throw InvalidChoreographyException("Encountered an initial node: $astNode without any addition correlation functions.")
             }
+            hasHandledFirstNode = true
             astNode.next!!.accept(this)
         }
     }

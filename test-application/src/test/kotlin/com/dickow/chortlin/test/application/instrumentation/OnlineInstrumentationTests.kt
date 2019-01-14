@@ -1,7 +1,6 @@
 package com.dickow.chortlin.test.application.instrumentation
 
 import com.dickow.chortlin.checker.ast.types.factory.TypeFactory.interaction
-import com.dickow.chortlin.checker.checker.ChoreographyChecker
 import com.dickow.chortlin.checker.checker.factory.OnlineCheckerFactory
 import com.dickow.chortlin.checker.choreography.participant.ParticipantFactory.external
 import com.dickow.chortlin.checker.choreography.participant.ParticipantFactory.participant
@@ -9,12 +8,11 @@ import com.dickow.chortlin.checker.correlation.factory.CorrelationFactory.correl
 import com.dickow.chortlin.checker.correlation.factory.CorrelationFactory.defineCorrelation
 import com.dickow.chortlin.checker.correlation.factory.PathBuilderFactory.root
 import com.dickow.chortlin.interception.configuration.InterceptionConfiguration
-import com.dickow.chortlin.interception.sending.TraceSender
 import com.dickow.chortlin.shared.exceptions.ChoreographyRuntimeException
-import com.dickow.chortlin.shared.trace.protobuf.DtoDefinitions
 import com.dickow.chortlin.test.application.shared.OnlineInstrumentFirstClass
 import com.dickow.chortlin.test.application.shared.OnlineInstrumentSecondClass
 import com.dickow.chortlin.test.application.shared.OnlineInstrumentThirdClass
+import com.dickow.chortlin.test.application.shared.TestSender
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -207,16 +205,5 @@ class OnlineInstrumentationTests {
             thread2.await()
         }
         assertTrue(atomicBoolean.get(), "Expected exception of type ${ChoreographyRuntimeException::class}")
-    }
-
-    class TestSender(private val checker: ChoreographyChecker) : TraceSender {
-        override fun send(invocationDTO: DtoDefinitions.InvocationDTO) {
-            checker.check(invocationDTO)
-        }
-
-        override fun send(returnDTO: DtoDefinitions.ReturnDTO) {
-            checker.check(returnDTO)
-        }
-
     }
 }

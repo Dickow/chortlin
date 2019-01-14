@@ -14,10 +14,10 @@ import com.dickow.chortlin.checker.trace.value.StringValue
 import com.dickow.chortlin.interception.configuration.InterceptionConfiguration
 import com.dickow.chortlin.shared.exceptions.ChoreographyRuntimeException
 import com.dickow.chortlin.shared.exceptions.InvalidChoreographyException
-import com.dickow.chortlin.test.application.instrumentation.OnlineInstrumentationTests
 import com.dickow.chortlin.test.application.shared.AuthResult
 import com.dickow.chortlin.test.application.shared.AuthenticatedService
 import com.dickow.chortlin.test.application.shared.Authentication
+import com.dickow.chortlin.test.application.shared.TestSender
 import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -75,7 +75,7 @@ class CreateCorrelationSetsTest {
     fun `expect success when running multiple instances of the services with correlation sets`() {
         authenticationChoreography.setCorrelation(cset)
         val checker = OnlineCheckerFactory.createOnlineChecker(listOf(authenticationChoreography))
-        val sender = OnlineInstrumentationTests.TestSender(checker)
+        val sender = TestSender(checker)
         InterceptionConfiguration.setupCustomInterception(sender)
 
         val authResult1 = authService.authenticate("jeppedickow", "1234!")
@@ -90,7 +90,7 @@ class CreateCorrelationSetsTest {
     fun `expect error when executing a session in the wrong order`() {
         authenticationChoreography.setCorrelation(cset)
         val checker = OnlineCheckerFactory.createOnlineChecker(listOf(authenticationChoreography))
-        val sender = OnlineInstrumentationTests.TestSender(checker)
+        val sender = TestSender(checker)
         InterceptionConfiguration.setupCustomInterception(sender)
         val authResult1 = authService.authenticate("jeppedickow", "1234!")
         val authResult2 = authService.authenticate("lars", "4321!")
@@ -111,7 +111,7 @@ class CreateCorrelationSetsTest {
                                 .noExtensions())
                         .finish())
         val checker = OnlineCheckerFactory.createOnlineChecker(listOf(authenticationChoreography))
-        val sender = OnlineInstrumentationTests.TestSender(checker)
+        val sender = TestSender(checker)
         InterceptionConfiguration.setupCustomInterception(sender)
         assertFailsWith(ChoreographyRuntimeException::class) { authService.authenticate("jeppedickow", "1234!") }
     }

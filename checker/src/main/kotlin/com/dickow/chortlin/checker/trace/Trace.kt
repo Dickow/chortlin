@@ -11,6 +11,10 @@ data class Trace(private val traces: List<TraceEvent>) {
         workingTraces.remove(event)
     }
 
+    fun copy(): Trace {
+        return Trace(workingTraces.map { event -> event.traceEvent })
+    }
+
     private fun constructWorkingList(): MutableList<TraceEventIndexed> {
         return traces.mapIndexed { index, element -> TraceEventIndexed(index, element) }.toMutableList()
     }

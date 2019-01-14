@@ -7,6 +7,6 @@ import com.dickow.chortlin.checker.choreography.participant.Participant
 interface ASTBuilder {
     fun returnFrom(receiver: ObservableParticipant, label: String): ASTBuilder
     fun interaction(sender: Participant, receiver: ObservableParticipant, label: String): ASTBuilder
-    fun choice(branches: List<Choreography>): Choreography
+    fun choice(vararg branches: Choreography): Choreography
     fun end(): Choreography
 }

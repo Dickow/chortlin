@@ -161,6 +161,7 @@
                     </includes>
                     <argLine>
                         --add-opens chortlin.test.application/com.dickow.chortlin.test.application.shared=chortlin.interception
+                        --add-opens java.base/java.util=chortlin.interception
                     </argLine>
                 </configuration>
             </plugin>

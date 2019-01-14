@@ -8,6 +8,10 @@ import com.dickow.chortlin.checker.trace.Trace
 class Choice(val possiblePaths: List<ASTNode>, previous: ASTNode?) : ASTNode(previous, null) {
 
     override fun satisfy(trace: Trace): CheckResult {
+        if (trace.getNotConsumed().isEmpty()) {
+            return CheckResult.Partial
+        }
+
         val pathResults = possiblePaths.map { path -> path.satisfy(trace.copy()) }
         return when {
             pathResults.any { result -> result == CheckResult.Full } -> CheckResult.Full
