@@ -28,35 +28,46 @@ class TraceDTOFactory {
         builder.observed = DtoDefinitions.ObservedDTO.newBuilder().setParticipant(classCanonicalName).setMethod(methodName).build()
         val mappedArguments = arguments.mapIndexed{index, argument -> buildArgument(resolveArgumentName(index, observed.jvmMethod), argument) }
         builder.addAllArguments(mappedArguments)
-        builder.returnValue = buildValue(returnValue).build()
+        builder.returnValue = buildProtobufValue(returnValue).build()
         return builder.build()
     }
 
     private fun buildArgument(argumentName: String, argument: Any?): DtoDefinitions.ArgumentDTO? {
         val argumentBuilder = DtoDefinitions.ArgumentDTO.newBuilder().setIdentifier(argumentName)
-        argumentBuilder.value = buildValue(argument).build()
+        argumentBuilder.value = buildProtobufValue(argument).build()
         return argumentBuilder.build()
     }
 
-    private fun buildValue(argument: Any?): Value.Builder {
+    private fun buildProtobufValue(argument: Any?): Value.Builder {
         return when(argument){
-            null -> Value.newBuilder().setNullValue(NullValue.NULL_VALUE)
-            is Number -> Value.newBuilder().setNumberValue(argument.toDouble())
-            is String -> Value.newBuilder().setStringValue(argument)
-            is Collection<*> -> Value.newBuilder().setListValue(
-                    ListValue.newBuilder().addAllValues(argument.map { listItem -> buildValue(listItem).build() }))
-            is Array<*> -> Value.newBuilder().setListValue(
-                    ListValue.newBuilder().addAllValues(argument.map { arrayItem -> buildValue(arrayItem).build() }))
-            is Boolean -> Value.newBuilder().setBoolValue(argument)
-            is Enum<*> -> Value.newBuilder().setStringValue(argument.name)
-            else -> {
-                Value.newBuilder()
-                        .setStructValue(Struct.newBuilder().putAllFields(
-                                argument.javaClass.declaredFields.map { field ->
-                                    Pair(field.name, buildValue(getFieldValue(argument, field)).build()) }.toMap()
-                        ))
-            }
+            null -> newValue().setNullValue(NullValue.NULL_VALUE)
+            is Number -> newValue().setNumberValue(argument.toDouble())
+            is String -> newValue().setStringValue(argument)
+            is Collection<*> -> newValue().setListValue(buildListValue(argument))
+            is Array<*> -> newValue().setListValue(buildListValue(argument))
+            is Boolean -> newValue().setBoolValue(argument)
+            is Enum<*> -> newValue().setStringValue(argument.name)
+            else -> newValue().setStructValue(buildStructValue(argument))
         }
+    }
+
+    private fun buildStructValue(argument: Any) : Struct.Builder {
+        return Struct.newBuilder().putAllFields(
+                argument.javaClass.declaredFields.map { field ->
+                    Pair(field.name, buildProtobufValue(getFieldValue(argument, field)).build()) }.toMap()
+        )
+    }
+
+    private fun buildListValue(arguments: Array<*>) : ListValue.Builder {
+        return ListValue.newBuilder().addAllValues(arguments.map { listItem -> buildProtobufValue(listItem).build() })
+    }
+
+    private fun buildListValue(arguments: Collection<*>) : ListValue.Builder {
+        return ListValue.newBuilder().addAllValues(arguments.map { listItem -> buildProtobufValue(listItem).build() })
+    }
+
+    private fun newValue() : Value.Builder {
+        return Value.newBuilder()
     }
 
     private fun getFieldValue(instance: Any?, field: Field) : Any?{
