@@ -42,7 +42,7 @@ class OnlineChecker(private val sessionManager: SessionManager) : ChoreographyCh
             CheckResult.None -> {
                 sessionManager.endSession(session)
                 throw ChoreographyRuntimeException("Unexpected trace encountered: $trace ${System.lineSeparator()}"+
-                "The following traces were observed prior: ${session.observedTraces()}")
+                        "The following traces were observed: ${session.observedTraces()}")
             }
             CheckResult.Full -> {sessionManager.endSession(session); ChoreographyStatus.FINISHED}
             CheckResult.Partial -> {session.extendKeys(trace); ChoreographyStatus.IN_PROGRESS}

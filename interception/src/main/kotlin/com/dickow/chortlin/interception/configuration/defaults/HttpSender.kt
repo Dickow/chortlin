@@ -20,7 +20,7 @@ class HttpSender(private val configuration: HttpConfiguration) : TraceSender {
                 .build()
         val response = httpClient.send(request, HttpResponse.BodyHandlers.ofString())
         if (response.statusCode() >= 300 || response.statusCode() <= 199) {
-            throw ChoreographyRuntimeException("Error occurred in the choreography checker: ${response.body()}")
+            throw ChoreographyRuntimeException(response.body())
         }
     }
 
@@ -31,7 +31,7 @@ class HttpSender(private val configuration: HttpConfiguration) : TraceSender {
                 .build()
         val response = httpClient.send(request, HttpResponse.BodyHandlers.ofString())
         if (response.statusCode() >= 300 || response.statusCode() <= 199) {
-            throw ChoreographyRuntimeException("Error occurred in the choreography checker: ${response.body()}")
+            throw ChoreographyRuntimeException(response.body())
         }
     }
 }
